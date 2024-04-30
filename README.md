@@ -30,13 +30,14 @@ Project stages:
 
 #### The previous results are presented through pictures
 - [ ] Visualize the results of the suggestions to the user
-  - [ ] [segment-anything](https://github.com/facebookresearch/segment-anything)
-  - [ ] [IDM-VTON](https://github.com/yisol/IDM-VTON)
-  - [ ] [champ](https://github.com/fudan-generative-vision/champ)
-  - [ ] [COTTON-size-does-matter](https://github.com/cotton6/COTTON-size-does-matter)
-  - [ ] [OOTDiffusion](https://github.com/levihsu/OOTDiffusion)
-  - [ ] [OutfitAnyone](https://github.com/HumanAIGC/OutfitAnyone)
-  - [ ] [StableVITON](https://github.com/rlawjdghek/StableVITON)
+  - [ ] [segment-anything](https://github.com/facebookresearch/segment-anything): **Features**: it can be used to generate masks for all objects in an image.
+  - [ ] [IDM-VTON](https://github.com/yisol/IDM-VTON): **Features**: it could keep background of the VToN, **Techs**: IP-Adapter, TryonNet, GarmentNet
+  - [ ] [COTTON-size-does-matter](https://github.com/cotton6/COTTON-size-does-matter): **Features**: it can adjust the size of VToN with a parameter
+  - [ ] [OOTDiffusion](https://github.com/levihsu/OOTDiffusion): **Techs**: LDM-based, outfitting UNet, outfitting dropout, Classifier-free guidance
+  - [ ] [OutfitAnyone](https://github.com/HumanAIGC/OutfitAnyone): Ultra-high quality virtual try-on for Any Clothing and Any Person (Including **Anime character pictures** in demo)
+  - [ ] [StableVITON](https://github.com/rlawjdghek/StableVITON): **Features**: it could keep background of the VToN, **Techs**: LDM-based, zero cross-attention blocks, attention total variation loss and augmentation,
+  - [ ] [champ](https://github.com/fudan-generative-vision/champ): Controllable and Consistent Human **Image Animation with 3D** Parametric Guidance
+  
 
 
 ## 📂 Repo structure (WIP)
