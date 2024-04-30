@@ -29,14 +29,18 @@ Project stages:
 
 
 #### The previous results are presented through pictures
-- [ ] Visualize the results of the suggestions to the user
+- [ ] Segment Tool
+  - [ ] [segment-anything](https://github.com/facebookresearch/segment-anything)
+- [ ] Virtual Try-on
   - [ ] [segment-anything](https://github.com/facebookresearch/segment-anything)
   - [ ] [IDM-VTON](https://github.com/yisol/IDM-VTON)
-  - [ ] [champ](https://github.com/fudan-generative-vision/champ)
   - [ ] [COTTON-size-does-matter](https://github.com/cotton6/COTTON-size-does-matter)
   - [ ] [OOTDiffusion](https://github.com/levihsu/OOTDiffusion)
   - [ ] [OutfitAnyone](https://github.com/HumanAIGC/OutfitAnyone)
   - [ ] [StableVITON](https://github.com/rlawjdghek/StableVITON)
+- [ ] Visualize the results of the suggestions to the user
+  - [ ] [champ](https://github.com/fudan-generative-vision/champ)
+  - [ ] [4d-dress](https://github.com/eth-ait/4d-dress)
 
 
 ## 📂 Repo structure (WIP)
