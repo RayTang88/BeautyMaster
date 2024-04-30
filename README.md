@@ -32,7 +32,6 @@ Project stages:
 - [ ] Segment Tool
   - [ ] [segment-anything](https://github.com/facebookresearch/segment-anything)
 - [ ] Virtual Try-on
-  - [ ] [segment-anything](https://github.com/facebookresearch/segment-anything)
   - [ ] [IDM-VTON](https://github.com/yisol/IDM-VTON)
   - [ ] [COTTON-size-does-matter](https://github.com/cotton6/COTTON-size-does-matter)
   - [ ] [OOTDiffusion](https://github.com/levihsu/OOTDiffusion)
