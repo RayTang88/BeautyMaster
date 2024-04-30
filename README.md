@@ -18,33 +18,39 @@ Project stages:
 ## ✊ Todo
 
 #### Train a VLM to have basic aesthetic ability
+
 - [ ] Collect fashion wear data
 - [ ] Look for a VLM to label ready-made images [internVL](https://internvl.opengvlab.com/)
 
 #### Align human aesthetic abilities
+
 - [ ] RLHF [instruct](https://arxiv.org/pdf/2203.02155.pdf)
 
 #### Choose the right match according to aesthetic ability.
+
 - [ ] The trained LLM gives suggestions on what to wear [internVL](https://internvl.opengvlab.com/)
 
 
 #### The previous results are presented through pictures
+
 - [ ] Segment Tool
-  - [ ] [segment-anything](https://github.com/facebookresearch/segment-anything)
+  - [ ] [segment-anything](https://github.com/facebookresearch/segment-anything): **Features**: it can be used to generate masks for all objects in an image.
 - [ ] Virtual Try-on
-  - [ ] [IDM-VTON](https://github.com/yisol/IDM-VTON)
-  - [ ] [COTTON-size-does-matter](https://github.com/cotton6/COTTON-size-does-matter)
-  - [ ] [OOTDiffusion](https://github.com/levihsu/OOTDiffusion)
-  - [ ] [OutfitAnyone](https://github.com/HumanAIGC/OutfitAnyone)
-  - [ ] [StableVITON](https://github.com/rlawjdghek/StableVITON)
+  - [ ] [IDM-VTON](https://github.com/yisol/IDM-VTON): **Features**: it could keep background of the VToN, **Techs**: IP-Adapter, TryonNet, GarmentNet
+  - [ ] [COTTON-size-does-matter](https://github.com/cotton6/COTTON-size-does-matter): **Features**: it can adjust the size of VToN with a parameter
+  - [ ] [OOTDiffusion](https://github.com/levihsu/OOTDiffusion): **Techs**: LDM-based, outfitting UNet, outfitting dropout, Classifier-free guidance
+  - [ ] [OutfitAnyone](https://github.com/HumanAIGC/OutfitAnyone): Ultra-high quality virtual try-on for Any Clothing and Any Person (Including **Anime character pictures** in demo)
+  - [ ] [StableVITON](https://github.com/rlawjdghek/StableVITON): **Features**: it could keep background of the VToN, **Techs**: LDM-based, zero cross-attention blocks, attention total variation loss and augmentation,
+
 - [ ] Visualize the results of the suggestions to the user
-  - [ ] [ControlNet](https://github.com/lllyasviel/ControlNet)
-  - [ ] [champ](https://github.com/fudan-generative-vision/champ)
-  - [ ] [4d-dress](https://github.com/eth-ait/4d-dress)
+  - [ ] [**ControlNet**](https://github.com/lllyasviel/ControlNet)
+  - [ ] [4d-dress](https://github.com/eth-ait/4d-dress): A **4D** Dataset of Real-world Human Clothing with **Semantic Annotations**
+  - [ ] [champ](https://github.com/fudan-generative-vision/champ): Controllable and Consistent Human **Image Animation with 3D** Parametric Guidance
 
 
 ## 📂 Repo structure (WIP)
-```
+
+```Bash
 ├── README.md
 ├── docs
 ├── scripts
