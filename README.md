@@ -38,6 +38,7 @@ Project stages:
   - [ ] [OutfitAnyone](https://github.com/HumanAIGC/OutfitAnyone)
   - [ ] [StableVITON](https://github.com/rlawjdghek/StableVITON)
 - [ ] Visualize the results of the suggestions to the user
+  - [ ] [ControlNet](https://github.com/lllyasviel/ControlNet)
   - [ ] [champ](https://github.com/fudan-generative-vision/champ)
   - [ ] [4d-dress](https://github.com/eth-ait/4d-dress)
 
