@@ -99,6 +99,7 @@ Refer to [Data.md](docs/Data.md)
 Example:
 
 ```Python
+cd beautymaster
 python demo/infer.py 
 ```
 
