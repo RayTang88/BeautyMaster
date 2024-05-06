@@ -114,7 +114,7 @@ const_prompt="""{
         },
         {
         "from": "human",
-        "value": "What kind of clothing is it, T-shirts, shirts, skirts, whatever?"
+        "value": "What kind of clothing is it?You should choose from the following options: T-shirts, shirts, skirts, whatever?"
         },
 
         {
@@ -131,7 +131,7 @@ const_prompt="""{
         },
         {
         "from": "human",
-        "value": "Describe the style of clothing. Casual, formal?"
+        "value": "Describe the style of clothing.You should choose from the following options:  Casual, formal, whatever?"
         },
         {
         "from": "gpt",
@@ -147,7 +147,7 @@ const_prompt="""{
         },
         {
         "from": "human",
-        "value": "Is it printed? If yes, please indicate what type of print, text, log?"
+        "value": "what type of print on the clothes? You should choose from the following options:  no, text, log, whatever?"
         },
         {
         "from": "gpt",
@@ -155,7 +155,7 @@ const_prompt="""{
         },
         {
         "from": "human",
-        "value": "What is the material of the clothes?"
+        "value": "What is the material of the clothes? You should choose from the following options: cotton fabric, synthetic fabric, whatever"
         },
         {
         "from": "gpt",
@@ -163,7 +163,7 @@ const_prompt="""{
         },
         {
         "from": "human",
-        "value": "Is it long sleeve or short sleeve?"
+        "value": "How about the length of the sleeves?  You should choose from the following options: Long sleeve, short sleeve, sleeveless, whatever"
         },
         {
         "from": "gpt",

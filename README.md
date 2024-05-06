@@ -25,6 +25,8 @@ Project stages:
 #### Align human aesthetic abilities
 
 - [ ] RLHF [instruct](https://arxiv.org/pdf/2203.02155.pdf)
+- [ ] DPO [DPO](https://arxiv.org/abs/2305.18290)
+- [ ] ORPO [ORPO](https://arxiv.org/abs/2403.07691)(https://github.com/xfactlab/orpo/tree/main)
 
 #### Choose the right match according to aesthetic ability.
 
