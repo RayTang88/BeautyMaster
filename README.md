@@ -18,19 +18,20 @@ Project stages:
 ## ✊ Todo
 
 #### Train a VLM to have basic aesthetic ability
-
-- [ ] Collect fashion wear data
-- [ ] Look for a VLM to label ready-made images [internVL](https://internvl.opengvlab.com/)
+- [x] Segment Tool(WIP)
+  - [x] Collect fashion wear data
+  - [x] Look for a VLM to label ready-made images [internVL](https://internvl.opengvlab.com/)
 
 #### Align human aesthetic abilities
 
 - [ ] RLHF [instruct](https://arxiv.org/pdf/2203.02155.pdf)
 - [ ] DPO [DPO](https://arxiv.org/abs/2305.18290)
 - [ ] ORPO [ORPO](https://arxiv.org/abs/2403.07691)(https://github.com/xfactlab/orpo/tree/main)
+- [ ] RLHF-V [RLHF-V](https://arxiv.org/abs/2312.00849)(https://github.com/RLHF-V/RLHF-V)
 
 #### Choose the right match according to aesthetic ability.
 
-- [ ] The trained LLM gives suggestions on what to wear [internVL](https://internvl.opengvlab.com/)
+- [ ] The trained VLM gives suggestions on what to wear [internVL](https://internvl.opengvlab.com/)
 
 
 #### The previous results are presented through pictures
