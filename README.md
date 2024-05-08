@@ -18,7 +18,7 @@ Project stages:
 ## ✊ Todo
 
 #### Train a VLM to have basic aesthetic ability
-- [x] Segment Tool(WIP)
+- [x] Data Processing(WIP)
   - [x] Collect fashion wear data
   - [x] Look for a VLM to label ready-made images [internVL](https://internvl.opengvlab.com/)
 
@@ -47,7 +47,7 @@ Project stages:
   - [ ] [StableVITON](https://github.com/rlawjdghek/StableVITON): **Features**: it could keep background of the VToN, **Techs**: LDM-based, zero cross-attention blocks, attention total variation loss and augmentation,
 
 - [ ] Visualize the results of the suggestions to the user
-  - [ ] [**ControlNet**](https://github.com/lllyasviel/ControlNet)
+  - [ ] [ControlNet](https://github.com/lllyasviel/ControlNet)
   - [ ] [4d-dress](https://github.com/eth-ait/4d-dress): A **4D** Dataset of Real-world Human Clothing with **Semantic Annotations**
   - [ ] [champ](https://github.com/fudan-generative-vision/champ): Controllable and Consistent Human **Image Animation with 3D** Parametric Guidance
 
