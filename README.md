@@ -108,5 +108,5 @@ python demo/infer.py
 
 
 ## 🔒 License
-* See [LICENSE](LICENSE) for details.
+**Usage and License Notices:** The data, code, and checkpoint are intended and licensed for research use only,non-commercial use. They are also restricted to uses that follow the license agreement of InternVL, RLHF,DPO,ORPO,RLHF-V,segment-anything,SCHP,IDM-VTON,ControlNet,4d-dress,champ. The dataset is CC BY NC 4.0 (allowing only non-commercial use) and models trained using the dataset should not be used outside of research purposes.
 
