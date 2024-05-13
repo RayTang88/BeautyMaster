@@ -13,10 +13,7 @@ def save_json(data, json_name):
         # ensure_ascii：保证了 “篮球” 能正确的写入，而不是字节形式
         # indent=4：为了美观，不然会保存成一行
 
-if __name__ == "__main__":
-    root_dir = "/root/data/zalando/train/"
-    images = os.listdir(root_dir + "/cloth/")
-
+def label_clothes():
     # 要嵌入的JSON数据
     const_prompt="""{
         "version": "0.0.1",
@@ -87,7 +84,7 @@ if __name__ == "__main__":
 
 
     pipe = pipeline('/root/model/InternVL-Chat-V1-5/',
-                    backend_config=TurbomindEngineConfig(session_len=10240))
+                    backend_config=TurbomindEngineConfig(session_len=12288))
 
     for image in images:
         prompts = [('%s'%prompt, load_image(root_dir + "/cloth/" + image))]
@@ -99,4 +96,119 @@ if __name__ == "__main__":
             json_name =  root_dir + "/json/"  + image[:-4]+".json"
             save_json(json_obj, json_name)
         except json.decoder.JSONDecodeError as e:
-            print("JSONDecodeError:", str(e))    
+            print("JSONDecodeError:", str(e))
+
+
+def label_model(image_path, json_path):
+    # 要嵌入的JSON数据
+    const_prompt="""{
+        "conversations":[
+            {
+            "from": "human",
+            "value": "<image>\n图中人物的头发是什么颜色？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer1>"
+            },
+            {
+            "from": "human",
+            "value": "图中人物的头发长度如何？长发、短发、中长、寸头、秃头？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer2>"
+            },
+            {
+            "from": "human",
+            "value": "图中人物的头发的发型是什么风格？卷发、直发、大波浪、齐刘海、妹妹头？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer3>"
+            },
+            {
+            "from": "human",
+            "value": "图中人物的体型胖瘦状况如何？肥胖、适中、清瘦？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer4>"
+            },
+            {
+            "from": "human",
+            "value": "图中人物的身高状况如何？高大、中等、矮小？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer5>"
+            },
+            {
+            "from": "human",
+            "value": "图中人物的腰部粗细如何？水桶腰、正常腰、小蛮腰？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer6>"
+            },
+            {
+            "from": "human",
+            "value": "图中人物的脸型如何？圆脸、锥子脸、国字方脸？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer7>"
+            },
+            {
+            "from": "human",
+            "value": "图中人物的腿部长度如何？长腿、中长腿、短腿？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer8>"
+            },
+            {
+            "from": "human",
+            "value": "图中人物的腿部形状如何？直腿、弯腿、O形腿？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer9>"
+            }
+        ]    
+    }"""
+
+    # 将JSON数据转换为字符串，并转义双引号和花括号
+    # json_string = json.dumps(const_prompt).replace('"', '\\"').replace('{', '\\{').replace('}', '\\}')
+    json_string = const_prompt.replace('"', '\\"').replace('{', '\\{').replace('}', '\\}').replace('\n', '\\n')
+    
+    # 将转义后的JSON字符串嵌入提示中
+    prompt = f"按照以下格式创建数据集:\n {json_string} \n根据提供的图片按json_string的格式生成问题和答案对。答案必须精简，后面有选项的在选项中选即可。答案必须严格来自图像内容，如果根据图像内容无法确定答案，请回答不知道。最后只输出生成的json_string部分即可。"
+
+
+    pipe = pipeline('/root/model/InternVL-Chat-V1-5/',
+                    backend_config=TurbomindEngineConfig(session_len=8190))
+
+    images = os.listdir(image_path)                
+
+    for image in images:
+        prompts = [('%s'%prompt, load_image(image_path + image))]
+        response = pipe(prompts)
+
+        # print(response[0].text[7:-3])
+        try:
+            json_obj = json.loads(response[0].text[7:-3])
+            json_name =  json_path + image[:-4]+".json"
+            save_json(json_obj, json_name)
+        except json.decoder.JSONDecodeError as e:
+            print("JSONDecodeError:", str(e))
+
+
+if __name__ == "__main__":
+    root_dir = "/root/data/fullbody_cleaned_yolo_vl1_5"
+    # images = os.listdir(root_dir + "/cloth/")
+    image_path = "/root/data/fullbody_cleaned_yolo_vl1_5/"
+    json_path = "/root/data/fullbody_cleaned_yolo_vl1_5_json/"
+    label_model(image_path, json_path)
+
+    
