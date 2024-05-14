@@ -2,6 +2,7 @@ from lmdeploy import pipeline, TurbomindEngineConfig
 from lmdeploy.vl import load_image
 import os
 import json
+from json_repair import repair_json
 
 
 def save_json(data, json_name):
@@ -92,9 +93,10 @@ def label_clothes():
 
         # print(response[0].text[7:-3])
         try:
-            json_obj = json.loads(response[0].text[7:-3])
+            # json_obj = json.loads(response[0].text[7:-3])
+            good_json_string = repair_json(response[0].text)
             json_name =  root_dir + "/json/"  + image[:-4]+".json"
-            save_json(json_obj, json_name)
+            save_json(good_json_string, json_name)
         except json.decoder.JSONDecodeError as e:
             print("JSONDecodeError:", str(e))
 
@@ -197,11 +199,77 @@ def label_model(image_path, json_path):
 
         # print(response[0].text[7:-3])
         try:
-            json_obj = json.loads(response[0].text[7:-3])
-            json_name =  json_path + image[:-4]+".json"
-            save_json(json_obj, json_name)
+            # json_obj = json.loads(response[0].text[7:-3])
+            good_json_string = repair_json(response[0].text)
+            json_name =  root_dir + "/json/"  + image[:-4]+".json"
+            save_json(good_json_string, json_name)
         except json.decoder.JSONDecodeError as e:
             print("JSONDecodeError:", str(e))
+   
+def label_mode_sup(image_path, json_path):
+    # 要嵌入的JSON数据
+    const_prompt="""{
+        "conversations":[
+            {
+            "from": "human",
+            "value": "<image>\n图中人物的是否穿的裙子？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer1>"
+            },
+            {
+            "from": "human",
+            "value": "图中人物是否穿外套？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer2>"
+            },
+            {
+            "from": "human",
+            "value": "图中人物的上衣包含外套的长度是否超过腰部？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer3>"
+            },
+            {
+            "from": "human",
+            "value": "图中人物的裤子长度是否超过膝盖？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer4>"
+            }
+        ]    
+    }"""
+
+    # 将JSON数据转换为字符串，并转义双引号和花括号
+    # json_string = json.dumps(const_prompt).replace('"', '\\"').replace('{', '\\{').replace('}', '\\}')
+    json_string = const_prompt.replace('"', '\\"').replace('{', '\\{').replace('}', '\\}').replace('\n', '\\n')
+    
+    # 将转义后的JSON字符串嵌入提示中
+    prompt = f"按照以下格式创建数据集:\n {json_string} \n根据提供的图片按json_string的格式生成问题和答案对。答案必须精简，后面有选项的在选项中选即可。答案必须严格来自图像内容，如果根据图像内容无法确定答案，请回答不知道。最后只输出生成的json_string部分即可。"
+
+
+    pipe = pipeline('/root/model/InternVL-Chat-V1-5/',
+                    backend_config=TurbomindEngineConfig(session_len=8190))
+
+    images = os.listdir(image_path)                
+
+    for image in images:
+        prompts = [('%s'%prompt, load_image(image_path + image))]
+        response = pipe(prompts)
+
+        # print(response[0].text[7:-3])
+        try:
+            # json_obj = json.loads(response[0].text[7:-3])
+            good_json_string = repair_json(response[0].text)
+            json_name =  root_dir + "/json_sup/"  + image[:-4]+".json"
+            save_json(good_json_string, json_name)
+        except json.decoder.JSONDecodeError as e:
+            print("JSONDecodeError:", str(e))            
 
 
 if __name__ == "__main__":
