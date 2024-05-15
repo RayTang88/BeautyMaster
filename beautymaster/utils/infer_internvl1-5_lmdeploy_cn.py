@@ -46,7 +46,7 @@ def label_clothes(root_dir):
             },
             {
             "from": "human",
-            "value": "请问这件衣服的衣领是什么形状？圆领、V领、或者其他？"
+            "value": "请问这件衣服的衣领是什么形状？高领、圆领、V领、或者其他？"
             },
             {
             "from": "gpt",
@@ -99,7 +99,11 @@ def label_clothes(root_dir):
                     backend_config=TurbomindEngineConfig(session_len=8190))
 
     images = os.listdir(root_dir + "/images/") 
+    index=0
     for image in images:
+        if image[-5:] == "1.jpg":
+            continue
+        print("index:%d:%s"%(index, root_dir + "/images/" + image))
         prompts = [('%s'%prompt, load_image(root_dir + "/images/" + image))]
         response = pipe(prompts)
 
@@ -116,6 +120,8 @@ def label_clothes(root_dir):
             save_json(good_json_obj, json_name)
         except json.decoder.JSONDecodeError as e:
             print("JSONDecodeError:", str(e))
+
+        index+=1    
 
 def label_trous(root_dir):
     # 要嵌入的JSON数据
