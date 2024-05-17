@@ -310,7 +310,7 @@ def label_model(image_path, json_path):
             },
             {
             "from": "human",
-            "value": "图中人物的腿部长度如何？长腿、中长腿、短腿？"
+            "value": "图中人物的腿部长度如何？长腿、中等腿、短腿？"
             },
             {
             "from": "gpt",
