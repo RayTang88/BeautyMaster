@@ -19,8 +19,10 @@ Project stages:
 
 #### Train a VLM to have basic aesthetic ability
 - [x] Data Processing(WIP)
-  - [x] Collect fashion wear data
-  - [x] Look for a VLM to label ready-made images [internVL](https://internvl.opengvlab.com/)
+  - [x] Collect fashion wear data.
+  - [x] Look for a VLM to label ready-made images [internVL](https://internvl.opengvlab.com/).
+  - [x] Make a data annotation tool.
+  - [x] Correct data form VLM for test and train.
 
 #### Align human aesthetic abilities
 
@@ -39,12 +41,12 @@ Project stages:
 - [ ] Segment Tool
   - [ ] [segment-anything](https://github.com/facebookresearch/segment-anything): **Features**: it can be used to generate masks for all objects in an image.
   - [ ] [Self Correction for Human Parsing](https://github.com/TannedCung/SCHP)**Features**: An out-of-box human parsing representation extractor.
-- [ ] Virtual Try-on
-  - [ ] [IDM-VTON](https://github.com/yisol/IDM-VTON): **Features**: it could keep background of the VToN, **Techs**: IP-Adapter, TryonNet, GarmentNet
-  - [ ] [COTTON-size-does-matter](https://github.com/cotton6/COTTON-size-does-matter): **Features**: it can adjust the size of VToN with a parameter
-  - [ ] [OOTDiffusion](https://github.com/levihsu/OOTDiffusion): **Techs**: LDM-based, outfitting UNet, outfitting dropout, Classifier-free guidance
-  - [ ] [OutfitAnyone](https://github.com/HumanAIGC/OutfitAnyone): Ultra-high quality virtual try-on for Any Clothing and Any Person (Including **Anime character pictures** in demo)
-  - [ ] [StableVITON](https://github.com/rlawjdghek/StableVITON): **Features**: it could keep background of the VToN, **Techs**: LDM-based, zero cross-attention blocks, attention total variation loss and augmentation,
+- [ ] Virtual Try-on(WIP)
+  - [x] [IDM-VTON](https://github.com/yisol/IDM-VTON): **Features**: it could keep background of the VToN, **Techs**: IP-Adapter, TryonNet, GarmentNet.
+  - [ ] [COTTON-size-does-matter](https://github.com/cotton6/COTTON-size-does-matter): **Features**: it can adjust the size of VToN with a parameter.
+  - [x] [OOTDiffusion](https://github.com/levihsu/OOTDiffusion): **Techs**: LDM-based, outfitting UNet, outfitting dropout, Classifier-free guidance.
+  - [ ] [OutfitAnyone](https://github.com/HumanAIGC/OutfitAnyone): Ultra-high quality virtual try-on for Any Clothing and Any Person (Including **Anime character pictures** in demo).
+  - [ ] [StableVITON](https://github.com/rlawjdghek/StableVITON): **Features**: it could keep background of the VToN, **Techs**: LDM-based, zero cross-attention blocks, attention total variation loss and augmentation.
 
 - [ ] Visualize the results of the suggestions to the user
   - [ ] [ControlNet](https://github.com/lllyasviel/ControlNet)
