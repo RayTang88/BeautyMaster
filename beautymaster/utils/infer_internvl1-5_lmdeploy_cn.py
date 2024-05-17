@@ -4,6 +4,7 @@ import os
 import json
 from json_repair import repair_json
 import random
+from tqdm import tqdm 
 
 
 def save_json(data, json_name):
@@ -83,6 +84,14 @@ def label_clothes(root_dir):
             {
             "from": "gpt",
             "value": "<answer8>"
+            },
+            {
+            "from": "human",
+            "value": "请问这件衣服适合什么性别穿？男装、女装、男女均可？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer9>"
             }
         ]    
     }"""
@@ -100,28 +109,37 @@ def label_clothes(root_dir):
 
     images = os.listdir(root_dir + "/images/") 
     index=0
-    for image in images:
+    for image in tqdm(images):
+        index+=1  
         if image[-5:] == "1.jpg":
             continue
-        print("index:%d:%s"%(index, root_dir + "/images/" + image))
-        prompts = [('%s'%prompt, load_image(root_dir + "/images/" + image))]
-        response = pipe(prompts)
 
-        # print(response[0].text[7:-3])
+        if not os.path.exists(root_dir + "/images/" + image):
+            continue
+
+        json_path = root_dir + "/json/"
+        json_name =  json_path  + image[:-4]+".json"
+        if os.path.exists(json_path  + image[:-4]+".json"):
+            continue
+
         try:
+            print("index:%d:%s"%(index, root_dir + "/images/" + image))
+            prompts = [('%s'%prompt, load_image(root_dir + "/images/" + image))]
+            response = pipe(prompts)
+
+            # print(response[0].text[7:-3])
+
             # json_obj = json.loads(response[0].text[7:-3])
             good_json_obj = repair_json(response[0].text, return_objects=True)
 
-            json_path = root_dir + "/json/"
-
             if not os.path.exists(json_path):
                 os.makedirs(json_path)
-            json_name =  json_path  + image[:-4]+".json"
+            
             save_json(good_json_obj, json_name)
-        except json.decoder.JSONDecodeError as e:
-            print("JSONDecodeError:", str(e))
+        except Exception as e:
+            print("Exception:", str(e))            
 
-        index+=1    
+  
 
 def label_trous(root_dir):
     # 要嵌入的JSON数据
@@ -173,6 +191,14 @@ def label_trous(root_dir):
             {
             "from": "gpt",
             "value": "<answer6>"
+            },
+            {
+            "from": "human",
+            "value": "请问这条裤子适合什么性别穿？男装、女装、男女均可？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer9>"
             }
         ]    
     }"""
@@ -189,30 +215,37 @@ def label_trous(root_dir):
                     backend_config=TurbomindEngineConfig(session_len=8190))
 
     images = os.listdir(root_dir + "/images/")   
-    random.shuffle(images)
+    # random.shuffle(images)
 
-    iamges = images[:10000]    
+    # iamges = images[:10000]    
 
 
     for image in images:
         if image[-5:] == "1.jpg":
             continue
-        prompts = [('%s'%prompt, load_image(root_dir + "/images/" + image))]
-        response = pipe(prompts)
 
-        # print(response[0].text[7:-3])
+        if not os.path.exists(root_dir + "/images/" + image):
+            continue
+
+        json_path = root_dir + "/json/"
+        if os.path.exists(json_path  + image[:-4]+".json"):
+            continue
+
         try:
+            prompts = [('%s'%prompt, load_image(root_dir + "/images/" + image))]
+            response = pipe(prompts)
+
+            # print(response[0].text[7:-3])
+        
             # json_obj = json.loads(response[0].text[7:-3])
             good_json_obj = repair_json(response[0].text, return_objects=True)
-
-            json_path = root_dir + "/json/"
 
             if not os.path.exists(json_path):
                 os.makedirs(json_path)
             json_name =  json_path  + image[:-4]+".json"
             save_json(good_json_obj, json_name)
-        except json.decoder.JSONDecodeError as e:
-            print("JSONDecodeError:", str(e))            
+        except Exception as e:
+            print("Exception:", str(e))            
 
 
 def label_model(image_path, json_path):
@@ -310,22 +343,29 @@ def label_model(image_path, json_path):
                     
 
     for image in images:
-        prompts = [('%s'%prompt, load_image(image_path + image))]
-        response = pipe(prompts)
 
-        # print(response[0].text[7:-3])
+        if not os.path.exists(root_dir + "/images/" + image):
+            continue
+
+        if os.path.exists(json_path  + image[:-4]+".json"):
+            continue
+
         try:
+            prompts = [('%s'%prompt, load_image(image_path + image))]
+            response = pipe(prompts)
+
+            # print(response[0].text[7:-3])
+
             # json_obj = json.loads(response[0].text[7:-3])
             good_json_obj = repair_json(response[0].text, return_objects=True)
             
-            json_path = root_dir + "/json/"
-
             if not os.path.exists(json_path):
                 os.makedirs(json_path)
             json_name =  json_path  + image[:-4]+".json"
             save_json(good_json_obj, json_name)
-        except json.decoder.JSONDecodeError as e:
-            print("JSONDecodeError:", str(e))
+        except Exception as e:
+            print("Exception:", str(e))            
+
    
 def label_model_sup(image_path, json_path):
     # 要嵌入的JSON数据
@@ -362,6 +402,14 @@ def label_model_sup(image_path, json_path):
             {
             "from": "gpt",
             "value": "<answer4>"
+            },
+            {
+            "from": "human",
+            "value": "图中人物是什么性别？男性、女性？"
+            },
+            {
+            "from": "gpt",
+            "value": "<answer10>"
             }
         ]    
     }"""
@@ -380,6 +428,10 @@ def label_model_sup(image_path, json_path):
     images = os.listdir(image_path)                
 
     for image in images:
+
+        if os.path.exists(json_path  + image[:-4]+".json"):
+            continue
+
         prompts = [('%s'%prompt, load_image(image_path + image))]
         response = pipe(prompts)
 
@@ -392,8 +444,8 @@ def label_model_sup(image_path, json_path):
                 os.makedirs(json_path)
             json_name =  json_path  + image[:-4]+".json"
             save_json(good_json_obj, json_name)
-        except json.decoder.JSONDecodeError as e:
-            print("JSONDecodeError:", str(e))            
+        except Exception as e:
+            print("Exception:", str(e))              
 
 
 if __name__ == "__main__":
