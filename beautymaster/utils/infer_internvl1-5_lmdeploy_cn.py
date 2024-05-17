@@ -87,7 +87,7 @@ def label_clothes(root_dir):
             },
             {
             "from": "human",
-            "value": "请问这件衣服适合什么性别穿？男装、女装、男女均可？"
+            "value": "请问这件衣服适合什么性别穿？男性、女性、男女均可？"
             },
             {
             "from": "gpt",
@@ -194,7 +194,7 @@ def label_trous(root_dir):
             },
             {
             "from": "human",
-            "value": "请问这条裤子适合什么性别穿？男装、女装、男女均可？"
+            "value": "请问这条裤子适合什么性别穿？男性、女性、男女均可？"
             },
             {
             "from": "gpt",
@@ -220,7 +220,7 @@ def label_trous(root_dir):
     # iamges = images[:10000]    
 
 
-    for image in images:
+    for image in tqdm(images):
         if image[-5:] == "1.jpg":
             continue
 
@@ -342,7 +342,7 @@ def label_model(image_path, json_path):
 
                     
 
-    for image in images:
+    for image in tqdm(images):
 
         if not os.path.exists(root_dir + "/images/" + image):
             continue
@@ -409,7 +409,7 @@ def label_model_sup(image_path, json_path):
             },
             {
             "from": "gpt",
-            "value": "<answer10>"
+            "value": "<answer5>"
             }
         ]    
     }"""
@@ -427,7 +427,7 @@ def label_model_sup(image_path, json_path):
 
     images = os.listdir(image_path)                
 
-    for image in images:
+    for image in tqdm(images):
 
         if os.path.exists(json_path  + image[:-4]+".json"):
             continue
