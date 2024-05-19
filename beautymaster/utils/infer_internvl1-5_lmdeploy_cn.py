@@ -101,7 +101,7 @@ def label_clothes(root_dir):
     json_string = const_prompt.replace('"', '\\"').replace('{', '\\{').replace('}', '\\}').replace('\n', '\\n')
     
     # 将转义后的JSON字符串嵌入提示中
-    prompt = f"按照以下格式为我创建一个数据集:\n {json_string} \n要求：根据提供的图片,按json_string的格式生成问题和答案对。答案要必须精简，不要啰嗦废话，后面有选项的在选项中选即可。保证答案正确，不能瞎编，必须严格来源于图像内容中，如果图像没有，请回答不知道即可。最后只需要输出生成的json_string部分即可，不需要其他多余的部分。"
+    prompt = f"按照以下格式为我创建一个数据集:\n {json_string} \n根据提供的图片按json_string的格式生成问题和答案对。答案必须精简，后面有选项的在选项中选即可。答案必须严格来自图像内容，如果根据图像内容无法确定答案，请回答不知道。最后只输出生成的json_string部分即可。注意<answer>部分是hunman问题相对应的回答，不要原样输出。"
 
 
     pipe = pipeline('/root/model/InternVL-Chat-V1-5/',
@@ -215,7 +215,7 @@ def label_dresses(root_dir):
     json_string = const_prompt.replace('"', '\\"').replace('{', '\\{').replace('}', '\\}').replace('\n', '\\n')
     
     # 将转义后的JSON字符串嵌入提示中
-    prompt = f"按照以下格式为我创建一个数据集:\n {json_string} \n要求：根据提供的图片,按json_string的格式生成问题和答案对。答案要必须精简，不要啰嗦废话，后面有选项的在选项中选即可。保证答案正确，不能瞎编，必须严格来源于图像内容中，如果图像没有，请回答不知道即可。最后只需要输出生成的json_string部分即可，不需要其他多余的部分。"
+    prompt = f"按照以下格式为我创建一个数据集:\n {json_string} \n根据提供的图片按json_string的格式生成问题和答案对。答案必须精简，后面有选项的在选项中选即可。答案必须严格来自图像内容，如果根据图像内容无法确定答案，请回答不知道。最后只输出生成的json_string部分即可。注意<answer>部分是hunman问题相对应的回答，不要原样输出。"
 
 
     pipe = pipeline('/share/new_models/OpenGVLab/InternVL-Chat-V1-5/',
@@ -322,7 +322,7 @@ def label_trous(root_dir):
     json_string = const_prompt.replace('"', '\\"').replace('{', '\\{').replace('}', '\\}').replace('\n', '\\n')
     
     # 将转义后的JSON字符串嵌入提示中
-    prompt = f"按照以下格式为我创建一个数据集:\n {json_string} \n要求：根据提供的图片,按json_string的格式生成问题和答案对。答案要必须精简，不要啰嗦废话，后面有选项的在选项中选即可。保证答案正确，不能瞎编，必须严格来源于图像内容中，如果图像没有，请回答不知道即可。最后只需要输出生成的json_string部分即可，不需要其他多余的部分。"
+    prompt = f"按照以下格式为我创建一个数据集:\n {json_string} \n根据提供的图片按json_string的格式生成问题和答案对。答案必须精简，后面有选项的在选项中选即可。答案必须严格来自图像内容，如果根据图像内容无法确定答案，请回答不知道。最后只输出生成的json_string部分即可。注意<answer>部分是hunman问题相对应的回答，不要原样输出。"
 
 
     pipe = pipeline('/root/model/InternVL-Chat-V1-5/',
@@ -446,7 +446,7 @@ def label_model(image_path, json_path):
     json_string = const_prompt.replace('"', '\\"').replace('{', '\\{').replace('}', '\\}').replace('\n', '\\n')
     
     # 将转义后的JSON字符串嵌入提示中
-    prompt = f"按照以下格式创建数据集:\n {json_string} \n根据提供的图片按json_string的格式生成问题和答案对。答案必须精简，后面有选项的在选项中选即可。答案必须严格来自图像内容，如果根据图像内容无法确定答案，请回答不知道。最后只输出生成的json_string部分即可。"
+    prompt = f"按照以下格式创建数据集:\n {json_string} \n根据提供的图片按json_string的格式生成问题和答案对。答案必须精简，后面有选项的在选项中选即可。答案必须严格来自图像内容，如果根据图像内容无法确定答案，请回答不知道。最后只输出生成的json_string部分即可。注意<answer>部分是hunman问题相对应的回答，不要原样输出。"
 
 
     pipe = pipeline('/root/model/InternVL-Chat-V1-5/',
