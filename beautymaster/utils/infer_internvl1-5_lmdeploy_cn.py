@@ -137,7 +137,121 @@ def label_clothes(root_dir):
             
             save_json(good_json_obj, json_name)
         except Exception as e:
-            print("Exception:", str(e))            
+            print("Exception:", str(e))
+
+def label_dresses(root_dir):
+    # 要嵌入的JSON数据
+    const_prompt="""{
+        "conversations": [
+            {
+                "from": "human",
+                "value": "图中这条裙子适合什么季节穿？春、夏、秋、冬？."
+            },
+            {
+                "from": "gpt",
+                "value": "<answer1>"
+            },
+            {
+                "from": "human",
+                "value": "图中这条裙子下摆的长度如何？超短裙、中长未过膝、长裙？"
+            },
+            {
+                "from": "gpt",
+                "value": "<answer2>"
+            },
+            {
+                "from": "human",
+                "value": "图中这条裙子衣袖长度如何？长袖、中袖、短袖、无袖？"
+            },
+            {
+                "from": "gpt",
+                "value": "<answer3>"
+            },
+            {
+                "from": "human",
+                "value": "图中这条裙子的衣领是什么形状？高领、圆领、V领、抹胸、低胸露背、吊带、其他？"
+            },
+            {
+                "from": "gpt",
+                "value": "<answer3>"
+            },
+            {
+                "from": "human",
+                "value": "图中这条裙子是什么风格？晚礼服、休闲风、职业装、旗袍、其他？"
+            },
+            {
+                "from": "gpt",
+                "value": "<answer5>"
+            },
+            {
+                "from": "human",
+                "value": "图中这条裙子表面有什么特殊的log？纯色、小碎花、印花、中文文字、英文字母、其他？"
+            },
+            {
+                "from": "gpt",
+                "value": "<answer6>"
+            },
+            {
+                "from": "human",
+                "value": "图中这条裙子是什么颜色？"
+            },
+            {
+                "from": "gpt",
+                "value": "<answer7>"
+            },
+            {
+                "from": "human",
+                "value": "图中这条裙子是什么版型？宽松、修身、其他？"
+            },
+            {
+                "from": "gpt",
+                "value": "<answer8>"
+            }
+        ]
+    }"""
+
+    # 将JSON数据转换为字符串，并转义双引号和花括号
+    # json_string = json.dumps(const_prompt).replace('"', '\\"').replace('{', '\\{').replace('}', '\\}')
+    json_string = const_prompt.replace('"', '\\"').replace('{', '\\{').replace('}', '\\}').replace('\n', '\\n')
+    
+    # 将转义后的JSON字符串嵌入提示中
+    prompt = f"按照以下格式为我创建一个数据集:\n {json_string} \n要求：根据提供的图片,按json_string的格式生成问题和答案对。答案要必须精简，不要啰嗦废话，后面有选项的在选项中选即可。保证答案正确，不能瞎编，必须严格来源于图像内容中，如果图像没有，请回答不知道即可。最后只需要输出生成的json_string部分即可，不需要其他多余的部分。"
+
+
+    pipe = pipeline('/share/new_models/OpenGVLab/InternVL-Chat-V1-5/',
+                    backend_config=TurbomindEngineConfig(session_len=10240))
+
+    images = os.listdir(root_dir + "/images/") 
+    index=0
+    for image in tqdm(images):
+        index+=1  
+        if image[-5:] == "1.jpg":
+            continue
+
+        if not os.path.exists(root_dir + "/images/" + image):
+            continue
+
+        json_path = root_dir + "/json/"
+        json_name =  json_path  + image[:-4]+".json"
+        if os.path.exists(json_path  + image[:-4]+".json"):
+            continue
+
+        try:
+            print("index:%d:%s"%(index, root_dir + "/images/" + image))
+            prompts = [('%s'%prompt, load_image(root_dir + "/images/" + image))]
+            response = pipe(prompts)
+
+            # print(response[0].text[7:-3])
+
+            # json_obj = json.loads(response[0].text[7:-3])
+            good_json_obj = repair_json(response[0].text, return_objects=True)
+
+            if not os.path.exists(json_path):
+                os.makedirs(json_path)
+            
+            save_json(good_json_obj, json_name)
+        except Exception as e:
+            print("Exception:", str(e))                        
 
   
 
@@ -463,6 +577,9 @@ if __name__ == "__main__":
 
     root_dir = "/root/data/DressCode/upper_body/"
 
-    label_clothes(root_dir)
+    # label_clothes(root_dir)
+
+    root_dir = "/root/data/DressCode/dresses/"
+    label_dresses(root_dir)
 
     
