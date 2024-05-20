@@ -278,5 +278,3 @@ if __name__ == "__main__":
     image_path = "/root/data/fullbody_cleaned_yolo_vl1_5/"
     json_path = "/root/data/fullbody_cleaned_yolo_vl1_5_json/"
     label_model(image_path, json_path)
-
-    
