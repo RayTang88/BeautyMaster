@@ -6,6 +6,7 @@ from json_repair import repair_json
 import random
 from tqdm import tqdm 
 
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 def save_json(data, json_name):
     with open(json_name, "w", encoding="utf-8") as fp:
@@ -110,7 +111,7 @@ def label_clothes(root_dir):
     images = os.listdir(root_dir + "/images/") 
     index=0
     for image in tqdm(images):
-        index+=1  
+        index+=1
         if image[-5:] == "1.jpg":
             continue
 
@@ -139,7 +140,7 @@ def label_clothes(root_dir):
         except Exception as e:
             print("Exception:", str(e))
 
-def label_dresses(root_dir):
+def label_dresses(root_dir, flag):
     # 要嵌入的JSON数据
     const_prompt="""{
         "conversations": [
@@ -235,6 +236,13 @@ def label_dresses(root_dir):
         json_name =  json_path  + image[:-4]+".json"
         if os.path.exists(json_path  + image[:-4]+".json"):
             continue
+
+        if flag == "l":
+            if int(image[1:3])>35:
+                continue
+        elif flag == "h":
+            if int(image[1:3])<=35:
+                continue    
 
         try:
             print("index:%d:%s"%(index, root_dir + "/images/" + image))
@@ -580,6 +588,6 @@ if __name__ == "__main__":
     # label_clothes(root_dir)
 
     root_dir = "/root/data/DressCode/dresses/"
-    label_dresses(root_dir)
+    label_dresses(root_dir, "h")
 
     
