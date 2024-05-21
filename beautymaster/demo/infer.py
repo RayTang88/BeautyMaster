@@ -2,7 +2,7 @@ import argparse
 import torch
 import sys
 
-sys.path.append("/data0/tc_workspace/internlm/code/project/BeautyMaster/beautymaster")
+sys.path.append("/root/code/BeautyMaster/beautymaster")
 
 from src.infer_vlm import infer_vlm_func
 from src.infer_rag import infer_rag_func
@@ -23,19 +23,21 @@ def run(weights='',  # model.pt path(s)
     #2.Trained VLM give suggestions
     model_candidate_clothes_list = infer_rag_func(source, get_num_list) #for test, now get list randomly.
     response_string = infer_vlm_func(weights, model_candidate_clothes_list, season, weather, determine)
+    
+    print(response_string)
 
     #3.Virtual Try-on according the suggestions
 
     #4.Visualize the results of the suggestions to the user
-    pass
+
 
 def parse_opt():
 	parser = argparse.ArgumentParser()
  
-	parser.add_argument('--weights', nargs='+', type=str, default='/data0/tc_workspace/internlm/model/', help='model path(s)')
-	parser.add_argument('--source', type=str, default='/data0/tc_workspace/data/vton/test_data/', help='')
+	parser.add_argument('--weights', nargs='+', type=str, default='/root/model/', help='model path(s)')
+	parser.add_argument('--source', type=str, default='/root/data/test_data/', help='')
  
-	parser.add_argument('--save-path', type=str, default='/data0/tc_workspace/internlm/code/project/py_child/data/save_data/', help='save results to project/name')
+	parser.add_argument('--save-path', type=str, default='./save_data/', help='save results to project/name')
 
 	parser.add_argument('--get-num-list', nargs='+', type=int, default=[1, 5, 5, 5], help='model and clothes number')
 	parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640, 480], help='inference size h,w')
