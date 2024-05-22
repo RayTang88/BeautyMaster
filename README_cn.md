@@ -59,6 +59,7 @@
 
 ```Bash
 ├── README.md
+├── README_cn.md
 ├── docs
 ├── scripts
 ├── beautymaster
@@ -71,6 +72,7 @@
 │   │   ├── ControlNet
 │   │   └── OOTDiffusion
 │   ├── demo
+│   ├── src
 │   ├── train     
 │   └── utils
 ├── requirements.txt

@@ -60,6 +60,7 @@ Project stages:
 
 ```Bash
 ├── README.md
+├── README_cn.md
 ├── docs
 ├── scripts
 ├── beautymaster
@@ -72,6 +73,7 @@ Project stages:
 │   │   ├── ControlNet
 │   │   └── OOTDiffusion
 │   ├── demo
+│   ├── src
 │   ├── train     
 │   └── utils
 ├── requirements.txt
