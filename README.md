@@ -6,7 +6,7 @@ We hope to train VLM to be a beauty master to help you solve the problem of dres
 
 ## 💪 Goal
 
-Welcome Pull request！！！
+**Welcome Pull request！！！**
 
 Project stages:
 - Primary

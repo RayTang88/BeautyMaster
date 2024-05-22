@@ -6,7 +6,7 @@ from json_repair import repair_json
 import random
 from tqdm import tqdm 
 
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 def save_json(data, json_name):
     with open(json_name, "w", encoding="utf-8") as fp:
