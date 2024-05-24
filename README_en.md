@@ -1,42 +1,41 @@
-**[English](README.md) | [中文](README_cn.md)**
-# 美妆达人
+**[中文](README.md) | [English](README_en.md)**
+# BeautyMaster
 
-我们希望训练一个视觉语言大模型成为成美妆大师，给你提供穿衣和美妆建议。
+We hope to train VLM to be a beauty master to help you solve the problem of dressing and beauty.
 
-## 💪 目标
+**Welcome Pull request！！！**
 
-**欢迎大家fork和star我们的项目！！！**
+## 💪 Goal
 
-项目流程:
-- 主要
-1. 训练视觉语言大模型具备基本的审美能力；
-2. 对齐人类的审美能力；
-3. 让大模型为我们提供穿搭建议；
-4. 将大模型的穿搭建议展示出来。
+- Primary
+1. Train a VLM to have basic aesthetic ability.
+2. Align human aesthetic abilities.
+3. Choose the right match according to aesthetic ability.
+4. The previous results are presented through pictures.
 
 
-## ✊ 计划列表
+## ✊ Todo
 
-#### 训练视觉语言大模型具备基本的审美能力
-- [x] 数据处理(WIP)
-  - [x] 搜集时尚穿搭数据集；
-  - [x] 使用视觉语言大模型为数据打标 [internVL](https://internvl.opengvlab.com/)；
-  - [x] 做一个标记工具；
-  - [x] 用标记工具校正大模型打标的数据。
+#### Train a VLM to have basic aesthetic ability
+- [x] Data Processing(WIP)
+  - [x] Collect fashion wear data.
+  - [x] Look for a VLM to label ready-made images [internVL](https://internvl.opengvlab.com/).
+  - [x] Make a data annotation tool.
+  - [x] Correct data form VLM for test and train.
 
-#### 对齐人类的审美能力
+#### Align human aesthetic abilities
 
 - [ ] RLHF [instruct](https://arxiv.org/pdf/2203.02155.pdf)
 - [ ] DPO [DPO](https://arxiv.org/abs/2305.18290)
 - [ ] ORPO [ORPO](https://arxiv.org/abs/2403.07691)(https://github.com/xfactlab/orpo/tree/main)
 - [ ] RLHF-V [RLHF-V](https://arxiv.org/abs/2312.00849)(https://github.com/RLHF-V/RLHF-V)
 
-#### 让大模型为我们提供穿搭建议
-- [x] 视觉语言大模型会给出穿搭建议(WIP)
-  - [x] 视觉语言大模型会给出穿搭建议 [internVL](https://internvl.opengvlab.com/)
+#### Choose the right match according to aesthetic ability.
+- [x] The trained VLM gives suggestions on what to wear
+  - [x] [internVL](https://internvl.opengvlab.com/)
 
 
-#### 将大模型的穿搭建议展示出来
+#### The previous results are presented through pictures
 
 - [ ] Segment Tool
   - [ ] [segment-anything](https://github.com/facebookresearch/segment-anything): **Features**: it can be used to generate masks for all objects in an image.
@@ -55,7 +54,7 @@
   - [ ] [MOSS](https://github.com/3DHumanRehab/MOSS)
 
 
-## 📂 代码厂库结构 (WIP)
+## 📂 Repo structure (WIP)
 
 ```Bash
 ├── README.md
@@ -78,39 +77,40 @@
 ├── requirements.txt
 ```
 
-## 🛠️ 下载代码
+## 🛠️ Requirements and Installation
 
-1. 下载代码
+1. Clone this repository and open BeautyMaster folder
 ```
 git clone https://github.com/RayTang88/BeautyMaster.git
 cd BeautyMaster
 ```
-2. 安装基础环境
+2. Install required packages
 ```
 conda create -n beautyMaster python=3.10 -y
 conda activate beautyMaster
 
 ```
-3. 安装依赖
+3. Install additional packages for training cases
 ```
 pip install -r requirements.txt
 
 ```
 
 
-### 数据集
-请参考 [Data.md](docs/Data.md)
+### Datasets
+Refer to [Data.md](docs/Data.md)
 
 
-### 推理
+### Infer
 
-示例:
+Example:
 
 ```Python
 cd beautymaster
 python demo/infer.py 
 ```
 
-## 🔒 许可证
-**使用和许可声明:** 数据、代码和检查点仅供研究使用，不得用于商业用途。 它们还仅限于遵循 InternVL、RLHF、DPO、ORPO、RLHF-V、segment-anything、SCHP、IDM-VTON、ControlNet、4d-dress、champ 许可协议的使用。 数据集为 CC BY NC 4.0（仅允许非商业用途），使用该数据集训练的模型不应在研究目的之外使用。
+
+## 🔒 License
+**Usage and License Notices:** The data, code, and checkpoint are intended and licensed for research use only,non-commercial use. They are also restricted to uses that follow the license agreement of InternVL, RLHF,DPO,ORPO,RLHF-V,segment-anything,SCHP,IDM-VTON,ControlNet,4d-dress,champ. The dataset is CC BY NC 4.0 (allowing only non-commercial use) and models trained using the dataset should not be used outside of research purposes.
 
