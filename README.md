@@ -65,7 +65,7 @@ Project stages:
 ├── scripts
 ├── beautymaster
 │   ├── datasets
-│   ├── models
+│   ├── 3rdparty
 │   │   ├── internvl
 │   │   ├── IDM-VTON                     
 │   │   ├── champ

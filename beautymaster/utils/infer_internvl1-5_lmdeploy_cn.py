@@ -6,7 +6,7 @@ from json_repair import repair_json
 import random
 from tqdm import tqdm 
 
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 def save_json(data, json_name):
     with open(json_name, "w", encoding="utf-8") as fp:
@@ -20,7 +20,6 @@ def save_json(data, json_name):
 def label_clothes(root_dir):
     # 要嵌入的JSON数据
     const_prompt="""{
-        "version": "0.0.1",
         "conversations":[
             {
             "from": "human",
@@ -266,7 +265,6 @@ def label_dresses(root_dir, flag):
 def label_trous(root_dir):
     # 要嵌入的JSON数据
     const_prompt="""{
-        "version": "0.0.1",
         "conversations":[
             {
             "from": "human",
@@ -300,6 +298,7 @@ def label_trous(root_dir):
             "from": "gpt",
             "value": "<answer4>"
             },
+            {
             "from": "human",
             "value": "请问这条裤子是什么颜色？"
             },
@@ -307,6 +306,7 @@ def label_trous(root_dir):
             "from": "gpt",
             "value": "<answer5>"
             },
+            {
             "from": "human",
             "value": "请问这条裤子的面料是什么？纯棉、化纤、尼龙、或者其他？"
             },
@@ -334,15 +334,16 @@ def label_trous(root_dir):
 
 
     pipe = pipeline('/root/model/InternVL-Chat-V1-5/',
-                    backend_config=TurbomindEngineConfig(session_len=8190))
+                    backend_config=TurbomindEngineConfig(session_len=10240))
 
     images = os.listdir(root_dir + "/images/")   
     # random.shuffle(images)
 
     # iamges = images[:10000]    
 
-
+    index=0
     for image in tqdm(images):
+        index+=1
         if image[-5:] == "1.jpg":
             continue
 
@@ -354,6 +355,7 @@ def label_trous(root_dir):
             continue
 
         try:
+            print("index:%d:%s"%(index, root_dir + "/images/" + image))
             prompts = [('%s'%prompt, load_image(root_dir + "/images/" + image))]
             response = pipe(prompts)
 
@@ -370,7 +372,7 @@ def label_trous(root_dir):
             print("Exception:", str(e))            
 
 
-def label_model(image_path, json_path):
+def label_model(root_dir):
     # 要嵌入的JSON数据
     const_prompt="""{
         "conversations":[
@@ -460,19 +462,22 @@ def label_model(image_path, json_path):
     pipe = pipeline('/root/model/InternVL-Chat-V1-5/',
                     backend_config=TurbomindEngineConfig(session_len=8190))
 
-    images = os.listdir(image_path)
+    images = os.listdir(root_dir + "/images/")
 
                     
-
+    index=0
     for image in tqdm(images):
+        index+=1
 
         if not os.path.exists(root_dir + "/images/" + image):
             continue
 
+        json_path = root_dir + "/json/"
         if os.path.exists(json_path  + image[:-4]+".json"):
             continue
 
         try:
+            print("index:%d:%s"%(index, root_dir + "/images/" + image))
             prompts = [('%s'%prompt, load_image(image_path + image))]
             response = pipe(prompts)
 
@@ -489,7 +494,7 @@ def label_model(image_path, json_path):
             print("Exception:", str(e))            
 
    
-def label_model_sup(image_path, json_path):
+def label_model_sup(root_dir):
     # 要嵌入的JSON数据
     const_prompt="""{
         "conversations":[
@@ -547,18 +552,24 @@ def label_model_sup(image_path, json_path):
     pipe = pipeline('/root/model/InternVL-Chat-V1-5/',
                     backend_config=TurbomindEngineConfig(session_len=8190))
 
-    images = os.listdir(image_path)                
-
+    images = os.listdir(root_dir + "/images/")                
+    index=0
     for image in tqdm(images):
-
+        index+=1
+        
+        if not os.path.exists(root_dir + "/images/" + image):
+            continue
+        
+        json_path = root_dir + "/json_sup/"
         if os.path.exists(json_path  + image[:-4]+".json"):
             continue
 
-        prompts = [('%s'%prompt, load_image(image_path + image))]
-        response = pipe(prompts)
-
-        # print(response[0].text[7:-3])
         try:
+            print("index:%d:%s"%(index, root_dir + "/images/" + image))
+            prompts = [('%s'%prompt, load_image(image_path + image))]
+            response = pipe(prompts)
+            # print(response[0].text[7:-3])
+
             # json_obj = json.loads(response[0].text[7:-3])
             good_json_obj = repair_json(response[0].text, return_objects=True)
 
@@ -571,14 +582,14 @@ def label_model_sup(image_path, json_path):
 
 
 if __name__ == "__main__":
-    root_dir = "/root/data/fullbody_cleaned_yolo_vl1_5"
+    root_dir = "/group_share/data_org/fullbody_cleaned/"
     # images = os.listdir(root_dir + "/cloth/")
     image_path = "/root/data/fullbody_cleaned_yolo_vl1_5/"
     json_path = "/root/data/fullbody_cleaned_yolo_vl1_5_json/"
-    # label_model(image_path, json_path)
+    # label_model(root_dir)
     json_path_sup = "/root/data/fullbody_cleaned_yolo_vl1_5_json_sup/"
 
-    # label_model_sup(image_path, json_path_sup)
+    label_model_sup(root_dir)
 
     root_dir = "/root/data/DressCode/lower_body/"
 
@@ -589,6 +600,6 @@ if __name__ == "__main__":
     # label_clothes(root_dir)
 
     root_dir = "/root/data/DressCode/dresses/"
-    label_dresses(root_dir, "h")
+    # label_dresses(root_dir, "l")
 
     
