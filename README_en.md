@@ -103,8 +103,6 @@ Refer to [Data.md](docs/Data.md)
 
 ### Infer
 
-Example:
-
 ```Python
 cd beautymaster
 python demo/infer.py 

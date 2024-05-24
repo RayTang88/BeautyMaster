@@ -103,8 +103,6 @@ pip install -r requirements.txt
 
 ### 推理
 
-示例:
-
 ```Python
 cd beautymaster
 python demo/infer.py 
