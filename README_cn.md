@@ -1,4 +1,4 @@
-**[English](README.md), [中文](README_cn.md)**
+**[English](README.md) | [中文](README_cn.md)**
 # 美妆达人
 
 我们希望训练一个视觉语言大模型成为成美妆大师，给你提供穿衣和美妆建议。

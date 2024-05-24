@@ -2,7 +2,7 @@ import os
 
 from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig
 from lmdeploy.vl import load_image
-from . import prompt
+from .prompt import vlm_prompt_template
 
 
 def infer_vlm_func(weights_path, weight_name, model_candidate_clothes_list, season, weather, determine):
@@ -20,7 +20,7 @@ def infer_vlm_func(weights_path, weight_name, model_candidate_clothes_list, seas
     
     # vlm_prompt = prompt.vlm_prompt_template.format("1", "2~6", "7~11", "12~16", season, weather, determine, 'n', 'n', 'n', 'n', 'n', 'n')
     # vlm_prompt = prompt.vlm_prompt_template.format("16", "1", "2,3,4,5,6", "7,8,9,10,11", "12,13,14,15,16", season, weather, determine, prompt.a_format)
-    vlm_prompt = prompt.vlm_prompt_template
+    vlm_prompt = vlm_prompt_template
     # print(vlm_prompt)
     response = pipe((vlm_prompt, images))
 

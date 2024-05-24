@@ -1,4 +1,4 @@
-**[English](README.md), [中文](README_cn.md)**
+**[English](README.md) | [中文](README_cn.md)**
 # BeautyMaster
 
 We hope to train VLM to be a beauty master to help you solve the problem of dressing and beauty.
