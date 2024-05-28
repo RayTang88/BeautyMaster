@@ -14,7 +14,11 @@
 4. 将大模型的穿搭建议展示出来。
 
 - 流程图
-[全流程如下：](assets/BeautyMaster.png)
+
+<p align="center">
+    <img src="./assets/BeautyMaster.png" alt="alt text">
+</p>
+
 
 ## ✊ 计划列表
 
