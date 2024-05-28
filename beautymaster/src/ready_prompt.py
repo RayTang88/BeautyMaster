@@ -1,7 +1,8 @@
 import json
 from .prompt import pasing_prompt_template
 
-
+#This function is to prepare prompts for converting json description into txt description. 
+#It is more efficient to use list to ask llm questions.
 def ready_prompt_func(model_candidate_clothes_jsons, get_num_list, meaning_list):
   
   prompt_list=[]
@@ -18,11 +19,10 @@ def ready_prompt_func(model_candidate_clothes_jsons, get_num_list, meaning_list)
     with file_descriptor:
         decoded_object = json.load(file_descriptor)
         
-
-    pasing_prompt = pasing_prompt_template.format(decoded_object, meaning)
+    parsing_prompt = parsing_prompt_template.format(decoded_object, meaning)
     
     file_descriptor.close()
     
-    prompt_list.append(pasing_prompt)
+    prompt_list.append(parsing_prompt)
     
   return prompt_list  

@@ -14,6 +14,7 @@ def llm_parsing_json(pipe, model_candidate_clothes_jsons, get_num_list, meaning_
         
     return parsed_list
 
+#This function is the main interface for llm to make recommendations.
 def infer_llm_recommend(weights_path, weight_name, season, weather, determine, model_candidate_clothes_jsons, get_num_list, meaning_list):
     
     # # decrease the ratio of the k/v cache occupation to 20%

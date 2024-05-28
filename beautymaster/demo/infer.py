@@ -15,7 +15,7 @@ def run(weights_path="",  # model.pt path(s)
 		save_path="",  # save results to project/name
         get_num_list = [], # model and number of cloth candidates
         meaning_list=[],  
-		weather="",  # confidence threshold
+		weather="",
         season="",
         determine="",
         content=""
@@ -47,12 +47,11 @@ def parse_opt():
 	parser.add_argument('--source', type=str, default='/group_share/data_org/test_data/', help='')
 	parser.add_argument('--save-path', type=str, default='./save_data/', help='save results to project/name')
 	parser.add_argument('--get-num-list', nargs='+', type=int, default=[1, 5, 5, 5], help='model and number of cloth candidates')
-	parser.add_argument('--meaning-list', nargs='+', type=int, default=["我的形象特征", "上衣", "裤子", "裙子"], help='The meaning of each item in num_list')
+	parser.add_argument('--meaning-list', nargs='+', type=str, default=["我的形象特征", "上衣", "裤子", "裙子"], help='The meaning of each item in num_list')
 	parser.add_argument('--weather', type=str, default='10~15摄氏度', help='weather')
 	parser.add_argument('--season', type=str, default='春季', help='season')
 	parser.add_argument('--determine', type=str, default='逛街', help='determine')
 	parser.add_argument('--content', type=str, default='json', help='content')
-
 
 	opt = parser.parse_args()
 
