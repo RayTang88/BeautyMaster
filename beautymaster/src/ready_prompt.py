@@ -1,5 +1,5 @@
 import json
-from .prompt import pasing_prompt_template
+from .prompt import parsing_prompt_template
 
 #This function is to prepare prompts for converting json description into txt description. 
 #It is more efficient to use list to ask llm questions.
