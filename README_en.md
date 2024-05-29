@@ -16,7 +16,7 @@ We hope to train VLM to be a beauty master to help you solve the problem of dres
 - Flow
 
 <p align="center">
-    <img src="./assets/BeautyMaster.png" alt="alt text">
+    <img src="./assets/BeautyMaster_en.png" alt="alt text">
 </p>
 
 
