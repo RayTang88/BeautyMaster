@@ -13,6 +13,13 @@ We hope to train VLM to be a beauty master to help you solve the problem of dres
 3. Choose the right match according to aesthetic ability.
 4. The previous results are presented through pictures.
 
+- Flow
+
+<p align="center">
+    <img src="./assets/BeautyMaster.png" alt="alt text">
+</p>
+
+
 
 ## ✊ Todo
 
