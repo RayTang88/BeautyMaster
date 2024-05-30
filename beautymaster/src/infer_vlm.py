@@ -90,8 +90,7 @@ def infer_vlm_4o_like_func(weights_path, weight_name, model_candidate_clothes_li
     print(model_candidate_clothes_list)
 
     images = [load_image(model_candidate_clothes) for model_candidate_clothes in model_candidate_clothes_list]
-    # print(images)
-    
+
     # vlm_prompt = prompt.vlm_prompt_template.format("1", "2~6", "7~11", "12~16", season, weather, determine, 'n', 'n', 'n', 'n', 'n', 'n')
     # vlm_prompt = prompt.vlm_prompt_template.format("16", "1", "2,3,4,5,6", "7,8,9,10,11", "12,13,14,15,16", season, weather, determine, prompt.a_format)
 
