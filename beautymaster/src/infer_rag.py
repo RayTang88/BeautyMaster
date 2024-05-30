@@ -47,6 +47,7 @@ def random_pick(model_candidate_clothes_path, get_num_list, content):
                      
     return model_candidate_clothes_dict  
 
+
 def ordered_list(model_candidate_clothes_dict):
     
     model_candidate_clothes_list = []
@@ -55,8 +56,8 @@ def ordered_list(model_candidate_clothes_dict):
     model_candidate_clothes_list.extend(model_candidate_clothes_dict["lower_body"])
     model_candidate_clothes_list.extend(model_candidate_clothes_dict["dresses"]) 
     
-    return model_candidate_clothes_list                       
-            
+    return model_candidate_clothes_list   
+      
 def infer_rag_func(model_candidate_clothes_path, get_num_list, content):
     
     model_candidate_clothes_dict = random_pick(model_candidate_clothes_path, get_num_list, content)

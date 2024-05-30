@@ -85,14 +85,15 @@ def load_image(image_file, input_size=448, max_num=6):
     pixel_values = torch.stack(pixel_values)
     return pixel_values
 
-path = "/root/model/InternVL-Chat-V1-5-Int8"
+path = "/root/model/InternVL-Chat-V1-5"
 # If you have an 80G A100 GPU, you can put the entire model on a single GPU.
 model = AutoModel.from_pretrained(
     path,
     torch_dtype=torch.bfloat16,
     low_cpu_mem_usage=True,
     trust_remote_code=True,
-    load_in_8bit=True).eval()
+    # 
+    ).eval()
 
 
 tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)

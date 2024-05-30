@@ -52,6 +52,7 @@
   - [x] [OOTDiffusion](https://github.com/levihsu/OOTDiffusion): **Techs**: LDM-based, outfitting UNet, outfitting dropout, Classifier-free guidance.
   - [ ] [OutfitAnyone](https://github.com/HumanAIGC/OutfitAnyone): Ultra-high quality virtual try-on for Any Clothing and Any Person (Including **Anime character pictures** in demo).
   - [ ] [StableVITON](https://github.com/rlawjdghek/StableVITON): **Features**: it could keep background of the VToN, **Techs**: LDM-based, zero cross-attention blocks, attention total variation loss and augmentation.
+  - [ ] [AnyFit](https://colorful-liyu.github.io/anyfit-page/)
 
 - [ ] Visualize the results of the suggestions to the user
   - [ ] [ControlNet](https://github.com/lllyasviel/ControlNet)

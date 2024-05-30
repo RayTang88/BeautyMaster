@@ -9,7 +9,7 @@ import json
 sys.path.append("/root/code/BeautyMaster/beautymaster")
 # from src.infer_vlm import infer_vlm_func
 from src.infer_rag import infer_rag_func
-from src.prompt import parsing_prompt_template, match_prompt_template
+from src.prompt import parsing_prompt_template, match_prompt_template, vlm_prompt_template_4o
 
 
 from lmdeploy import pipeline, TurbomindEngineConfig
