@@ -1,5 +1,12 @@
 import os
 import random
+from json_repair import repair_json
+from .infer_vlm import infer_vlm_4o_like_func, infer_vlm_sigle_func
+from .infer_llm import infer_llm_single_recommend
+from .bce_langchain import bce_retriever
+from .prompt import vlm_prompt_body_template, body_shape, body_out_format
+
+
 
 def random_get(images_path, num, content):
     content_list = []
@@ -68,3 +75,36 @@ def infer_rag_func(model_candidate_clothes_path, get_num_list, content):
     assert total == len(model_candidate_clothes_list)
     
     return model_candidate_clothes_list
+
+
+def infer_rag_4o_like_func(weights_path, vlm_weight_name, llm_weight_name, embedding_model_name, top_n, csv_data, full_body_image_path, season, weather, determine, available_types, use_vlm):
+    
+    #目前VLM给出的结果和提供的图片穿着有很大关系,搭配的结果不太理想
+    if use_vlm:
+        match_text = infer_vlm_4o_like_func(weights_path, vlm_weight_name, full_body_image_path, season, weather, determine)
+    else:
+        data = {"shape": body_shape, "feature":"我的体型特征", "out_format":body_out_format}
+        vlm_prompt_template = vlm_prompt_body_template.format(**data)
+        body_shape_response = infer_vlm_sigle_func(weights_path, vlm_weight_name, full_body_image_path, season, weather, determine, vlm_prompt_template)
+        match_text, body_shape_descs, gender = infer_llm_single_recommend(weights_path, llm_weight_name, season, weather, determine, body_shape_response)
+        
+    good_json_obj = repair_json(match_text, return_objects=True)
+    item_descs = good_json_obj["items"]
+    category_descs = good_json_obj["category"]
+    
+    #目前需要搭配的类别
+    assert len(item_descs) == len(category_descs)
+    
+    # 创建a和b之间的字典映射
+    mapping = dict(zip(category_descs, item_descs))
+    
+    # 使用字典推导式处理c中的元素，根据映射关系从b中取出对应的元素，并输出为字典
+    items = {item: mapping[item] for item in available_types if item in mapping}
+    
+    print(items)
+    
+    print("--------------------")
+    
+    similar_items = bce_retriever(weights_path, embedding_model_name, top_n, csv_data, items)
+    
+    return similar_items, body_shape_descs, gender

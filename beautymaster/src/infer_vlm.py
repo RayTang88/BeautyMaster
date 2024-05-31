@@ -2,14 +2,14 @@ import os
 
 from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig
 from lmdeploy.vl import load_image
-from src.prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, out_format
+from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, out_format
 
 
-def infer_vlm_func(weights_path, weight_name, model_candidate_clothes_list, season, weather, determine):
+def infer_vlm_func(weights_path, weight_name, model_candidate_clothes_list, season, weather, determine, vlm_prompt_template):
 
     backend_config = TurbomindEngineConfig(session_len=163840,  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.2, 
-                                        tp=2,
+                                        tp=1,
                                         # quant_policy=0,
                                         )  # 两个显卡
 
@@ -78,7 +78,7 @@ def analyze_image(image_base64, subcategories):
     # return features
 
 
-def infer_vlm_4o_like_func(weights_path, weight_name, model_candidate_clothes_list, season, weather, determine):
+def infer_vlm_4o_like_func(weights_path, weight_name, full_body_image_path, season, weather, determine):
 
     backend_config = TurbomindEngineConfig(session_len=163840,  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.2, 
@@ -87,9 +87,8 @@ def infer_vlm_4o_like_func(weights_path, weight_name, model_candidate_clothes_li
                                         )  # 两个显卡
 
     pipe = pipeline(weights_path + weight_name, backend_config=backend_config, )
-    print(model_candidate_clothes_list)
 
-    images = [load_image(model_candidate_clothes) for model_candidate_clothes in model_candidate_clothes_list]
+    image = load_image(full_body_image_path)
 
     # vlm_prompt = prompt.vlm_prompt_template.format("1", "2~6", "7~11", "12~16", season, weather, determine, 'n', 'n', 'n', 'n', 'n', 'n')
     # vlm_prompt = prompt.vlm_prompt_template.format("16", "1", "2,3,4,5,6", "7,8,9,10,11", "12,13,14,15,16", season, weather, determine, prompt.a_format)
@@ -98,6 +97,24 @@ def infer_vlm_4o_like_func(weights_path, weight_name, model_candidate_clothes_li
 
     vlm_prompt = vlm_prompt_template_4o.format(**data)
     print(vlm_prompt)
-    response = pipe((vlm_prompt, images[0]))
+    response = pipe((vlm_prompt, image))
+
+    return response.text
+
+def infer_vlm_sigle_func(weights_path, weight_name, full_body_image_path, season, weather, determine, vlm_prompt_template):
+    
+    backend_config = TurbomindEngineConfig(session_len=163840,  # 图片分辨率较高时请调高session_len
+                                        cache_max_entry_count=0.2, 
+                                        tp=1,
+                                        # quant_policy=0,
+                                        )  # 两个显卡
+
+    pipe = pipeline(weights_path + weight_name, backend_config=backend_config, )
+    
+    image = load_image(full_body_image_path)
+    
+    vlm_prompt = vlm_prompt_template
+
+    response = pipe((vlm_prompt, image))
 
     return response.text
