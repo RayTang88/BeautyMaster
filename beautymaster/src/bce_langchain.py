@@ -1,4 +1,3 @@
-# 我们在`BCEmbedding`中提供langchain直接集成的接口。
 from BCEmbedding.tools.langchain import BCERerank
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -64,5 +63,5 @@ def bce_retriever(weights_path, embedding_model_name, top_n, csv_data, item_dict
     
     return similar_items
 
-    response = compression_retriever.get_relevant_documents('夏天穿的短袖上衣')
-    print(response)
+    # response = compression_retriever.get_relevant_documents('夏天穿的短袖上衣')
+    # print(response)
