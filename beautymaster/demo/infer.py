@@ -46,6 +46,10 @@ def run(weights_path="",  # model.pt path(s)
     response_string = infer_llm_recommend_raged(weights_path, llm_weight_name, season, weather, determine, rag_4o_like_recommended, body_shape_descs, gender, get_num_list, meaning_list)
     
     print(rag_4o_like_recommended)
+	
+    print("----------------------------------------")
+	
+    print(response_string)
 
     #3.Virtual Try-on according the suggestions
 

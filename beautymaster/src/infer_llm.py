@@ -61,7 +61,7 @@ def infer_llm_single_recommend(weights_path, weight_name, season, weather, deter
 def infer_llm_recommend_raged(weights_path, weight_name, season, weather, determine, rag_4o_like_recommended, body_shape_descs, gender, get_num_list, meaning_list):
     
     # # decrease the ratio of the k/v cache occupation to 20%
-    backend_config = TurbomindEngineConfig(cache_max_entry_count=0.2, session_len=8190)
+    backend_config = TurbomindEngineConfig(cache_max_entry_count=0.2, session_len=10240)
     pipe = pipeline(weights_path + weight_name, backend_config=backend_config) 
     
     upper, lower, dresses = parsing_rag_func(rag_4o_like_recommended) 
