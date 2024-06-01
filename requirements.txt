@@ -31,7 +31,7 @@ fastapi==0.110.1
 ffmpy==0.3.2
 filelock==3.13.1
 fire==0.6.0
-flash-attn==2.5.8
+# flash-attn==2.5.8 # 建议单独安装
 fonttools==4.53.0
 frozenlist==1.4.1
 fsspec==2024.2.0
