@@ -6,6 +6,7 @@ sys.path.append("/root/code/BeautyMaster/beautymaster")
 from src.infer_vlm import infer_vlm_func, infer_vlm_4o_like_func
 from src.infer_rag import infer_rag_func, infer_rag_4o_like_func
 from src.infer_llm import infer_llm_recommend, infer_llm_recommend_raged
+# from 3rdparty.IDM-VTON import my_tryon_test
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0, 1"
 

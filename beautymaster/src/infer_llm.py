@@ -71,5 +71,7 @@ def infer_llm_recommend_raged(weights_path, weight_name, season, weather, determ
     match_prompt = match_prompt_template_raged.format(**data)
     
     responses = pipe([match_prompt])
+
+    good_json_obj = repair_json(responses[0].text, return_objects=True)
     
-    return responses[0].text
+    return good_json_obj
