@@ -2,7 +2,10 @@ import os
 import sys
 import argparse
 
-sys.path.append("/root/code/BeautyMaster/beautymaster")
+# 根据自己代码位置修改
+# sys.path.append("/root/code/BeautyMaster/beautymaster")
+sys.path.append('/root/BeautyMaster-dev/beautymaster')
+
 from src.infer_vlm import infer_vlm_func, infer_vlm_4o_like_func
 from src.infer_rag import infer_rag_func, infer_rag_4o_like_func
 from src.infer_llm import infer_llm_recommend, infer_llm_recommend_raged
@@ -58,11 +61,11 @@ def run(weights_path="",  # model.pt path(s)
 
 def parse_opt():
 	parser = argparse.ArgumentParser()
- 
-	parser.add_argument('--weights-path', nargs='+', type=str, default='/group_share/model/', help='model path(s)')
+ 	# 所有模型和资源路径为group_share有关路径
+	parser.add_argument('--weights-path', nargs='+', type=str, default='/group_share/model', help='model path(s)')
 	parser.add_argument('--vlm-weight-name', nargs='+', type=str, default='/InternVL-Chat-V1-5/', help='')
 	parser.add_argument('--llm-weight-name', nargs='+', type=str, default='/internlm2-chat-20b_TurboMind/', help='')
-	parser.add_argument('--embedding-model-name', nargs='+', type=str, default='/bce-embedding-base_v1/', help='')
+	parser.add_argument('--embedding-model-name', nargs='+', type=str, default='/bce-embedding-base_v1', help='')
 	parser.add_argument('--source', type=str, default='/group_share/data_org/test_data/', help='')
 	parser.add_argument('--save-path', type=str, default='./save_data/', help='save results to project/name')
 	parser.add_argument('--get-num-list', nargs='+', type=int, default=[1, 1, 0, 0], help='model and number of cloth candidates')
@@ -72,8 +75,8 @@ def parse_opt():
 	parser.add_argument('--determine', type=str, default='约会', help='determine')
 	parser.add_argument('--content', type=str, default='images', help='content')
 	parser.add_argument('--top-n', type=int, default=5, help='rag num')
-	parser.add_argument('--csv-data-path', type=str, default='/root/data_org/test_data/sample_style.csv', help='content')
-	parser.add_argument('--full-body-image-path', type=str, default='/root/data_org/test_data/fullbody/real_image/v2-637c977c47e7794caa8cc80e12f1a369_r.jpg', help='content')
+	parser.add_argument('--csv-data-path', type=str, default='/group_share/data_org/test_data/sample_style.csv', help='content')
+	parser.add_argument('--full-body-image-path', type=str, default='/group_share/data_org/test_data/fullbody/real_image/v2-637c977c47e7794caa8cc80e12f1a369_r.jpg', help='content')
 	parser.add_argument('--available-types', nargs='+', type=str, default=["上衣", "裤子", "裙子"], help='available types')
 	opt = parser.parse_args()
 
