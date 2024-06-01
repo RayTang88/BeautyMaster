@@ -99,7 +99,7 @@ conda activate beautyMaster
 3. 安装依赖
 ```
 pip install -r requirements.txt
-
+MAX_JOBS=4 pip install -U flash-attn==2.5.8 --no-build-isolation # 这样安装flash-attn会很快，否则要等一两个小时
 ```
 
 

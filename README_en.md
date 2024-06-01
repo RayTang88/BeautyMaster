@@ -93,7 +93,7 @@ conda activate beautyMaster
 3. Install additional packages for training cases
 ```
 pip install -r requirements.txt
-
+MAX_JOBS=4 pip install -U flash-attn==2.5.8 --no-build-isolation # faster instalation for flash-attn
 ```
 
 
