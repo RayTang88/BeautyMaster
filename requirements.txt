@@ -152,6 +152,7 @@ wcwidth==0.2.13
 websockets==11.0.3
 xxhash==3.4.1
 yapf==0.40.2
+json_repair==0.22.0
 yarl==1.9.4
 zipp==3.18.1
 openxlab
