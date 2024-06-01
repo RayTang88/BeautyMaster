@@ -61,7 +61,7 @@
   - [ ] [MOSS](https://github.com/3DHumanRehab/MOSS)
 
 
-## 📂 代码厂库结构 (WIP)
+## 📂 代码仓库结构 (WIP)
 
 ```Bash
 ├── README.md
