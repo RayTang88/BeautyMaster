@@ -20,7 +20,7 @@ def bce_retriever(weights_path, embedding_model_name, top_n, csv_data, item_dict
                                         encode_kwargs=embedding_encode_kwargs)
 
     reranker_args = {
-        'model': '/root/model/bce-reranker-base_v1/',
+        'model': weights_path + '/bce-reranker-base_v1',
         'top_n': top_n,
         'device': 'cuda',
         'use_fp16': True
