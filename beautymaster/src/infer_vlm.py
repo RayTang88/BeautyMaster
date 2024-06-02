@@ -101,7 +101,7 @@ def infer_vlm_4o_like_func(weights_path, weight_name, full_body_image_path, seas
 
     return response.text
 
-def infer_vlm_sigle_func(weights_path, weight_name, full_body_image_path, season, weather, determine, vlm_prompt_template):
+def infer_vlm_sigle_func(weights_path, weight_name, full_body_image_path, vlm_prompt_template):
     
     backend_config = TurbomindEngineConfig(session_len=163840,  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.2, 

@@ -38,7 +38,7 @@ def infer_llm_recommend(weights_path, weight_name, season, weather, determine, m
     return responses[0].text
 
 #This function is the main interface for llm to make recommendations.
-def infer_llm_single_recommend(weights_path, weight_name, season, weather, determine, body_shape_response):
+def infer_llm_single_recommend(weights_path, weight_name, season, weather, determine, body_shape_response, additional_requirements):
     
     # # decrease the ratio of the k/v cache occupation to 20%
     backend_config = TurbomindEngineConfig(cache_max_entry_count=0.2, session_len=8190)
@@ -50,7 +50,7 @@ def infer_llm_single_recommend(weights_path, weight_name, season, weather, deter
     
     body_shape_descs = '、'.join(item_descs)
     
-    data = {"season":season, "weather":weather, "gender": gender, "determine": determine, "shape":body_shape_descs,"order":"搭配风格需要简洁大方", "out_format": out_format}
+    data = {"season":season, "weather":weather, "gender": gender, "determine": determine, "shape":body_shape_descs,"order":additional_requirements, "out_format": out_format}
     match_prompt = llm_prompt_template_4o.format(**data)
     
     responses = pipe([match_prompt])

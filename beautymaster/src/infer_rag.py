@@ -77,7 +77,7 @@ def infer_rag_func(model_candidate_clothes_path, get_num_list, content):
     return model_candidate_clothes_list
 
 
-def infer_rag_4o_like_func(weights_path, vlm_weight_name, llm_weight_name, embedding_model_name, top_n, csv_data, full_body_image_path, season, weather, determine, available_types, use_vlm):
+def infer_rag_4o_like_func(weights_path, vlm_weight_name, llm_weight_name, embedding_model_name, top_n, csv_data, full_body_image_path, season, weather, determine, available_types, additional_requirements, use_vlm):
     
     #目前VLM给出的结果和提供的图片穿着有很大关系,搭配的结果不太理想
     if use_vlm:
@@ -85,8 +85,8 @@ def infer_rag_4o_like_func(weights_path, vlm_weight_name, llm_weight_name, embed
     else:
         data = {"shape": body_shape, "feature":"我的体型特征", "out_format":body_out_format}
         vlm_prompt_template = vlm_prompt_body_template.format(**data)
-        body_shape_response = infer_vlm_sigle_func(weights_path, vlm_weight_name, full_body_image_path, season, weather, determine, vlm_prompt_template)
-        match_text, body_shape_descs, gender = infer_llm_single_recommend(weights_path, llm_weight_name, season, weather, determine, body_shape_response)
+        body_shape_response = infer_vlm_sigle_func(weights_path, vlm_weight_name, full_body_image_path, vlm_prompt_template)
+        match_text, body_shape_descs, gender = infer_llm_single_recommend(weights_path, llm_weight_name, season, weather, determine, body_shape_response, additional_requirements)
         
     good_json_obj = repair_json(match_text, return_objects=True)
     item_descs = good_json_obj["items"]

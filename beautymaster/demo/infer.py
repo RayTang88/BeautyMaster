@@ -29,7 +29,8 @@ def run(weights_path="",  # model.pt path(s)
         top_n=5,
         csv_data_path="",
         full_body_image_path="",
-        available_types=[]
+        available_types=[],
+		additional_requirements=""
         ):
     
     #1.Load caption and template to form prompt
@@ -41,7 +42,7 @@ def run(weights_path="",  # model.pt path(s)
     # response_string = infer_vlm_func(weights_path, weight_name, model_candidate_clothes_list, season, weather, determine)
     
     #2.2 4o like
-    rag_4o_like_recommended, body_shape_descs, gender = infer_rag_4o_like_func(weights_path, vlm_weight_name, llm_weight_name, embedding_model_name, top_n, csv_data_path, full_body_image_path, season, weather, determine, available_types, False)
+    rag_4o_like_recommended, body_shape_descs, gender = infer_rag_4o_like_func(weights_path, vlm_weight_name, llm_weight_name, embedding_model_name, top_n, csv_data_path, full_body_image_path, season, weather, determine, available_types, additional_requirements, False)
     
     #2.3 Because VLM is not effective, LLM is used instead.
     # model_candidate_clothes_jsons = infer_rag_func(source, get_num_list, content) #for test, now get list randomly.
@@ -78,6 +79,7 @@ def parse_opt():
 	parser.add_argument('--csv-data-path', type=str, default='/group_share/data_org/test_data/sample_style.csv', help='content')
 	parser.add_argument('--full-body-image-path', type=str, default='/group_share/data_org/test_data/fullbody/real_image/v2-637c977c47e7794caa8cc80e12f1a369_r.jpg', help='content')
 	parser.add_argument('--available-types', nargs='+', type=str, default=["上衣", "裤子", "裙子"], help='available types')
+	parser.add_argument('--additional-requirements', type=str, default='搭配简单大方', help='additional requirements')
 	opt = parser.parse_args()
 
 	return opt
