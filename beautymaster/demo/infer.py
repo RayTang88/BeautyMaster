@@ -60,7 +60,7 @@ def run(weights_path="",  # model.pt path(s)
     match_result = try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
     print(match_result)
     #4.Visualize the results of the suggestions to the user
-    show_func(match_result)
+    show_func(match_result, save_path)
 
 def parse_opt():
 	parser = argparse.ArgumentParser()
@@ -69,7 +69,7 @@ def parse_opt():
 	parser.add_argument('--llm-weight-name', nargs='+', type=str, default='/internlm2-chat-20b_TurboMind/', help='')
 	parser.add_argument('--embedding-model-name', nargs='+', type=str, default='/bce-embedding-base_v1', help='')
 	parser.add_argument('--source', type=str, default='/group_share/data_org/test_data/', help='')
-	parser.add_argument('--save-path', type=str, default='./save_data/', help='save results to project/name')
+	parser.add_argument('--save-path', type=str, default='/group_share/data_org/try_on_data/middle/', help='save results to project/name')
 	parser.add_argument('--get-num-list', nargs='+', type=int, default=[1, 1, 0, 0], help='model and number of cloth candidates')
 	parser.add_argument('--meaning-list', nargs='+', type=str, default=["我的形象特征", "上衣", "裤子", "裙子"], help='The meaning of each item in num_list')
 	parser.add_argument('--weather', type=str, default='30~35摄氏度', help='weather')
