@@ -2,7 +2,7 @@ from lmdeploy import pipeline, TurbomindEngineConfig
 from json_repair import repair_json
 from .ready_prompt import ready_prompt_func
 from .prompt import match_prompt_template, match_prompt_template_raged, body_out_format, llm_prompt_template_4o, out_format, upper_lower_format
-from utils.parsing_rag import parsing_rag_func
+from beautymaster.utils.parsing_rag import parsing_rag_func
 
 def llm_parsing_json(pipe, model_candidate_clothes_jsons, get_num_list, meaning_list):
   

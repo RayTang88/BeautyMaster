@@ -123,6 +123,13 @@ def creat_database(csv_name):
 
   df.to_csv(csv_name)
 
+def parse_llm_recommended(llm_recommended, content):
+
+  match_category_list = llm_recommended["match_content"][0]["category"]
+  match_id_list = llm_recommended["match_content"][0]["match_id"]
+  match_caption_list = llm_recommended["match_content"][0]["match_caption"]
+
+
 def main():
   csv_name = "/root/data_org/test_data/sample_style.csv"
   creat_database(csv_name)

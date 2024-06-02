@@ -1,6 +1,5 @@
 import os
 from json_repair import repair_json
-from langchain_core.documents.base import Document
 
 def parsing_rag_func(rag_4o_like_recommended):
     upper="上衣"

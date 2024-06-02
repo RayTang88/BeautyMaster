@@ -1,3 +1,3 @@
-[submodule "beautymaster/3rdparty/IDM-VTON"]
-	path = beautymaster/3rdparty/IDM-VTON
+[submodule "beautymaster/third_party/IDM-VTON"]
+	path = beautymaster/third_party/IDM-VTON
 	url = https://github.com/RayTang88/IDM-VTON.git

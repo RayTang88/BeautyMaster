@@ -89,7 +89,7 @@ We hope to train VLM to be a beauty master to help you solve the problem of dres
 
 1. Clone this repository and open BeautyMaster folder
 ```
-git clone https://github.com/RayTang88/BeautyMaster.git
+git clone --recursive https://github.com/RayTang88/BeautyMaster.git
 cd BeautyMaster
 ```
 2. Install required packages

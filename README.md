@@ -88,7 +88,7 @@
 
 1. 下载代码
 ```
-git clone https://github.com/RayTang88/BeautyMaster.git
+git clone --recursive https://github.com/RayTang88/BeautyMaster.git
 cd BeautyMaster
 ```
 2. 安装基础环境

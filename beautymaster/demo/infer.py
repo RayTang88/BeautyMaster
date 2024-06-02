@@ -1,15 +1,16 @@
 import os
 import sys
 import argparse
-
 # 根据自己代码位置修改
-# sys.path.append("/root/code/BeautyMaster/beautymaster")
-sys.path.append('/root/BeautyMaster-dev/beautymaster')
+sys.path.append("/root/code/BeautyMaster")
 
-from src.infer_vlm import infer_vlm_func, infer_vlm_4o_like_func
-from src.infer_rag import infer_rag_func, infer_rag_4o_like_func
-from src.infer_llm import infer_llm_recommend, infer_llm_recommend_raged
-# from 3rdparty.IDM-VTON import my_tryon_test
+# sys.path.append('/root/BeautyMaster-dev/beautymaster')
+
+from beautymaster.src.infer_vlm import infer_vlm_func, infer_vlm_4o_like_func
+from beautymaster.src.infer_rag import infer_rag_func, infer_rag_4o_like_func
+from beautymaster.src.infer_llm import infer_llm_recommend, infer_llm_recommend_raged
+from beautymaster.src.try_on import try_on_func
+
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0, 1"
 
@@ -47,22 +48,20 @@ def run(weights_path="",  # model.pt path(s)
     # response_string = infer_llm_recommend(weights_path, llm_weight_name, season, weather, determine, rag_4o_like_recommended, get_num_list, meaning_list)
     
     #2.4 use llm after rag 4o like
-    response_string = infer_llm_recommend_raged(weights_path, llm_weight_name, season, weather, determine, rag_4o_like_recommended, body_shape_descs, gender, get_num_list, meaning_list)
+    llm_recommended = infer_llm_recommend_raged(weights_path, llm_weight_name, season, weather, determine, rag_4o_like_recommended, body_shape_descs, gender, get_num_list, meaning_list)
     
-    print(rag_4o_like_recommended)
-	
-    print("----------------------------------------")
-	
-    print(response_string)
-
+    # print(rag_4o_like_recommended)
+    # print("----------------------------------------")
+    # print(response_string)
     #3.Virtual Try-on according the suggestions
-
+	
+    match_result = try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
+    print(match_result)
     #4.Visualize the results of the suggestions to the user
 
 
 def parse_opt():
 	parser = argparse.ArgumentParser()
- 	# 所有模型和资源路径为group_share有关路径
 	parser.add_argument('--weights-path', nargs='+', type=str, default='/group_share/model', help='model path(s)')
 	parser.add_argument('--vlm-weight-name', nargs='+', type=str, default='/InternVL-Chat-V1-5/', help='')
 	parser.add_argument('--llm-weight-name', nargs='+', type=str, default='/internlm2-chat-20b_TurboMind/', help='')
