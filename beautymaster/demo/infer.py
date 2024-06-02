@@ -10,6 +10,7 @@ from beautymaster.src.infer_vlm import infer_vlm_func, infer_vlm_4o_like_func
 from beautymaster.src.infer_rag import infer_rag_func, infer_rag_4o_like_func
 from beautymaster.src.infer_llm import infer_llm_recommend, infer_llm_recommend_raged
 from beautymaster.src.try_on import try_on_func
+from beautymaster.utils.show import show_func
 
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0, 1"
@@ -59,7 +60,7 @@ def run(weights_path="",  # model.pt path(s)
     match_result = try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
     print(match_result)
     #4.Visualize the results of the suggestions to the user
-
+    show_func(match_result)
 
 def parse_opt():
 	parser = argparse.ArgumentParser()
