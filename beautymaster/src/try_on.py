@@ -7,7 +7,6 @@ tryon = importlib.import_module("beautymaster.third_party.IDM-VTON.tryon")
 
 def try_on_func(llm_recommended, full_body_image_path, body_shape_descs):
   assert len(llm_recommended["match_content"]) > 0
-
   match_result = []
   for match in llm_recommended["match_content"]:
         match_dict = {}

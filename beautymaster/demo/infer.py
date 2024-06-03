@@ -6,61 +6,102 @@ sys.path.append("/root/code/BeautyMaster")
 
 # sys.path.append('/root/BeautyMaster-dev/beautymaster')
 
-from beautymaster.src.infer_vlm import infer_vlm_func, infer_vlm_4o_like_func
-from beautymaster.src.infer_rag import infer_rag_func, infer_rag_4o_like_func
-from beautymaster.src.infer_llm import infer_llm_recommend, infer_llm_recommend_raged
+from beautymaster.src.infer_vlm import VLM
+from beautymaster.src.infer_rag_recommend import RagAndRecommend
+from beautymaster.src.bce_langchain import BceEmbeddingRetriever
+from beautymaster.src.infer_llm import LLM
 from beautymaster.src.try_on import try_on_func
 from beautymaster.utils.show import show_func
 
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
-os.environ["CUDA_VISIBLE_DEVICES"]="0, 1"
+class Interface:
+    def __init__(self,
+                 weights_path, # model.pt path(s)
+                 embedding_model_name,
+                 reranker_model_name,
+                 vlm_weight_name,
+                 llm_weight_name,
+                 save_path,
+                 get_num_list,
+                 meaning_list,
+                 csv_data_path,
+                 available_types,
+                 top_n,
+                 content,
+                 ) -> None:
+        """
+        Args:
+            weights_path: model.pt path(s)
+            embedding_model_name:
+            reranker_model_name:
+            top_n:
+            vlm_weight_name:
+            llm_weight_name:
+            full_body_image_path:
+            save_path: save results to project/name
+            get_num_list: model and number of cloth candidates
+            meaning_list:
+            csv_data_path:
+            available_types:
+            top_n:
+            content:
 
-def run(weights_path="",  # model.pt path(s)
-        vlm_weight_name="", # model name
-        llm_weight_name="", # model name
-        embedding_model_name="",
-		source="",  # file/dir/URL/glob, 0 for webcam
-		save_path="",  # save results to project/name
-        get_num_list = [], # model and number of cloth candidates
-        meaning_list=[],  
-		weather="",
-        season="",
-        determine="",
-        content="",
-        top_n=5,
-        csv_data_path="",
-        full_body_image_path="",
-        available_types=[],
-		additional_requirements=""
-        ):
-    
-    #1.Load caption and template to form prompt
-    
-    #2.Trained VLM give suggestions
-    
-    #2.1 only use vlm
-    # model_candidate_clothes_list = infer_rag_func(source, get_num_list, content) #for test, now get list randomly.
-    # response_string = infer_vlm_func(weights_path, weight_name, model_candidate_clothes_list, season, weather, determine)
-    
-    #2.2 4o like
-    rag_4o_like_recommended, body_shape_descs, gender = infer_rag_4o_like_func(weights_path, vlm_weight_name, llm_weight_name, embedding_model_name, top_n, csv_data_path, full_body_image_path, season, weather, determine, available_types, additional_requirements, False)
-    
-    #2.3 Because VLM is not effective, LLM is used instead.
-    # model_candidate_clothes_jsons = infer_rag_func(source, get_num_list, content) #for test, now get list randomly.
-    # response_string = infer_llm_recommend(weights_path, llm_weight_name, season, weather, determine, rag_4o_like_recommended, get_num_list, meaning_list)
-    
-    #2.4 use llm after rag 4o like
-    llm_recommended = infer_llm_recommend_raged(weights_path, llm_weight_name, season, weather, determine, rag_4o_like_recommended, body_shape_descs, gender, get_num_list, meaning_list)
-    
-    # print(rag_4o_like_recommended)
-    # print("----------------------------------------")
-    # print(response_string)
-    #3.Virtual Try-on according the suggestions
-	
-    match_result = try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
-    print(match_result)
-    #4.Visualize the results of the suggestions to the user
-    show_func(match_result, save_path)
+        Returns:
+            None
+        
+        Raises:
+            None
+        
+        """
+        
+        self.ragandrecommend = RagAndRecommend(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path, vlm_weight_name, llm_weight_name, available_types)
+        self.save_path = save_path 
+           
+    def match(self,
+            weather="",
+            season="",
+            determine="",
+            full_body_image_path="",
+            additional_requirements=""
+            ):
+        
+        #1 use llm after rag 4o like
+        llm_recommended, body_shape_descs = self.ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
+        
+        # print(rag_4o_like_recommended)
+        # print("----------------------------------------")
+        # print(response_string)
+        #2.Virtual Try-on according the suggestions
+        match_result = try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
+        
+        print(match_result)
+        #3.Visualize the results of the suggestions to the user
+        show_func(match_result, self.save_path)
+        
+    def rag(self,
+            weather="",
+            season="",
+            determine="",
+            full_body_image_path="",
+            additional_requirements=""
+            ):
+        
+        rag_4o_like_recommended, _, _ = self.ragandrecommend.infer_rag_4o_like_func(full_body_image_path, season, weather, determine additional_requirements)
+        
+        return rag_4o_like_recommended
+        
+
+    def caption(self,
+            weather="",
+            season="",
+            determine="",
+            full_body_image_path="",
+            additional_requirements=""
+            ):
+        
+        pass
+        
 
 def parse_opt():
 	parser = argparse.ArgumentParser()
@@ -68,6 +109,7 @@ def parse_opt():
 	parser.add_argument('--vlm-weight-name', nargs='+', type=str, default='/InternVL-Chat-V1-5/', help='')
 	parser.add_argument('--llm-weight-name', nargs='+', type=str, default='/internlm2-chat-20b_TurboMind/', help='')
 	parser.add_argument('--embedding-model-name', nargs='+', type=str, default='/bce-embedding-base_v1', help='')
+	parser.add_argument('--reranker-model-name', nargs='+', type=str, default='/bce-reranker-base_v1', help='')
 	parser.add_argument('--source', type=str, default='/group_share/data_org/test_data/', help='')
 	parser.add_argument('--save-path', type=str, default='/group_share/data_org/try_on_data/middle/', help='save results to project/name')
 	parser.add_argument('--get-num-list', nargs='+', type=int, default=[1, 1, 0, 0], help='model and number of cloth candidates')
@@ -86,7 +128,10 @@ def parse_opt():
 	return opt
 
 def main(opt):
-	run(**vars(opt))
+    interface = Interface(**vars(opt))
+    # interface.caption(**vars(opt))
+    # interface.rag(**vars(opt))
+    interface.match(**vars(opt))
 
 if __name__ == "__main__":
 	opt = parse_opt()
