@@ -15,7 +15,7 @@ from beautymaster.src.infer_llm import LLM
 from beautymaster.src.try_on import TryOnInterface
 from beautymaster.utils.show import show_func
 
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 class Interface:
     def __init__(self,
@@ -75,15 +75,10 @@ class Interface:
         #1 use llm after rag 4o like
         llm_recommended, body_shape_descs = self.ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
         
-        # print(rag_4o_like_recommended)
-        # print("----------------------------------------")
-        # print(response_string)
         #2.Virtual Try-on according the suggestions
         match_result = self.tryon.try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
-        
-        print(match_result)
+        # print(match_result)
         #3.Visualize the results of the suggestions to the user
-        
         show_func(match_result, self.save_path)
         
     def rag(self,
@@ -98,7 +93,6 @@ class Interface:
         
         return rag_4o_like_recommended
         
-
     def caption(self,
             weather="",
             season="",
@@ -107,14 +101,19 @@ class Interface:
             additional_requirements=""
             ):
         
+        #1. get full body
+        #2. get clothes
+        #3. write database
+        
+        
         pass
         
 
 def parse_opt():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--weights-path', nargs='+', type=str, default='/group_share/model', help='model path(s)')
-	parser.add_argument('--vlm-weight-name', nargs='+', type=str, default='/Mini-InternVL-Chat-2B-V1-5/', help='')
-	parser.add_argument('--llm-weight-name', nargs='+', type=str, default='/internlm2-chat-1_8b/', help='')
+	parser.add_argument('--vlm-weight-name', nargs='+', type=str, default='/InternVL-Chat-V1-5-AWQ/', help='')
+	parser.add_argument('--llm-weight-name', nargs='+', type=str, default='/internlm2-chat-7b/', help='')
 	parser.add_argument('--embedding-model-name', nargs='+', type=str, default='/bce-embedding-base_v1', help='')
 	parser.add_argument('--reranker-model-name', nargs='+', type=str, default='/bce-reranker-base_v1', help='')
 	parser.add_argument('--save-path', type=str, default='/group_share/data_org/try_on_data/middle/', help='save results to project/name')
@@ -141,7 +140,7 @@ def main(opt):
     season = "夏季"
     determine = "约会"
     additional_requirements = "搭配简单大方"
-    full_body_image_path = "/group_share/data_org/test_data/fullbody/real_image/v2-637c977c47e7794caa8cc80e12f1a369_r.jpg" 
+    full_body_image_path = "/group_share/data_org/test_data/fullbody/real_image/b17ab66100f34037b1a83e4c9e7c97a4_th.jpg" 
     # interface.caption(**vars(opt))
     # interface.rag(**vars(opt))
     interface.match(weather,

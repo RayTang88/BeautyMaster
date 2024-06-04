@@ -37,7 +37,7 @@ clothes_prompt="""{
             },
             {
             "from": "human",
-            "value": "请问这件衣服是什么风格？T恤、衬衣、礼服、婚纱、或者其他？"
+            "value": "请问这件衣服是什么类型？T恤、衬衣、礼服、婚纱、或者其他？"
             },
             {
             "from": "gpt",
@@ -77,6 +77,20 @@ clothes_prompt="""{
             }
         ]    
     }"""
+    
+#1.1.this template is for vlm describe the body shape
+##1.1.1 Describe the body shape from the following dimensions
+upper_shape=["衣服适合什么季节穿","衣服的风格怎么样", "衣服衣袖长度如何", "衣服的衣领是什么形状", "衣服是什么类型", "衣服是什么颜色", "衣服的面料是什么", "衣服是什么版型", "衣服适合什么性别穿"]
+##1.1.2 Describe the body shape output format
+upper_out_format = """{"items": ["春、秋", "休闲", "中袖", "V领", "T恤", "黑色", "纯棉", "宽松", "男性"], "category":"上衣"}"""
+##1.1.3 this template is for vlm describe the body shape 
+vlm_prompt_upper_template = """你是一位时尚搭配大师，你需要为我搭配服装，但是做这个之前你需要仔细观察提供的{category}，请从{upper_shape}这几个维度分析,分析{feature}并生成包含以下字段的 JSON 输出："items"。
+                    items 字段应该是图片中的{feature}的各个维度的特征，与upper_shape中字段一一对应。
+                    upper_shape中的部分字段可选范围如下：
+                    这件衣服适合什么季节穿，应该在[春、夏、秋、冬]中选择一个或者多个；衣服的风格怎么样，在[休闲、正装、运动、或者其他]中选；衣服衣袖长度如何, 在[长袖、中袖、短袖、无袖、或者其他]中选；衣服的衣领是什么形状，在[高领、圆领、V领、或者其他]中选；
+                    衣服是什么类型，在[T恤、衬衣、礼服、婚纱、或者其他]中选；衣服的面料是什么，在[纯棉、化纤、尼龙、或者其他]中选；衣服是什么版型，在[宽松、修身、或者其他]中选；衣服适合什么性别穿, 在[男性、女性、男女均可]中选；
+                    禁止出现图片中包含物品的描述, 图片只能用来分析{feature}特征。不要在输出中包含 ```json ``` 标签。
+                    示例输出: {upper_out_format}。"""    
 #2.This is a prompt to describe dresses.    
 dresses_prompt="""{
         "conversations": [
@@ -294,7 +308,7 @@ body_shape=["头发的颜色","头发的长度", "发型风格", "皮肤颜色",
 ##6.2 Describe the body shape output format
 body_out_format = """{"items": ["金色", "长发", "大波浪", "黄色皮肤", "匀称身材", "身高偏高", "腰部纤细", "腿部偏长", "O型腿", "细沙漏型体型" ], "gender": "Women"}"""
 ##6.3 this template is for vlm describe the body shape 
-vlm_prompt_body_template = """你是一位时尚搭配大师，你需要要我搭配服装，但是做这个之前你需要仔细观察并描述我的体型特征，请从{shape}这几个维度分析,分析{feature}并生成包含以下字段的 JSON 输出："items"和"gender"。
+vlm_prompt_body_template = """你是一位时尚搭配大师，你需要为我搭配服装，但是做这个之前你需要仔细观察并描述我的体型特征，请从{shape}这几个维度分析,分析{feature}并生成包含以下字段的 JSON 输出："items"和"gender"。
                     items 字段应该是图片中的我的体型特征，与shape中字段一一对应。注意：禁止出现图片中包含物品的描述, 图片只能用来分析我的体型特征。不要在输出中包含 ```json ``` 标签。
                     gender 字段必须根据图片内容判别图中人物的性别，在此列表中的性别之间进行选择：[Men、Women、Boys、Girls、Unisex]。
                     示例输入：代表皮肤白皙的女生的图像。
@@ -371,3 +385,31 @@ vlm_prompt_template_4o = """您是一位时尚搭配大师，当前处在{season
 
                     示例输出: {recommend_format}。
                     """
+
+#12.this template is for vlm describe the body shape
+##12.1 Describe the body shape from the following dimensions
+upper_shape=["衣服适合什么季节穿","衣服的风格怎么样", "衣服衣袖长度如何", "衣服的衣领是什么形状", "衣服是什么类型", "衣服是什么颜色", "衣服的面料是什么", "衣服是什么版型", "衣服适合什么性别穿"]
+##12.2 Describe the body shape output format
+upper_out_format = """{"items": ["春、秋", "休闲", "中袖", "V领", "T恤", "黑色", "纯棉", "宽松", "男性"], "category":"上衣"}"""
+
+upper_choice_list="""这件衣服适合什么季节穿，应该在[春、夏、秋、冬]中选择一个或者多个；衣服的风格怎么样，在[休闲、正装、运动、或者其他]中选；衣服衣袖长度如何, 在[长袖、中袖、短袖、无袖、或者其他]中选；衣服的衣领是什么形状，在[高领、圆领、V领、或者其他]中选；
+                    衣服是什么类型，在[T恤、衬衣、礼服、婚纱、或者其他]中选；衣服的面料是什么，在[纯棉、化纤、尼龙、或者其他]中选；衣服是什么版型，在[宽松、修身、或者其他]中选；衣服适合什么性别穿, 在[男性、女性、男女均可]中选；"""
+
+lower_shape=["衣服适合什么季节穿","衣服的风格怎么样", "衣服衣袖长度如何", "衣服的衣领是什么形状", "衣服是什么类型", "衣服是什么颜色", "衣服的面料是什么", "衣服是什么版型", "衣服适合什么性别穿"]
+##12.3 Describe the body shape output format
+lower_out_format = """{"items": ["春、秋", "休闲", "中袖", "V领", "T恤", "黑色", "纯棉", "宽松", "男性"], "category":"裤子"}"""
+upper_choice_list = """"""
+
+dresses_shape=["衣服适合什么季节穿","衣服的风格怎么样", "衣服衣袖长度如何", "衣服的衣领是什么形状", "衣服是什么类型", "衣服是什么颜色", "衣服的面料是什么", "衣服是什么版型", "衣服适合什么性别穿"]
+##12.4 Describe the body shape output format
+dresses_out_format = """{"items": ["春、秋", "休闲", "中袖", "V领", "T恤", "黑色", "纯棉", "宽松", "男性"], "category":"裙子"}"""
+dresses_choice_list = """"""
+
+##12.5 this template is for vlm describe the body shape 
+vlm_prompt_upper_template = """你是一位时尚搭配大师，你需要为我搭配服装，但是做这个之前你需要仔细观察提供的图片，前先判断输入图片中服装的类型,请在{available_types}中选，请从{upper_shape}这几个维度分析,分析{feature}并生成包含以下字段的 JSON 输出："items"。
+                    items 字段应该是图片中的{feature}的各个维度的特征，与upper_shape中字段一一对应。
+                    upper_shape中的部分字段可选范围如下：
+                    这件衣服适合什么季节穿，应该在[春、夏、秋、冬]中选择一个或者多个；衣服的风格怎么样，在[休闲、正装、运动、或者其他]中选；衣服衣袖长度如何, 在[长袖、中袖、短袖、无袖、或者其他]中选；衣服的衣领是什么形状，在[高领、圆领、V领、或者其他]中选；
+                    衣服是什么类型，在[T恤、衬衣、礼服、婚纱、或者其他]中选；衣服的面料是什么，在[纯棉、化纤、尼龙、或者其他]中选；衣服是什么版型，在[宽松、修身、或者其他]中选；衣服适合什么性别穿, 在[男性、女性、男女均可]中选；
+                    禁止出现图片中包含物品的描述, 图片只能用来分析{feature}特征。不要在输出中包含 ```json ``` 标签。
+                    示例输出: {upper_out_format}。"""   

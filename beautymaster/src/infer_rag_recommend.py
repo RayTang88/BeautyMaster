@@ -102,7 +102,7 @@ class RagAndRecommend():
         else: 
         #这个接口1.先根据全身照，描述全身照的身材；2.根据身材llm推荐搭配；3.根据推荐的搭配在数据库里面RAG搜索相似的；4.让他模型在RAG推荐的里面搭配三套，由粗到细。这个接口实现了1,2,3的功能
 
-            body_shape_response = self.vlm.infer_vlm_sigle_func(full_body_image_path, body_shape, body_out_format)
+            body_shape_response = self.vlm.infer_vlm_body_shape_func(full_body_image_path, body_shape, body_out_format)
             match_text, body_shape_descs, gender = self.llm.infer_llm_single_recommend(season, weather, determine, body_shape_response, additional_requirements)
             
         good_json_obj = repair_json(match_text, return_objects=True)
@@ -133,3 +133,7 @@ class RagAndRecommend():
         recommended = self.llm.infer_llm_recommend_raged(season, weather, determine, similar_items, body_shape_descs, gender)
         
         return recommended, body_shape_descs
+    
+    def infer_vlm_caption(self, clothes_image_path, body_shape, clothes_out_format):
+        
+        body_shape_response = self.vlm.infer_vlm_clothes_caption_func(clothes_image_path, body_shape, clothes_out_format)

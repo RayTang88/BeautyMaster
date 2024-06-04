@@ -10,6 +10,7 @@ class VLM():
         backend_config = TurbomindEngineConfig(session_len=163840,  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.2, 
                                         tp=1,
+                                        model_format='awq',
                                         # quant_policy=0,
                                         )  # 两个显卡
 
@@ -93,12 +94,23 @@ class VLM():
 
         return response.text
 
-    def infer_vlm_sigle_func(self, full_body_image_path, body_shape, body_out_format):
+    def infer_vlm_body_shape_func(self, full_body_image_path, body_shape, body_out_format):
         
         data = {"shape": body_shape, "feature":"我的体型特征", "body_out_format":body_out_format}
         vlm_prompt = vlm_prompt_body_template.format(**data)
     
         image = load_image(full_body_image_path)
+        
+        response = self.pipe((vlm_prompt, image))
+
+        return response.text
+    
+    def infer_vlm_clothes_caption_func(self, clothes_image_path, body_shape, clothes_out_format):
+            
+        data = {"shape": body_shape, "feature":"我的体型特征", "body_out_format":clothes_out_format}
+        vlm_prompt = vlm_prompt_body_template.format(**data)
+    
+        image = load_image(clothes_image_path)
         
         response = self.pipe((vlm_prompt, image))
 
