@@ -2,9 +2,10 @@ import os
 
 from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig
 from lmdeploy.vl import load_image
-from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, out_format
+from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, vlm_prompt_template, vlm_prompt_body_template
 
 class VLM():
+    
     def __init__(self, weights_path, weight_name):
         backend_config = TurbomindEngineConfig(session_len=163840,  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.2, 
@@ -14,7 +15,7 @@ class VLM():
 
         self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config, )
 
-    def infer_vlm_func(self, weights_path, weight_name, model_candidate_clothes_list, season, weather, determine, vlm_prompt_template):
+    def infer_vlm_func(self, weights_path, weight_name, model_candidate_clothes_list, season, weather, determine):
 
         print(model_candidate_clothes_list)
 
@@ -92,12 +93,13 @@ class VLM():
 
         return response.text
 
-    def infer_vlm_sigle_func(self, full_body_image_path, vlm_prompt_template):
+    def infer_vlm_sigle_func(self, full_body_image_path, body_shape, body_out_format):
         
+        data = {"shape": body_shape, "feature":"我的体型特征", "body_out_format":body_out_format}
+        vlm_prompt = vlm_prompt_body_template.format(**data)
+    
         image = load_image(full_body_image_path)
         
-        vlm_prompt = vlm_prompt_template
-
         response = self.pipe((vlm_prompt, image))
 
         return response.text

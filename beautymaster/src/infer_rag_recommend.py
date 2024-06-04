@@ -100,13 +100,13 @@ class RagAndRecommend():
         if self.only_use_vlm:
             match_text = self.vlm.infer_vlm_4o_like_func(full_body_image_path, season, weather, determine)
         else: 
-        #这个接口1.先根据全身照，描述全身照的身材；2.根据身材推荐搭配；3.根据推荐的搭配在数据库里面RAG搜索相似的；4.让他模型在RAG推荐的里面搭配三套，由粗到细。这个接口实现了1,2,3的功能
-            data = {"shape": body_shape, "feature":"我的体型特征", "out_format":body_out_format}
-            vlm_prompt_template = vlm_prompt_body_template.format(**data)
-            body_shape_response = self.vlm.infer_vlm_sigle_func(full_body_image_path, vlm_prompt_template)
+        #这个接口1.先根据全身照，描述全身照的身材；2.根据身材llm推荐搭配；3.根据推荐的搭配在数据库里面RAG搜索相似的；4.让他模型在RAG推荐的里面搭配三套，由粗到细。这个接口实现了1,2,3的功能
+
+            body_shape_response = self.vlm.infer_vlm_sigle_func(full_body_image_path, body_shape, body_out_format)
             match_text, body_shape_descs, gender = self.llm.infer_llm_single_recommend(season, weather, determine, body_shape_response, additional_requirements)
             
         good_json_obj = repair_json(match_text, return_objects=True)
+        print("good_json_obj llm recommend ", good_json_obj)
         item_descs = good_json_obj["items"]
         category_descs = good_json_obj["category"]
         
