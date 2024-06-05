@@ -79,9 +79,9 @@ class Interface:
         match_result = self.tryon.try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
         # print(match_result)
         #3.Visualize the results of the suggestions to the user
-        show_func(match_result, self.save_path)
+        # show_func(match_result, self.save_path)
         
-        return match_result
+        return match_result[0]["image"], match_result[1]["image"]
         
     def rag(self,
             weather="",
@@ -100,7 +100,6 @@ class Interface:
             clothes_path="",
             ):
         
-
         #1. get clothes caption
         caption = self.ragandrecommend.infer_vlm_caption(clothes_path)
         
@@ -135,16 +134,10 @@ def parse_opt():
 
 	return opt
 
-def main(interface, weather, season, determine, additional_requirements, full_body_image_path, clothes_path, func="match"):
-    # weather = "30~35摄氏度"
-    # season = "夏季"
-    # determine = "约会"
-    # additional_requirements = "搭配简单大方"
-    # full_body_image_path = "/group_share/data_org/test_data/fullbody/real_image/b17ab66100f34037b1a83e4c9e7c97a4_th.jpg" 
-    # clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg" 
-    
+def run(weather, season, determine, additional_requirements, full_body_image_path, clothes_path, interface, func="match"):
+
     if "match" == func:
-        interface.match(weather,
+        match_reslult = interface.match(weather,
         season,
         determine,
         full_body_image_path,
@@ -170,4 +163,4 @@ if __name__ == "__main__":
     additional_requirements = "搭配简单大方"
     full_body_image_path = "/group_share/data_org/test_data/fullbody/real_image/b17ab66100f34037b1a83e4c9e7c97a4_th.jpg" 
     clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg" 
-    main(interface, weather, season, determine, additional_requirements, full_body_image_path, clothes_path, func="match")
+    run(interface, weather, season, determine, additional_requirements, full_body_image_path, clothes_path, func="match")

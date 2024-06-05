@@ -98,6 +98,7 @@ class VLM():
         
         data = {"shape": body_shape, "feature":"我的体型特征", "body_out_format":body_out_format}
         vlm_prompt = vlm_prompt_body_template.format(**data)
+        # print("full_body_image_path:" ,full_body_image_path)
     
         image = load_image(full_body_image_path)
         
