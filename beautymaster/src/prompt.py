@@ -1,7 +1,6 @@
 
 #1.This is a prompt to describe clothes.
 clothes_prompt="""{
-        "version": "0.0.1",
         "conversations":[
             {
             "from": "human",
@@ -422,7 +421,7 @@ vlm_prompt_caption_template = """你是一位时尚搭配大师，你需要为�
                             {dresses_choice_list}， category字段需要填"裙子";
                             裙子的示例输出: {dresses_out_format}
                             
-                            禁止出现图片中包含物品的描述。不要在输出中包含 ```json ``` 标签。每张图片只包含一种类型的服装，必须准确判断服装的类型，然后按照相应的类型示例输出"""
+                            禁止出现图片中包含物品的描述。不要在输出中包含 ```json ``` 标签。每张图片只包含一种类型的服装，必须准确判断服装的类型，然后按照相应的类型示例输出，输出json"""
                  
 #13 This template is used to generate a caption in json format based on the specified data in the image.
 vlm_caption_prompt_origin = f"按照以下格式创建数据集:\n {clothes_prompt} \n根据提供的图片按json_string的格式生成问题和答案对。答案必须精简，后面有选项的在选项中选即可。答案必须严格来自图像内容，如果根据图像内容无法确定答案，请回答不知道。最后只输出生成好的json_string部分即可。注意gpt字段的value，<answer>部分是hunman字段value部分问题相对应的回答,不要原样输出。"
