@@ -15,7 +15,7 @@ from beautymaster.src.infer_llm import LLM
 from beautymaster.src.try_on import TryOnInterface
 from beautymaster.utils.show import show_func
 
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 class Interface:
     def __init__(self,
@@ -81,6 +81,8 @@ class Interface:
         #3.Visualize the results of the suggestions to the user
         show_func(match_result, self.save_path)
         
+        return match_result
+        
     def rag(self,
             weather="",
             season="",
@@ -90,6 +92,7 @@ class Interface:
             ):
         
         rag_4o_like_recommended, _, _ = self.ragandrecommend.infer_rag_4o_like_func(full_body_image_path, season, weather, determine, additional_requirements)
+        print("rag_4o_like_recommended" , rag_4o_like_recommended)
         
         return rag_4o_like_recommended
         
@@ -97,15 +100,15 @@ class Interface:
             clothes_path="",
             ):
         
-        #1. get full body
-        #2. get clothes
+
+        #1. get clothes caption
         caption = self.ragandrecommend.infer_vlm_caption(clothes_path)
         
-        print(caption)
-        #3. write database
+        print("caption", caption)
+        #2. write database
         
         
-        pass
+        return caption
         
 
 def parse_opt():

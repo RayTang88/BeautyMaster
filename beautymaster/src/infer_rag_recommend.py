@@ -106,7 +106,7 @@ class RagAndRecommend():
             match_text, body_shape_descs, gender = self.llm.infer_llm_single_recommend(season, weather, determine, body_shape_response, additional_requirements)
             
         good_json_obj = repair_json(match_text, return_objects=True)
-        print("good_json_obj llm recommend ", good_json_obj)
+        # print("good_json_obj llm recommend ", good_json_obj)
         item_descs = good_json_obj["items"]
         category_descs = good_json_obj["category"]
         
@@ -119,7 +119,7 @@ class RagAndRecommend():
         # 使用字典推导式处理c中的元素，根据映射关系从b中取出对应的元素，并输出为字典
         items = {item: mapping[item] for item in self.available_types if item in mapping}
         
-        print(items)
+        # print(items)
         
         print("--------------------")
         # 用RAG进行检索和排序
