@@ -135,27 +135,39 @@ def parse_opt():
 
 	return opt
 
-def main(opt):
-    interface = Interface(**vars(opt))
+def main(interface, weather, season, determine, additional_requirements, full_body_image_path, clothes_path, func="match"):
+    # weather = "30~35摄氏度"
+    # season = "夏季"
+    # determine = "约会"
+    # additional_requirements = "搭配简单大方"
+    # full_body_image_path = "/group_share/data_org/test_data/fullbody/real_image/b17ab66100f34037b1a83e4c9e7c97a4_th.jpg" 
+    # clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg" 
+    
+    if "match" == func:
+        interface.match(weather,
+        season,
+        determine,
+        full_body_image_path,
+        additional_requirements)
+    elif "rag" == func:
+        interface.rag(weather,
+            season,
+            determine,
+            full_body_image_path,
+            additional_requirements)
+    elif "caption" == func:
+        interface.caption(clothes_path)
+    elif  "tryon"== func:
+        pass    
 
+if __name__ == "__main__":
+    
+    opt = parse_opt()
+    interface = Interface(**vars(opt))
     weather = "30~35摄氏度"
     season = "夏季"
     determine = "约会"
     additional_requirements = "搭配简单大方"
     full_body_image_path = "/group_share/data_org/test_data/fullbody/real_image/b17ab66100f34037b1a83e4c9e7c97a4_th.jpg" 
     clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg" 
-    # interface.caption(clothes_path)
-    interface.rag(weather,
-            season,
-            determine,
-            full_body_image_path,
-            additional_requirements)
-    # interface.match(weather,
-    #         season,
-    #         determine,
-    #         full_body_image_path,
-    #         additional_requirements)
-
-if __name__ == "__main__":
-	opt = parse_opt()
-	main(opt)
+    main(interface, weather, season, determine, additional_requirements, full_body_image_path, clothes_path, func="match")
