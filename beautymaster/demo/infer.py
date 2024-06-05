@@ -94,15 +94,14 @@ class Interface:
         return rag_4o_like_recommended
         
     def caption(self,
-            weather="",
-            season="",
-            determine="",
-            full_body_image_path="",
-            additional_requirements=""
+            clothes_path="",
             ):
         
         #1. get full body
         #2. get clothes
+        caption = self.ragandrecommend.infer_vlm_caption(clothes_path)
+        
+        print(caption)
         #3. write database
         
         
@@ -113,7 +112,7 @@ def parse_opt():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--weights-path', nargs='+', type=str, default='/group_share/model', help='model path(s)')
 	parser.add_argument('--vlm-weight-name', nargs='+', type=str, default='/InternVL-Chat-V1-5-AWQ/', help='')
-	parser.add_argument('--llm-weight-name', nargs='+', type=str, default='/internlm2-chat-7b/', help='')
+	parser.add_argument('--llm-weight-name', nargs='+', type=str, default='/internlm2-chat-20b-4bits/', help='')
 	parser.add_argument('--embedding-model-name', nargs='+', type=str, default='/bce-embedding-base_v1', help='')
 	parser.add_argument('--reranker-model-name', nargs='+', type=str, default='/bce-reranker-base_v1', help='')
 	parser.add_argument('--save-path', type=str, default='/group_share/data_org/try_on_data/middle/', help='save results to project/name')
@@ -141,13 +140,18 @@ def main(opt):
     determine = "约会"
     additional_requirements = "搭配简单大方"
     full_body_image_path = "/group_share/data_org/test_data/fullbody/real_image/b17ab66100f34037b1a83e4c9e7c97a4_th.jpg" 
-    # interface.caption(**vars(opt))
-    # interface.rag(**vars(opt))
-    interface.match(weather,
+    clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg" 
+    # interface.caption(clothes_path)
+    interface.rag(weather,
             season,
             determine,
             full_body_image_path,
             additional_requirements)
+    # interface.match(weather,
+    #         season,
+    #         determine,
+    #         full_body_image_path,
+    #         additional_requirements)
 
 if __name__ == "__main__":
 	opt = parse_opt()

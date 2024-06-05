@@ -78,19 +78,19 @@ clothes_prompt="""{
         ]    
     }"""
     
-#1.1.this template is for vlm describe the body shape
-##1.1.1 Describe the body shape from the following dimensions
-upper_shape=["衣服适合什么季节穿","衣服的风格怎么样", "衣服衣袖长度如何", "衣服的衣领是什么形状", "衣服是什么类型", "衣服是什么颜色", "衣服的面料是什么", "衣服是什么版型", "衣服适合什么性别穿"]
-##1.1.2 Describe the body shape output format
-upper_out_format = """{"items": ["春、秋", "休闲", "中袖", "V领", "T恤", "黑色", "纯棉", "宽松", "男性"], "category":"上衣"}"""
-##1.1.3 this template is for vlm describe the body shape 
-vlm_prompt_upper_template = """你是一位时尚搭配大师，你需要为我搭配服装，但是做这个之前你需要仔细观察提供的{category}，请从{upper_shape}这几个维度分析,分析{feature}并生成包含以下字段的 JSON 输出："items"。
-                    items 字段应该是图片中的{feature}的各个维度的特征，与upper_shape中字段一一对应。
-                    upper_shape中的部分字段可选范围如下：
-                    这件衣服适合什么季节穿，应该在[春、夏、秋、冬]中选择一个或者多个；衣服的风格怎么样，在[休闲、正装、运动、或者其他]中选；衣服衣袖长度如何, 在[长袖、中袖、短袖、无袖、或者其他]中选；衣服的衣领是什么形状，在[高领、圆领、V领、或者其他]中选；
-                    衣服是什么类型，在[T恤、衬衣、礼服、婚纱、或者其他]中选；衣服的面料是什么，在[纯棉、化纤、尼龙、或者其他]中选；衣服是什么版型，在[宽松、修身、或者其他]中选；衣服适合什么性别穿, 在[男性、女性、男女均可]中选；
-                    禁止出现图片中包含物品的描述, 图片只能用来分析{feature}特征。不要在输出中包含 ```json ``` 标签。
-                    示例输出: {upper_out_format}。"""    
+# #1.1.this template is for vlm describe the body shape
+# ##1.1.1 Describe the body shape from the following dimensions
+# upper_shape=["衣服适合什么季节穿","衣服的风格怎么样", "衣服衣袖长度如何", "衣服的衣领是什么形状", "衣服是什么类型", "衣服是什么颜色", "衣服的面料是什么", "衣服是什么版型", "衣服适合什么性别穿"]
+# ##1.1.2 Describe the body shape output format
+# upper_out_format = """{"items": ["春、秋", "休闲", "中袖", "V领", "T恤", "黑色", "纯棉", "宽松", "男性"], "category":"上衣"}"""
+# ##1.1.3 this template is for vlm describe the body shape 
+# vlm_prompt_upper_template = """你是一位时尚搭配大师，你需要为我搭配服装，但是做这个之前你需要仔细观察提供的{category}，请从{upper_shape}这几个维度分析,分析{feature}并生成包含以下字段的 JSON 输出："items"。
+#                     items 字段应该是图片中的{feature}的各个维度的特征，与upper_shape中字段一一对应。
+#                     upper_shape中的部分字段可选范围如下：
+#                     这件衣服适合什么季节穿，应该在[春、夏、秋、冬]中选择一个或者多个；衣服的风格怎么样，在[休闲、正装、运动、或者其他]中选；衣服衣袖长度如何, 在[长袖、中袖、短袖、无袖、或者其他]中选；衣服的衣领是什么形状，在[高领、圆领、V领、或者其他]中选；
+#                     衣服是什么类型，在[T恤、衬衣、礼服、婚纱、或者其他]中选；衣服的面料是什么，在[纯棉、化纤、尼龙、或者其他]中选；衣服是什么版型，在[宽松、修身、或者其他]中选；衣服适合什么性别穿, 在[男性、女性、男女均可]中选；
+#                     禁止出现图片中包含物品的描述, 图片只能用来分析{feature}特征。不要在输出中包含 ```json ``` 标签。
+#                     示例输出: {upper_out_format}。"""    
 #2.This is a prompt to describe dresses.    
 dresses_prompt="""{
         "conversations": [
@@ -189,7 +189,7 @@ trousers_prompt="""{
             },
             {
             "from": "human",
-            "value": "请问这条裤子是什么版型？宽松、修身、直通、喇叭、或者其他？"
+            "value": "请问这条裤子是什么版型？宽松、修身、直筒、喇叭、或者其他？"
             },
             {
             "from": "gpt",
@@ -215,7 +215,7 @@ trousers_prompt="""{
             },
             {
             "from": "gpt",
-            "value": "<answer9>"
+            "value": "<answer7>"
             }
         ]    
     }"""
@@ -386,30 +386,43 @@ vlm_prompt_template_4o = """您是一位时尚搭配大师，当前处在{season
                     示例输出: {recommend_format}。
                     """
 
+#TODO
 #12.this template is for vlm describe the body shape
 ##12.1 Describe the body shape from the following dimensions
-upper_shape=["衣服适合什么季节穿","衣服的风格怎么样", "衣服衣袖长度如何", "衣服的衣领是什么形状", "衣服是什么类型", "衣服是什么颜色", "衣服的面料是什么", "衣服是什么版型", "衣服适合什么性别穿"]
+upper_shape=["上衣适合穿着的季节","上衣的风格", "上衣衣袖长度", "上衣衣领的形状", "上衣的类型", "上衣的颜色", "上衣的面料", "上衣的版型", "上衣适合穿着的性别"]
 ##12.2 Describe the body shape output format
-upper_out_format = """{"items": ["春、秋", "休闲", "中袖", "V领", "T恤", "黑色", "纯棉", "宽松", "男性"], "category":"上衣"}"""
+upper_out_format = """{"items": ["春季、秋季", "休闲风格", "中袖", "V领", "T恤", "黑色", "纯棉", "宽松", "男性"], "category":"上衣"}"""
 
-upper_choice_list="""这件衣服适合什么季节穿，应该在[春、夏、秋、冬]中选择一个或者多个；衣服的风格怎么样，在[休闲、正装、运动、或者其他]中选；衣服衣袖长度如何, 在[长袖、中袖、短袖、无袖、或者其他]中选；衣服的衣领是什么形状，在[高领、圆领、V领、或者其他]中选；
-                    衣服是什么类型，在[T恤、衬衣、礼服、婚纱、或者其他]中选；衣服的面料是什么，在[纯棉、化纤、尼龙、或者其他]中选；衣服是什么版型，在[宽松、修身、或者其他]中选；衣服适合什么性别穿, 在[男性、女性、男女均可]中选；"""
+upper_choice_list="""items 字段是图片中的上衣的各个维度的特征，与{upper_shape}中字段一一对应， 其中有部分字段是可选的，请直接在可选列表中选取即可。部分字段可选范围如下：上衣适合穿着的季节，应该在[春季、夏季、秋季、冬季]中选择一个或者多个；上衣的风格，在[休闲、正装、运动、其他]中选；上衣衣袖长度, 在[长袖、中袖、短袖、无袖、其他]中选；上衣衣领的形状，在[高领、圆领、V领、其他]中选；
+                    上衣的类型，在[T恤、衬衣、礼服、婚纱、其他]中选；上衣的面料，在[纯棉、化纤、尼龙、其他]中选；上衣的版型，在[宽松、修身、其他]中选；上衣适合穿着的性别, 在[男性、女性、男女均可]中选。"""
 
-lower_shape=["衣服适合什么季节穿","衣服的风格怎么样", "衣服衣袖长度如何", "衣服的衣领是什么形状", "衣服是什么类型", "衣服是什么颜色", "衣服的面料是什么", "衣服是什么版型", "衣服适合什么性别穿"]
+lower_shape=["裤子适合穿着的季节","裤子的风格", "裤子的长度", "裤子的版型", "裤子的颜色", "裤子的面料", "裤子适合穿着的性别"]
 ##12.3 Describe the body shape output format
-lower_out_format = """{"items": ["春、秋", "休闲", "中袖", "V领", "T恤", "黑色", "纯棉", "宽松", "男性"], "category":"裤子"}"""
-upper_choice_list = """"""
+lower_out_format = """{"items": ["春季", "休闲裤", "长裤", "喇叭", "纯棉", "黑色", "男性"], "category":"裤子"}"""
+lower_choice_list = """items 字段是图片中的裤子的各个维度的特征，与{lower_shape}中字段一一对应， 其中有部分字段是内容可选的，请直接在可选列表中选取即可。部分字段可选范围如下：裤子适合穿着的季节，应该在[春季、夏季、秋季、冬季]中选择一个或者多个；裤子的风格，在[牛仔裤、休闲裤、正装、运动裤、其他]中选；裤子的长度, 在[长裤、短裤、超短裤、其他]中选；裤子的版型，在[宽松、修身、直筒、喇叭、其他]中选；
+                    裤子的面料，在[纯棉、化纤、尼龙、其他]中选；裤子适合穿着的性别, 在[男性、女性、男女均可]中选。"""
 
-dresses_shape=["衣服适合什么季节穿","衣服的风格怎么样", "衣服衣袖长度如何", "衣服的衣领是什么形状", "衣服是什么类型", "衣服是什么颜色", "衣服的面料是什么", "衣服是什么版型", "衣服适合什么性别穿"]
+dresses_shape=["裙子适合穿着的季节","裙子下摆的长度", "裙子衣袖长度", "裙子的衣领形状", "裙子的风格", "裙子表面特殊的log", "裙子的颜色", "裙子的版型"]
 ##12.4 Describe the body shape output format
-dresses_out_format = """{"items": ["春、秋", "休闲", "中袖", "V领", "T恤", "黑色", "纯棉", "宽松", "男性"], "category":"裙子"}"""
-dresses_choice_list = """"""
+dresses_out_format = """{"items": ["冬季", "中长未过膝", "长袖", "低胸露背领", "休闲风格", "小碎花", "黄色", "宽松"], "category":"裙子"}"""
+dresses_choice_list = """items 字段是图片中的裙子的各个维度的特征，与{dresses_shape}中字段一一对应， 其中有部分字段是可选的，请直接在可选列表中选取即可。部分字段可选范围如下：裙子适合穿着的季节，应该在[春季、夏季、秋季、冬季]中选择一个或者多个；裙子下摆的长度，在[超短裙、中长未过膝、长裙]中选；裙子衣袖长度, 在[长袖、中袖、短袖、无袖、或者其他]中选；裙子的衣领形状，在[高领、圆领、V领、抹胸、低胸露背、吊带、其他]中选；
+                    裙子的风格，在[晚礼服、休闲风格、职业装、旗袍、其他]中选；裙子表面特殊的log，在[纯色、小碎花、印花、中文文字、英文字母、其他]中选；裙子的版型，在[宽松、修身、其他]中选。"""
 
-##12.5 this template is for vlm describe the body shape 
-vlm_prompt_upper_template = """你是一位时尚搭配大师，你需要为我搭配服装，但是做这个之前你需要仔细观察提供的图片，前先判断输入图片中服装的类型,请在{available_types}中选，请从{upper_shape}这几个维度分析,分析{feature}并生成包含以下字段的 JSON 输出："items"。
-                    items 字段应该是图片中的{feature}的各个维度的特征，与upper_shape中字段一一对应。
-                    upper_shape中的部分字段可选范围如下：
-                    这件衣服适合什么季节穿，应该在[春、夏、秋、冬]中选择一个或者多个；衣服的风格怎么样，在[休闲、正装、运动、或者其他]中选；衣服衣袖长度如何, 在[长袖、中袖、短袖、无袖、或者其他]中选；衣服的衣领是什么形状，在[高领、圆领、V领、或者其他]中选；
-                    衣服是什么类型，在[T恤、衬衣、礼服、婚纱、或者其他]中选；衣服的面料是什么，在[纯棉、化纤、尼龙、或者其他]中选；衣服是什么版型，在[宽松、修身、或者其他]中选；衣服适合什么性别穿, 在[男性、女性、男女均可]中选；
-                    禁止出现图片中包含物品的描述, 图片只能用来分析{feature}特征。不要在输出中包含 ```json ``` 标签。
-                    示例输出: {upper_out_format}。"""   
+
+
+##12.5 this template is for vlm describe the all clothes 
+vlm_prompt_caption_template = """你是一位时尚搭配大师，你需要为我搭配服装，但是做这个之前你需要仔细观察提供的图片，请先判断输入图片中服装的类型,请在{available_types}中选服装类型，
+                            如果判断输入图片中服装的类型是上衣，请从{upper_shape}这几个维度分析,分析并生成包含以下字段的 JSON 输出："items", "category"。
+                            {upper_choice_list}， category字段需要填"上衣";
+                            上衣的示例输出: {upper_out_format}
+                            如果判断输入图片中服装的类型是裤子，请从{lower_shape}这几个维度分析,分析并生成包含以下字段的 JSON 输出："items", "category"。
+                            {lower_choice_list}， category字段需要填"裤子";
+                            裤子的示例输出: {lower_out_format}
+                            如果判断输入图片中服装的类型是裙子，请从{dresses_shape}这几个维度分析,分析并生成包含以下字段的 JSON 输出："items", "category"。
+                            {dresses_choice_list}， category字段需要填"裙子";
+                            裙子的示例输出: {dresses_out_format}
+                            
+                            禁止出现图片中包含物品的描述。不要在输出中包含 ```json ``` 标签。每张图片只包含一种类型的服装，必须准确判断服装的类型，然后按照相应的类型示例输出"""
+                 
+#13 This template is used to generate a caption in json format based on the specified data in the image.
+vlm_caption_prompt_origin = f"按照以下格式创建数据集:\n {clothes_prompt} \n根据提供的图片按json_string的格式生成问题和答案对。答案必须精简，后面有选项的在选项中选即可。答案必须严格来自图像内容，如果根据图像内容无法确定答案，请回答不知道。最后只输出生成好的json_string部分即可。注意gpt字段的value，<answer>部分是hunman字段value部分问题相对应的回答,不要原样输出。"

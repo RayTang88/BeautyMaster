@@ -134,6 +134,15 @@ class RagAndRecommend():
         
         return recommended, body_shape_descs
     
-    def infer_vlm_caption(self, clothes_image_path, body_shape, clothes_out_format):
+    def infer_vlm_caption(self, clothes_image_path):
         
-        body_shape_response = self.vlm.infer_vlm_clothes_caption_func(clothes_image_path, body_shape, clothes_out_format)
+        caption_response = self.vlm.infer_vlm_clothes_caption_func(clothes_image_path, self.available_types)
+        
+        # json_string = json.dumps(const_prompt).replace('"', '\\"').replace('{', '\\{').replace('}', '\\}')
+        # json_string = const_prompt.replace('"', '\\"').replace('{', '\\{').replace('}', '\\}').replace('\n', '\\n')
+        
+        good_json_obj = repair_json(caption_response, return_objects=True)
+        
+        return good_json_obj
+
+   

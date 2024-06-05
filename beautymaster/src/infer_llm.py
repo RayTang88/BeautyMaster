@@ -6,8 +6,10 @@ from beautymaster.utils.parsing_rag import parsing_rag_func
 
 class LLM():
     def __init__(self, weights_path, weight_name):
-                # # decrease the ratio of the k/v cache occupation to 20%
-        backend_config = TurbomindEngineConfig(cache_max_entry_count=0.2, session_len=10240)
+        # decrease the ratio of the k/v cache occupation to 20%
+        backend_config = TurbomindEngineConfig(cache_max_entry_count=0.2,
+                                               model_format='awq',
+                                               session_len=10240)
         self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config) 
         
 

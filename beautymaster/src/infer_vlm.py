@@ -2,7 +2,7 @@ import os
 
 from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig
 from lmdeploy.vl import load_image
-from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, vlm_prompt_template, vlm_prompt_body_template
+from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, vlm_prompt_template, vlm_prompt_body_template , vlm_prompt_caption_template, upper_shape, upper_choice_list, upper_out_format, lower_shape, lower_choice_list, lower_out_format, dresses_shape, dresses_choice_list, dresses_out_format
 
 class VLM():
     
@@ -105,10 +105,14 @@ class VLM():
 
         return response.text
     
-    def infer_vlm_clothes_caption_func(self, clothes_image_path, body_shape, clothes_out_format):
+    def infer_vlm_clothes_caption_func(self, clothes_image_path, available_types):
             
-        data = {"shape": body_shape, "feature":"我的体型特征", "body_out_format":clothes_out_format}
-        vlm_prompt = vlm_prompt_body_template.format(**data)
+        data = {"available_types": available_types, "upper_shape": upper_shape, "upper_choice_list":upper_choice_list, "upper_out_format":upper_out_format,
+        "lower_shape": lower_shape, "lower_choice_list":lower_choice_list, "lower_out_format":lower_out_format,
+        "dresses_shape": dresses_shape, "dresses_choice_list":dresses_choice_list, "dresses_out_format":dresses_out_format,
+        }
+        
+        vlm_prompt = vlm_prompt_caption_template.format(**data)
     
         image = load_image(clothes_image_path)
         
