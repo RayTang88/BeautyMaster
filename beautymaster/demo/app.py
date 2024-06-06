@@ -3,7 +3,7 @@ import os
 from PIL import Image
 import gradio as gr
 sys.path.append('/root/code/BeautyMaster/beautymaster/demo')
-from infer import Interface, parse_opt, run
+from infer import Interface, parse_opt
 
 
 example_path = os.path.join("/group_share/data_org/", 'test_data/')
@@ -51,7 +51,14 @@ def run_local(weather, season, determine, additional_requirements, full_body_ima
             planA = match_reslult[0]['image']
             planB = match_reslult[1]['image']
             planC = match_reslult[2]['image']
-        
+        if len(match_reslult)==2:
+            planA = match_reslult[0]['image']
+            planB = match_reslult[1]['image']
+
+        if len(match_reslult)==1:
+                 
+            planA = match_reslult[0]['image']
+   
     elif "RAG" == func:
         
         rag_reuslt = interface.rag(weather,
@@ -68,7 +75,9 @@ def run_local(weather, season, determine, additional_requirements, full_body_ima
         caption = caption_result
         
     elif  "tryon"== func:
-        pass 
+        pass
+    else :
+        print("error function select!")
     
     return planA, planB, planC, rag, caption   
 
@@ -109,9 +118,9 @@ with image_blocks as demo:
             #     with gr.Column():
             #         is_checked_crop = gr.Checkbox(label="Yes", info="Use auto-crop & resizing",value=False)
             fullbody_img = gr.Image(label="fullbody", sources='upload', type="pil")
-            season = gr.Dropdown(choices=["春季","夏季","秋季","冬季"], label="季节")
-            weather = gr.Dropdown(choices=["零下10摄氏度","0摄氏度","10摄氏度","20摄氏度","30摄氏度"], label="温度")
-            determine = gr.Dropdown(choices=["约会","逛街","晚宴","工作"], label="目的")
+            season = gr.Dropdown(choices=["春季","夏季","秋季","冬季"], label="季节", value="春季")
+            weather = gr.Dropdown(choices=["零下10摄氏度","0摄氏度","10摄氏度","20摄氏度","30摄氏度"], label="温度", value="零下10摄氏度")
+            determine = gr.Dropdown(choices=["约会","逛街","晚宴","工作"], label="目的", value="约会")
             additional_requirements = "简洁大方美丽漂亮"
 
             example = gr.Examples(
@@ -129,19 +138,19 @@ with image_blocks as demo:
                 inputs=clothes_img,
                 examples_per_page=8,
                 examples=upperlist_path)
-            func = gr.Dropdown(choices=["Match","RAG","Caption","TryOn"], label="功能")
-            additional_requirements = gr.Textbox(placeholder="描述您对搭配的特殊需求 ex) 简洁大方，美丽动人", show_label=True, elem_id="prompt")        
+            func = gr.Dropdown(choices=["Match","RAG","Caption","TryOn"], label="功能", value="Match")
+            additional_requirements = gr.Textbox(placeholder="描述您对搭配的特殊需求 ex) 简洁大方，美丽动人", show_label=True, elem_id="prompt")
+            rag = gr.Textbox(placeholder="rag output", show_label=False, elem_id="rag")
+            caption = gr.Textbox(placeholder="caption", show_label=False, elem_id="caption")        
         with gr.Column():
             # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
             planA = gr.Image(label="Mach output A", elem_id="Mach_output_A",show_share_button=False)
-        with gr.Column():
+
             # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
             planB = gr.Image(label="Mach output B", elem_id="Mach_output_B",show_share_button=False)
-        with gr.Column():
             # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
             planC = gr.Image(label="Mach output C", elem_id="Mach_output_C",show_share_button=False)
-        rag = gr.Textbox(placeholder="rag output", show_label=False, elem_id="rag")
-        caption = gr.Textbox(placeholder="caption", show_label=False, elem_id="caption")        
+
 
     with gr.Column():
         run_button = gr.Button(value="Run")

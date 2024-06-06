@@ -81,7 +81,7 @@ class Interface:
         #3.Visualize the results of the suggestions to the user
         # show_func(match_result, self.save_path)
         
-        return match_result[0]["image"], match_result[1]["image"]
+        return match_result
         
     def rag(self,
             weather="",
@@ -163,4 +163,4 @@ if __name__ == "__main__":
     additional_requirements = "搭配简单大方"
     full_body_image_path = "/group_share/data_org/test_data/fullbody/real_image/b17ab66100f34037b1a83e4c9e7c97a4_th.jpg" 
     clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg" 
-    run(interface, weather, season, determine, additional_requirements, full_body_image_path, clothes_path, func="match")
+    interface.run(interface, weather, season, determine, additional_requirements, full_body_image_path, clothes_path, func="match")

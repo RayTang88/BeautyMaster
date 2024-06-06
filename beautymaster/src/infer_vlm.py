@@ -1,8 +1,10 @@
 import os
+import numpy as np
 
 from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig
 from lmdeploy.vl import load_image
 from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, vlm_prompt_template, vlm_prompt_body_template , vlm_prompt_caption_template, upper_shape, upper_choice_list, upper_out_format, lower_shape, lower_choice_list, lower_out_format, dresses_shape, dresses_choice_list, dresses_out_format
+from PIL import Image
 
 class VLM():
     
@@ -80,7 +82,14 @@ class VLM():
         # return features
 
     def infer_vlm_4o_like_func(self, full_body_image_path, season, weather, determine):
-
+        
+        if isinstance(full_body_image_path, Image.Image):
+            image=full_body_image_path
+        elif isinstance(image, np.ndarray):
+            print("Image is OpenCV format")
+        else:
+            image = load_image(full_body_image_path)
+            
         image = load_image(full_body_image_path)
 
         # vlm_prompt = prompt.vlm_prompt_template.format("1", "2~6", "7~11", "12~16", season, weather, determine, 'n', 'n', 'n', 'n', 'n', 'n')
@@ -99,9 +108,13 @@ class VLM():
         data = {"shape": body_shape, "feature":"我的体型特征", "body_out_format":body_out_format}
         vlm_prompt = vlm_prompt_body_template.format(**data)
         # print("full_body_image_path:" ,full_body_image_path)
-    
-        image = load_image(full_body_image_path)
         
+        if isinstance(full_body_image_path, Image.Image):
+            image=full_body_image_path
+        elif isinstance(full_body_image_path, np.ndarray):
+            print("Image is OpenCV format")
+        else:
+            image = load_image(full_body_image_path)
         response = self.pipe((vlm_prompt, image))
 
         return response.text
@@ -114,8 +127,15 @@ class VLM():
         }
         
         vlm_prompt = vlm_prompt_caption_template.format(**data)
+        
+        if isinstance(clothes_image_path, Image.Image):
+            image=clothes_image_path
+        elif isinstance(clothes_image_path, np.ndarray):
+            print("Image is OpenCV format")
+        else:
+            image = load_image(clothes_image_path)
     
-        image = load_image(clothes_image_path)
+        # image = load_image(clothes_image_path)
         
         response = self.pipe((vlm_prompt, image))
 

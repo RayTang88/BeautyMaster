@@ -31,8 +31,12 @@ class TryOnInterface():
     self.try_on = try_on_module.TryOn(try_on_model_path)
 
   def get_try_on_result(self, full_body_path, clothes_path, full_body_caption, clothes_caption, idx):
-    
-    img_o = Image.open(full_body_path)
+    if isinstance(full_body_path, Image.Image):
+      img_o=full_body_path
+    elif isinstance(full_body_path, np.ndarray):
+      print("Image is OpenCV format")
+    else:    
+      img_o = Image.open(full_body_path)
     size = (768, 1024)
     img_o = img_o.resize(size)
     
@@ -68,7 +72,13 @@ class TryOnInterface():
     p2 = [clothes_caption]# 衣服的种类，由LLM或者数据库给出
     
     # img = Image.open('my_pre_data/img/img1.jpg')
-    cloth = Image.open(clothes_path)
+    if isinstance(clothes_path, Image.Image):
+      cloth=full_body_path
+    elif isinstance(clothes_path, np.ndarray):
+      print("Image is OpenCV format")
+    else:    
+      cloth = Image.open(clothes_path)
+    # cloth = Image.open(clothes_path)
     # mask = Image.open('/root/kj_work/IDM-VTON_old/my_tryon_test_data/mask.png')
 
     pose = self.dense_pose.execute(img_o.copy())
