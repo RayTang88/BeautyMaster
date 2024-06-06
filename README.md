@@ -70,7 +70,7 @@
 ├── scripts
 ├── beautymaster
 │   ├── datasets
-│   ├── 3rdparty
+│   ├── third_party
 │   │   ├── internvl
 │   │   ├── IDM-VTON                     
 │   │   ├── champ

@@ -1,6 +1,7 @@
 import os
 import random
 from json_repair import repair_json
+from PIL import Image
 from .infer_vlm import VLM
 from .infer_llm import LLM
 from .bce_langchain import BceEmbeddingRetriever
@@ -144,5 +145,49 @@ class RagAndRecommend():
         good_json_obj = repair_json(caption_response, return_objects=True)
         
         return good_json_obj
+    # Here we only show the matching results without adding tryon results
+    def match_only_result_func(self, llm_recommended):
+        print("llm_recommended[match_content]", llm_recommended)    
+        assert len(llm_recommended["match_content"]) > 0
+        match_result = []
+        for match in llm_recommended["match_content"]:
+            match_dict = {}
+            match_category_list = match["category"]
+            match_id_list = match["match_id"]
+            match_caption_list = match["match_caption"]
+            match_reason = match["reason"]
+            
+            assert len(match_category_list) == len(match_id_list)
+            assert len(match_caption_list) == len(match_id_list)
+            
+            match_dict["id"] = match["id"]
+            match_dict["score"] = match["score"]
+            match_dict["category"] = match_category_list
+            match_dict["match_reason"] = match_reason
+            
+            images = []
+            
+            for category, match_id, match_caption in zip(match_category_list, match_id_list, match_caption_list):
+                try:
+                
+                    if "上衣" == category:
+                        # idx = match_category_list.index("上衣")
+                        # match_id =match_id_list[idx]
+                        # match_caption =match_caption_list[idx]
+                        clothes_path = "/group_share/data_org/DressCode/upper_body/images/" + match_id.split('_')[0]+"_1.jpg"
+                    elif "裤子" == category:
+                        clothes_path = "/group_share/data_org/DressCode/lower_body/images/" + match_id.split('_')[0]+"_1.jpg"
+                    elif "裙子" == category:
+                        clothes_path = "/group_share/data_org/DressCode/dresses/images/" + match_id.split('_')[0]+"_1.jpg"   
+                    image = Image.open(clothes_path)
+                        
+                    images.append(image)
+                except FileNotFoundError:
+                    continue
+                        
+            match_dict["images"] = images
+            match_result.append(match_dict)
+
+        return match_result
 
    

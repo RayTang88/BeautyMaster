@@ -31,8 +31,55 @@ human_list_path = [os.path.join(example_path,"fullbody/images/",human) for human
 opt = parse_opt()
 interface = Interface(**vars(opt))
 
-def run_local(weather, season, determine, additional_requirements, full_body_image_path, clothes_path, func):
+def run_local(weather, season, determine, additional_requirements, full_body_image_path):
     
+    planA_clothes_img_A = Image.new("RGB", (500, 300), 'white')
+    planA_clothes_img_B = Image.new("RGB", (500, 300), 'white')
+    planB_clothes_img_A = Image.new("RGB", (500, 300), 'white')
+    planB_clothes_img_B = Image.new("RGB", (500, 300), 'white')
+    planC_clothes_img_A = Image.new("RGB", (500, 300), 'white')
+    planC_clothes_img_B = Image.new("RGB", (500, 300), 'white')
+    planA_match_reason = ""
+    planB_match_reason = ""
+    planC_match_reason = ""
+    
+    match_reslult, _ = interface.match(weather,
+    season,
+    determine,
+    full_body_image_path,
+    additional_requirements)
+    
+    if len(match_reslult)==3:
+            
+        planA_clothes_img_A = match_reslult[0]["images"][0]
+        planA_clothes_img_B = match_reslult[0]["images"][1]
+        planB_clothes_img_A = match_reslult[1]["images"][0]
+        planB_clothes_img_B = match_reslult[1]["images"][1]
+        planC_clothes_img_A = match_reslult[2]["images"][0]
+        planC_clothes_img_B = match_reslult[2]["images"][1]
+        planA_match_reason = match_reslult[0]["match_reason"]
+        planB_match_reason = match_reslult[1]["match_reason"]
+        planC_match_reason = match_reslult[2]["match_reason"]
+        
+    if len(match_reslult)==2:
+        planA_clothes_img_A = match_reslult[0]["images"][0]
+        planA_clothes_img_B = match_reslult[0]["images"][1]
+        planB_clothes_img_A = match_reslult[1]["images"][0]
+        planB_clothes_img_B = match_reslult[1]["images"][1]
+        planA_match_reason = match_reslult[0]["match_reason"]
+        planB_match_reason = match_reslult[1]["match_reason"]
+        
+    if len(match_reslult)==1:
+                
+        planA_clothes_img_A = match_reslult[0]["images"][0]
+        planA_clothes_img_B = match_reslult[0]["images"][1]
+        planA_match_reason = match_reslult[0]["match_reason"]
+
+    return planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason   
+
+def run_local_match(weather, season, determine, additional_requirements, full_body_image_path, clothes_path, func):
+    # func="match"
+    # clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg"
     planA = Image.new("RGB", (500, 300), 'white')
     planB = Image.new("RGB", (500, 300), 'white')
     planC = Image.new("RGB", (500, 300), 'white')
@@ -40,73 +87,70 @@ def run_local(weather, season, determine, additional_requirements, full_body_ima
     caption = ""
     
     if "Match" == func:
-        match_reslult = interface.match(weather,
-        season,
-        determine,
-        full_body_image_path,
-        additional_requirements)
-        
-        if len(match_reslult)==3:
-             
-            planA = match_reslult[0]['image']
-            planB = match_reslult[1]['image']
-            planC = match_reslult[2]['image']
-        if len(match_reslult)==2:
-            planA = match_reslult[0]['image']
-            planB = match_reslult[1]['image']
-
-        if len(match_reslult)==1:
-                 
-            planA = match_reslult[0]['image']
-   
-    elif "RAG" == func:
-        
-        rag_reuslt = interface.rag(weather,
-            season,
-            determine,
-            full_body_image_path,
-            additional_requirements)
-        rag = rag_reuslt
-    
-    elif "Caption" == func:
-        
-        caption_result = interface.caption(clothes_path)
-        
-        caption = caption_result
-        
-    elif  "tryon"== func:
-        pass
-    else :
-        print("error function select!")
-    
-    return planA, planB, planC, rag, caption   
-
-def run_local_test(garm_img, func):
-    # func="match"
-    # clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg"
-    if "Match" == func:
         # match_reslult = interface.match(weather,
         # season,
         # determine,
         # full_body_image_path,
         # additional_requirements)
-        return garm_img, garm_img
+        planA = clothes_path
+        planB = clothes_path
+        planC = clothes_path
+
     elif "RAG" == func:
         # interface.rag(weather,
         #     season,
         #     determine,
         #     full_body_image_path,
         #     additional_requirements)
-        return garm_img, garm_img
+        pass
+
     elif "Caption" == func:
         # interface.caption(clothes_path)
-        return garm_img, garm_img
+                pass
+
     elif  "TryOn"== func:
-        return garm_img, garm_img 
+        pass
+    
+    return planA, planB, planC, rag, caption 
+
+
+def run_local_tryon(weather, season, determine, additional_requirements, full_body_image_path, clothes_path, func):
+    # func="match"
+    # clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg"
+    planA = Image.new("RGB", (500, 300), 'white')
+    planB = Image.new("RGB", (500, 300), 'white')
+    planC = Image.new("RGB", (500, 300), 'white')
+    rag = ""
+    caption = ""
+    
+    if "Match" == func:
+        # match_reslult = interface.match(weather,
+        # season,
+        # determine,
+        # full_body_image_path,
+        # additional_requirements)
+        planA = clothes_path
+        planB = clothes_path
+        planC = clothes_path
+    elif "RAG" == func:
+        # interface.rag(weather,
+        #     season,
+        #     determine,
+        #     full_body_image_path,
+        #     additional_requirements)
+        pass
+    elif "Caption" == func:
+        # interface.caption(clothes_path)
+        # return clothes_path, clothes_path
+        pass
+    elif  "TryOn"== func:
+        # return clothes_path, clothes_path
+        pass
+    return planA, planB, planC, rag, caption 
 
 
 image_blocks = gr.Blocks().queue()
-with image_blocks as demo:
+with image_blocks as Match:
     gr.Markdown("## 🌟👗💄 BeautyMaster 💄👗🌟")
     gr.Markdown("Beauty Master make you beautiful every day. Check out the [source codes](https://github.com/RayTang88/BeautyMaster)")
     with gr.Row():
@@ -121,7 +165,7 @@ with image_blocks as demo:
             season = gr.Dropdown(choices=["春季","夏季","秋季","冬季"], label="季节", value="春季")
             weather = gr.Dropdown(choices=["零下10摄氏度","0摄氏度","10摄氏度","20摄氏度","30摄氏度"], label="温度", value="零下10摄氏度")
             determine = gr.Dropdown(choices=["约会","逛街","晚宴","工作"], label="目的", value="约会")
-            additional_requirements = "简洁大方美丽漂亮"
+            additional_requirements = gr.Textbox(placeholder="描述您对搭配的特殊需求 ex) 简洁大方，美丽动人", show_label=True, elem_id="prompt")
 
             example = gr.Examples(
                 inputs=fullbody_img,
@@ -130,36 +174,84 @@ with image_blocks as demo:
             )
 
         with gr.Column():
+            with gr.Row():
+                with gr.Column(elem_id="prompt-container"):
+                    gr.Markdown("方案A")
+                planA_clothes_img_A = gr.Image(label="clothes", sources='upload', type="pil", height=300)
+                planA_clothes_img_B = gr.Image(label="clothes", sources='upload', type="pil", height=300)
+                with gr.Row(elem_id="prompt-container"):
+                    with gr.Row():
+                        planA_match_reason = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="match_reason", show_label=True, elem_id="planA_match_reason")
+            with gr.Row():
+                with gr.Column(elem_id="prompt-container"):
+                    gr.Markdown("方案B")
+                planB_clothes_img_A = gr.Image(label="clothes", sources='upload', type="pil", height=300)
+                planB_clothes_img_B = gr.Image(label="clothes", sources='upload', type="pil", height=300)
+                with gr.Row(elem_id="prompt-container"):
+                    with gr.Row():
+                        planB_match_reason = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="match_reason", show_label=True, elem_id="planB_match_reason")
+            with gr.Row():
+                with gr.Column(elem_id="prompt-container"):
+                    gr.Markdown("方案C")
+                planC_clothes_img_A = gr.Image(label="clothes", sources='upload', type="pil", height=300)
+                planC_clothes_img_B = gr.Image(label="clothes", sources='upload', type="pil", height=300)      
+                with gr.Row(elem_id="prompt-container"):
+                    with gr.Row():
+                        planC_match_reason = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="match_reason", show_label=True, elem_id="planC_match_reason")
+                        
+        with gr.Column():
+            # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
+            planA = gr.Image(label="Try on output A", elem_id="Mach_output_A",show_share_button=False, height=300)
+            # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
+            planB = gr.Image(label="Try on output B", elem_id="Mach_output_B",show_share_button=False, height=300)
+            # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
+            planC = gr.Image(label="Try on output C", elem_id="Mach_output_C",show_share_button=False, height=300)
+
+    with gr.Row():
+        with gr.Row():
+            match_button = gr.Button(value="Match")
+            tryon_button = gr.Button(value="TryOn")
+        # with gr.Accordion(label="Advanced Settings", open=False):
+        #     with gr.Row():
+        #         denoise_steps = gr.Number(label="Denoising Steps", minimum=20, maximum=40, value=30, step=1)
+        #         seed = gr.Number(label="Seed", minimum=-1, maximum=2147483647, step=1, value=42)
+    match_button.click(run_local, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason], api_name='Match')
+    # match_button.click(run_local_match, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason], api_name='Match')
+    # tryon_button.click(run_local_tryon, inputs=[fullbody_img, clothes_img, body_desc, cloth_caption], outputs=[planA, planB, planC], api_name='TryOn')
+image_blocks = gr.Blocks().queue()
+with image_blocks as RAG:
+    with gr.Row():
+        with gr.Column():
+            fullbody_img = gr.ImageEditor(sources='upload', type="pil", label='Human. Mask with pen or use auto-masking', interactive=True)
+            with gr.Column():
+                with gr.Column():
+                    is_checked = gr.Checkbox(label="Yes", info="Use auto-generated mask (Takes 5 seconds)",value=True)
+                with gr.Column():
+                    is_checked_crop = gr.Checkbox(label="Yes", info="Use auto-crop & resizing",value=False)
+                example = gr.Examples(
+                inputs=fullbody_img,
+                examples_per_page=10,
+                examples=human_list_path
+            )
+        with gr.Column():        
             clothes_img = gr.Image(label="clothes", sources='upload', type="pil")
             with gr.Row(elem_id="prompt-container"):
                 with gr.Row():
-                    prompt = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", show_label=False, elem_id="prompt")
+                    prompt = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="", show_label=False, elem_id="prompt")
             example = gr.Examples(
                 inputs=clothes_img,
                 examples_per_page=8,
                 examples=upperlist_path)
-            func = gr.Dropdown(choices=["Match","RAG","Caption","TryOn"], label="功能", value="Match")
-            additional_requirements = gr.Textbox(placeholder="描述您对搭配的特殊需求 ex) 简洁大方，美丽动人", show_label=True, elem_id="prompt")
-            rag = gr.Textbox(placeholder="rag output", show_label=False, elem_id="rag")
-            caption = gr.Textbox(placeholder="caption", show_label=False, elem_id="caption")        
-        with gr.Column():
-            # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
-            planA = gr.Image(label="Mach output A", elem_id="Mach_output_A",show_share_button=False)
-
-            # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
-            planB = gr.Image(label="Mach output B", elem_id="Mach_output_B",show_share_button=False)
-            # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
-            planC = gr.Image(label="Mach output C", elem_id="Mach_output_C",show_share_button=False)
-
-
+            
     with gr.Column():
-        run_button = gr.Button(value="Run")
+        tryon_button = gr.Button(value="Caption")
         with gr.Accordion(label="Advanced Settings", open=False):
             with gr.Row():
                 denoise_steps = gr.Number(label="Denoising Steps", minimum=20, maximum=40, value=30, step=1)
                 seed = gr.Number(label="Seed", minimum=-1, maximum=2147483647, step=1, value=42)
 
-    run_button.click(run_local, inputs=[weather, season, determine, additional_requirements, fullbody_img, clothes_img, func], outputs=[planA, planB, planC, rag, caption], api_name='run')
+    # tryon_button.click(run_local_tryon, inputs=[weather, season, determine, additional_requirements, fullbody_img, clothes_img], outputs=[planA, planB, planC, rag, caption], api_name='run')
 
-image_blocks.launch()
 
+app = gr.TabbedInterface([Match, RAG], ["Match", "Caption"])
+app.launch()

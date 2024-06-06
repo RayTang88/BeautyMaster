@@ -89,7 +89,6 @@ class TryOnInterface():
     
     return tryon_result    
 
-
   def try_on_func(self, llm_recommended, full_body_image_path, body_shape_descs):
     print("llm_recommended[match_content]", llm_recommended)    
     assert len(llm_recommended["match_content"]) > 0
@@ -125,4 +124,11 @@ class TryOnInterface():
             match_result.append(match_dict)
 
     return match_result
+  
+  def try_on_simple_func(self, clothes_path, full_body_image_path, body_shape_descs, match_caption):
+        
+    id =0
+    image = self.get_try_on_result(full_body_image_path, clothes_path, body_shape_descs, match_caption, int(id))
+
+    return image  
 

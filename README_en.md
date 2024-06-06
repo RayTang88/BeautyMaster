@@ -71,7 +71,7 @@ We hope to train VLM to be a beauty master to help you solve the problem of dres
 ├── scripts
 ├── beautymaster
 │   ├── datasets
-│   ├── 3rdparty
+│   ├── third_party
 │   │   ├── internvl
 │   │   ├── IDM-VTON                     
 │   │   ├── champ

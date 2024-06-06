@@ -63,7 +63,7 @@ class Interface:
         self.save_path = save_path 
         
         self.tryon = TryOnInterface()
-           
+        
     def match(self,
             weather="",
             season="",
@@ -76,7 +76,23 @@ class Interface:
         llm_recommended, body_shape_descs = self.ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
         
         #2.Virtual Try-on according the suggestions
-        match_result = self.tryon.try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
+        # match_result = self.tryon.try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
+        match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
+        # print(match_result)
+        #3.Visualize the results of the suggestions to the user
+        # show_func(match_result, self.save_path)
+        
+        return match_result, body_shape_descs
+    
+    def tryon(self,
+        clothes="",
+        full_body_image_path="",
+        body_shape_descs="",
+        match_caption=""
+        ):
+        
+        #2.Virtual Try-on according the suggestions
+        match_result = self.tryon.try_on_func(clothes, full_body_image_path, body_shape_descs, match_caption)
         # print(match_result)
         #3.Visualize the results of the suggestions to the user
         # show_func(match_result, self.save_path)
