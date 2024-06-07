@@ -44,7 +44,7 @@ idna==3.7
 importlib_metadata==7.1.0
 importlib_resources==6.4.0
 intel-openmp==2024.1.2
-ipykernel==6.29.4
+ipykernel
 ipython==8.25.0
 jedi==0.19.1
 Jinja2==3.1.3
