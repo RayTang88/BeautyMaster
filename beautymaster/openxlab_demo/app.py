@@ -3,14 +3,14 @@ import os
 from PIL import Image
 import gradio as gr
 
-root_path = './'
 os.system(f'git clone -b dev https://github.com/RayTang88/BeautyMaster.git')
 
 sys.path.append('./BeautyMaster/')
+from beautymaster.demo.infer import Interface, parse_opt
 
 os.system(f'cd ./BeautyMaster && python beautymaster/openxlab_demo/download.py')
 
-from beautymaster.demo.infer import Interface, parse_opt
+os.system(f"cd ..")
 
 example_path = './BeautyMaster/beautymaster/openxlab_demo/simple_data/'
 
