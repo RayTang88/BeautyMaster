@@ -135,6 +135,7 @@ class RagAndRecommend():
         
         return recommended, body_shape_descs
     
+    #This interface is used to extract the caption of clothes
     def infer_vlm_caption(self, clothes_image_path):
         
         caption_response = self.vlm.infer_vlm_clothes_caption_func(clothes_image_path, self.available_types)
@@ -144,7 +145,11 @@ class RagAndRecommend():
         
         good_json_obj = repair_json(caption_response, return_objects=True)
         
-        return good_json_obj
+        good_json_obj["items"].insert(good_json_obj["category"])
+        item_descs = good_json_obj["items"]
+        clothes_shape_descs = '、'.join(good_json_obj["items"])
+        
+        return good_json_obj, clothes_shape_descs
     # Here we only show the matching results without adding tryon results
     def match_only_result_func(self, llm_recommended):
         print("llm_recommended[match_content]", llm_recommended)    

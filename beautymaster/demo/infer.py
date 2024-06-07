@@ -8,14 +8,11 @@ warnings.filterwarnings('ignore')
 sys.path.append("/root/code/BeautyMaster")
 # sys.path.append('/root/BeautyMaster-dev/beautymaster')
 
-from beautymaster.src.infer_vlm import VLM
 from beautymaster.src.infer_rag_recommend import RagAndRecommend
-from beautymaster.src.bce_langchain import BceEmbeddingRetriever
-from beautymaster.src.infer_llm import LLM
 from beautymaster.src.try_on import TryOnInterface
 from beautymaster.utils.show import show_func
 
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 class Interface:
     def __init__(self,
@@ -117,13 +114,13 @@ class Interface:
             ):
         
         #1. get clothes caption
-        caption = self.ragandrecommend.infer_vlm_caption(clothes_path)
+        caption_json, caption_string = self.ragandrecommend.infer_vlm_caption(clothes_path)
         
-        print("caption", caption)
+        # print("caption", caption_string)
         #2. write database
         
         
-        return caption
+        return caption_json, caption_string
         
 
 def parse_opt():
