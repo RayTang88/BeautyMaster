@@ -38,7 +38,7 @@ fsspec==2024.2.0
 greenlet==3.0.3
 h11==0.14.0
 httpcore==0.17.3
-httpx==0.24.0
+httpx==0.24.1
 huggingface-hub==0.23.0
 idna==3.7
 importlib_metadata==7.1.0
