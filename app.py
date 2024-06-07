@@ -2,11 +2,18 @@ import sys
 import os
 from PIL import Image
 import gradio as gr
-sys.path.append('/root/code/BeautyMaster')
+
+root_path = './workspace/'
+os.system(f'git clone -b dev https://github.com/RayTang88/BeautyMaster.git {base_path}')
+
+sys.path.append('./workspace/BeautyMaster/')
+os.system('apt install git')
+os.system('apt install git-lfs')
+os.system(f'cd {base_path} && python beautymaster/openxlab_demo/download.py')
+
 from beautymaster.demo.infer import Interface, parse_opt
 
-
-example_path = os.path.join("/group_share/data_org/", 'test_data/')
+example_path = os.path.join(root, '/BeautyMaster/beautymaster/openxlab_demo/simple_data/')
 
 upper_list = os.listdir(os.path.join(example_path,"upper_body/images/"))
 upper_list_path = [os.path.join(example_path,"upper_body/images/",garm) for garm in upper_list]

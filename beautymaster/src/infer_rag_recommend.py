@@ -145,7 +145,7 @@ class RagAndRecommend():
         
         good_json_obj = repair_json(caption_response, return_objects=True)
         
-        good_json_obj["items"].insert(good_json_obj["category"])
+        good_json_obj["items"].insert(0, good_json_obj["category"])
         item_descs = good_json_obj["items"]
         clothes_shape_descs = '、'.join(good_json_obj["items"])
         

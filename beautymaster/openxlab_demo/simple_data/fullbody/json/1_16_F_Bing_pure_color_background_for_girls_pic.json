@@ -1,0 +1,76 @@
+{
+    "conversations": [
+        {
+            "from": "human",
+            "value": "图中人物的头发是什么颜色？"
+        },
+        {
+            "from": "gpt",
+            "value": "黑色"
+        },
+        {
+            "from": "human",
+            "value": "图中人物的头发长度如何？长发、短发、中长、寸头、秃头？"
+        },
+        {
+            "from": "gpt",
+            "value": "中长"
+        },
+        {
+            "from": "human",
+            "value": "图中人物的头发的发型是什么风格？卷发、直发、大波浪、齐刘海、妹妹头？"
+        },
+        {
+            "from": "gpt",
+            "value": "齐刘海"
+        },
+        {
+            "from": "human",
+            "value": "图中人物的体型胖瘦状况如何？肥胖、适中、清瘦？"
+        },
+        {
+            "from": "gpt",
+            "value": "适中"
+        },
+        {
+            "from": "human",
+            "value": "图中人物的身高状况如何？高大、中等、矮小？"
+        },
+        {
+            "from": "gpt",
+            "value": "中等"
+        },
+        {
+            "from": "human",
+            "value": "图中人物的腰部粗细如何？水桶腰、正常腰、小蛮腰？"
+        },
+        {
+            "from": "gpt",
+            "value": "正常腰"
+        },
+        {
+            "from": "human",
+            "value": "图中人物的脸型如何？圆脸、锥子脸、国字方脸？"
+        },
+        {
+            "from": "gpt",
+            "value": "锥子脸"
+        },
+        {
+            "from": "human",
+            "value": "图中人物的腿部长度如何？长腿、中长腿、短腿？"
+        },
+        {
+            "from": "gpt",
+            "value": "中长腿"
+        },
+        {
+            "from": "human",
+            "value": "图中人物的腿部形状如何？直腿、弯腿、O形腿？"
+        },
+        {
+            "from": "gpt",
+            "value": "直腿"
+        }
+    ]
+}

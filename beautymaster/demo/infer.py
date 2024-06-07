@@ -59,7 +59,7 @@ class Interface:
         self.ragandrecommend = RagAndRecommend(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path, vlm_weight_name, llm_weight_name, available_types, only_use_vlm)
         self.save_path = save_path 
         
-        self.tryon = TryOnInterface()
+        # self.tryon = TryOnInterface()
         
     def match(self,
             weather="",
@@ -87,11 +87,11 @@ class Interface:
         body_shape_descs="",
         match_caption=""
         ):
-        
-        #2.Virtual Try-on according the suggestions
-        match_result = self.tryon.try_on_func(clothes, full_body_image_path, body_shape_descs, match_caption)
+        match_result = ""
+        #1.Virtual Try-on according the suggestions
+        # match_result = self.tryon.try_on_func(clothes, full_body_image_path, body_shape_descs, match_caption)
         # print(match_result)
-        #3.Visualize the results of the suggestions to the user
+        #2.Visualize the results of the suggestions to the user
         # show_func(match_result, self.save_path)
         
         return match_result
