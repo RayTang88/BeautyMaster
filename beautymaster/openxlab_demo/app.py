@@ -4,7 +4,7 @@ from PIL import Image
 import gradio as gr
 
 root_path = './'
-os.system(f'git clone -b dev https://github.com/RayTang88/BeautyMaster.git {root_path}')
+os.system(f'git clone -b dev https://github.com/RayTang88/BeautyMaster.git')
 
 sys.path.append('./BeautyMaster/')
 

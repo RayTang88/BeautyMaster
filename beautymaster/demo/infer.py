@@ -125,12 +125,12 @@ class Interface:
 
 def parse_opt():
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--weights-path', nargs='+', type=str, default='/group_share/model', help='model path(s)')
+	parser.add_argument('--weights-path', nargs='+', type=str, default=os.environ.get('MODEL_ROOT'), help='model path(s)')
 	parser.add_argument('--vlm-weight-name', nargs='+', type=str, default='/InternVL-Chat-V1-5-AWQ/', help='')
 	parser.add_argument('--llm-weight-name', nargs='+', type=str, default='/internlm2-chat-20b-4bits/', help='')
 	parser.add_argument('--embedding-model-name', nargs='+', type=str, default='/bce-embedding-base_v1', help='')
 	parser.add_argument('--reranker-model-name', nargs='+', type=str, default='/bce-reranker-base_v1', help='')
-	parser.add_argument('--save-path', type=str, default='/group_share/data_org/try_on_data/middle/', help='save results to project/name')
+	parser.add_argument('--save-path', type=str, default=os.environ.get('DATA_ROOT'), help='save results to project/name')
 	parser.add_argument('--get-num-list', nargs='+', type=int, default=[1, 1, 0, 0], help='model and number of cloth candidates')
 	parser.add_argument('--meaning-list', nargs='+', type=str, default=["我的形象特征", "上衣", "裤子", "裙子"], help='The meaning of each item in num_list')
 	# parser.add_argument('--weather', type=str, default='30~35摄氏度', help='weather')
@@ -138,7 +138,7 @@ def parse_opt():
 	# parser.add_argument('--determine', type=str, default='约会', help='determine')
 	parser.add_argument('--content', type=str, default='images', help='content')
 	parser.add_argument('--top-n', type=int, default=5, help='rag num')
-	parser.add_argument('--csv-data-path', type=str, default='/group_share/data_org/test_data/sample_style.csv', help='content')
+	parser.add_argument('--csv-data-path', type=str, default=os.environ.get('DATA_ROOT')+"/sample_style.csv", help='content')
 	# parser.add_argument('--full-body-image-path', type=str, default='/group_share/data_org/test_data/fullbody/real_image/v2-637c977c47e7794caa8cc80e12f1a369_r.jpg', help='content')
 	parser.add_argument('--available-types', nargs='+', type=str, default=["上衣", "裤子", "裙子"], help='available types')
 	parser.add_argument('--only-use-vlm', nargs='+', type=bool, default=False, help='available types')
