@@ -5,12 +5,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # 根据自己代码位置修改
-sys.path.append("/root/code/BeautyMaster")
+# sys.path.append("/root/code/BeautyMaster")
 # sys.path.append('/root/BeautyMaster-dev/beautymaster')
 
 from beautymaster.src.infer_rag_recommend import RagAndRecommend
-from beautymaster.src.try_on import TryOnInterface
-from beautymaster.utils.show import show_func
+# from beautymaster.src.try_on import TryOnInterface
+# from beautymaster.utils.show import show_func
 
 os.environ["CUDA_VISIBLE_DEVICES"]="1"
 

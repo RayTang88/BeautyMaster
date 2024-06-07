@@ -3,17 +3,16 @@ import os
 from PIL import Image
 import gradio as gr
 
-root_path = './workspace/'
+root_path = './'
 os.system(f'git clone -b dev https://github.com/RayTang88/BeautyMaster.git {root_path}')
 
-sys.path.append('./workspace/BeautyMaster/')
-os.system('apt install git')
-os.system('apt install git-lfs')
-os.system(f'cd {root_path} && python beautymaster/openxlab_demo/download.py')
+sys.path.append('./BeautyMaster/')
+
+os.system(f'cd ./BeautyMaster && python beautymaster/openxlab_demo/download.py')
 
 from beautymaster.demo.infer import Interface, parse_opt
 
-example_path = os.path.join(root_path, 'BeautyMaster/beautymaster/openxlab_demo/simple_data/')
+example_path = './BeautyMaster/beautymaster/openxlab_demo/simple_data/'
 
 upper_list = os.listdir(os.path.join(example_path,"upper_body/images/"))
 upper_list_path = [os.path.join(example_path,"upper_body/images/",garm) for garm in upper_list]
@@ -27,13 +26,6 @@ dresses_list_path = [os.path.join(example_path,"upper_body/images/",garm) for ga
 human_list = os.listdir(os.path.join(example_path,"fullbody/images/"))
 human_list_path = [os.path.join(example_path,"fullbody/images/",human) for human in human_list]
 
-# human_ex_list = []
-# for ex_human in human_list_path:
-#     ex_dict= {}
-#     ex_dict['background'] = ex_human
-#     ex_dict['layers'] = None
-#     ex_dict['composite'] = None
-#     human_ex_list.append(ex_dict)
 
 # opt = parse_opt()
 # interface = Interface(**vars(opt))

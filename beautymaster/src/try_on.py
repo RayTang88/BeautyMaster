@@ -1,7 +1,7 @@
 import sys
 import importlib
 import numpy as np
-sys.path.append("/root/code/BeautyMaster/beautymaster/third_party/IDM-VTON")
+sys.path.append("./BeautyMaster/beautymaster/third_party/IDM-VTON")
 from preprocess.openpose.run_openpose import OpenPose
 from preprocess.humanparsing.run_parsing import Parsing
 from my_get_maks import get_img_agnostic
@@ -14,13 +14,13 @@ try_on_module = importlib.import_module("beautymaster.third_party.IDM-VTON.tryon
 class TryOnInterface():
       
   def __init__(self,
-               #body_model_path,
-               #human_parsing_model_path,
-               #try_on_model_path
+               body_model_path,
+               human_parsing_model_path,
+               try_on_model_path
                ):
     
     body_model_path = "/group_share/model/IDM-VTON/openpose/ckpts"
-    config_path = "/root/code/BeautyMaster/beautymaster/third_party/IDM-VTON"
+    config_path = "./beautymaster/third_party/IDM-VTON"
     densepose_model_path = "/group_share/model/IDM-VTON/densepose"
     try_on_model_path = "/group_share/model/IDM-VTON/"
     human_parsing_model_path = "/group_share/model/IDM-VTON/humanparsing"
