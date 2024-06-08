@@ -105,15 +105,20 @@ MAX_JOBS=4 pip install -U flash-attn==2.5.8 --no-build-isolation # faster instal
 ```
 
 
-### Datasets
+## Datasets
 Refer to [Data.md](docs/Data.md)
 
 
-### Infer
+## Infer
+### env
+export MODEL_ROOT="..."
+export CODE_ROOT="..."
+export DATA_ROOT="..."
+
+Note: Set the root path for downloading models, the root path for cloning code, and the root path for data respectively.
 
 ```Python
-cd beautymaster
-python demo/infer.py 
+python $CODE_ROOT/BeautyMaster/beautymaster/demo/app.py
 ```
 
 

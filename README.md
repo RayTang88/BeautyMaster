@@ -115,6 +115,7 @@ export MODEL_ROOT="..."
 export CODE_ROOT="..."
 export DATA_ROOT="..."
 
+注意：分别设置下载模型的根路径，clone代码的根路径，数据的根路径
 ### gradio界面应用
 ```Python
 python $CODE_ROOT/BeautyMaster/beautymaster/demo/app.py
