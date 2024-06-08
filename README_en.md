@@ -110,7 +110,7 @@ Refer to [Data.md](docs/Data.md)
 
 
 ## Infer
-### env
+### set env
 ```cmd
 export MODEL_ROOT="..."
 export CODE_ROOT="..."
