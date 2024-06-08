@@ -111,9 +111,11 @@ Refer to [Data.md](docs/Data.md)
 
 ## Infer
 ### env
+```cmd
 export MODEL_ROOT="..."
 export CODE_ROOT="..."
 export DATA_ROOT="..."
+```
 
 Note: Set the root path for downloading models, the root path for cloning code, and the root path for data respectively.
 

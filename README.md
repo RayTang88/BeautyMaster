@@ -111,9 +111,11 @@ MAX_JOBS=4 pip install -U flash-attn==2.5.8 --no-build-isolation #更快安装fl
 ## 推理
 
 ### 设置环境变量
+```cmd
 export MODEL_ROOT="..."
 export CODE_ROOT="..."
 export DATA_ROOT="..."
+```
 
 注意：分别设置下载模型的根路径，clone代码的根路径，数据的根路径
 ### gradio界面应用
