@@ -3,10 +3,10 @@ import os
 from PIL import Image
 import gradio as gr
 
-sys.path.append(os.environ.get('CODE_ROOT')+'/BeautyMaster/')
+sys.path.append(os.environ.get('CODE_ROOT')+'BeautyMaster/')
 from beautymaster.demo.infer import Interface, parse_opt
 
-example_path = os.environ.get('CODE_ROOT')+'/BeautyMaster/beautymaster/openxlab_demo/simple_data/'
+example_path = os.path.join(os.environ.get('CODE_ROOT'),"BeautyMaster/beautymaster/openxlab_demo/simple_data/")
 
 upper_list = os.listdir(os.path.join(example_path,"upper_body/images/"))
 upper_list_path = [os.path.join(example_path,"upper_body/images/",garm) for garm in upper_list]
@@ -19,6 +19,11 @@ dresses_list_path = [os.path.join(example_path,"upper_body/images/",garm) for ga
 
 human_list = os.listdir(os.path.join(example_path,"fullbody/images/"))
 human_list_path = [os.path.join(example_path,"fullbody/images/",human) for human in human_list]
+
+def cc(image):
+    if image.mode in ('RGBA', 'LA'):
+        image = image.convert('RGB')
+    return image 
 
 opt = parse_opt()
 interface = Interface(**vars(opt))
@@ -34,6 +39,9 @@ def run_local(weather, season, determine, additional_requirements, full_body_ima
     planA_match_reason = ""
     planB_match_reason = ""
     planC_match_reason = ""
+    
+    #RGBA-RGB
+    full_body_image_path = cc(full_body_image_path["composite"])
     
     match_reslult, _ = interface.match(weather,
     season,
@@ -106,6 +114,15 @@ def run_local_match(weather, season, determine, additional_requirements, full_bo
 
     elif  "TryOn"== func:
         pass
+
+    # def ss(image, save_path):
+    #     if image.mode in ('RGBA', 'LA'):
+    #         image = image.convert('RGB')
+    #     image.save(save_path)    
+
+    # ss(full_body_image_path["background"], "/root/code/test/b.jpg")
+    # ss(full_body_image_path["layers"][0], "/root/code/test/l.jpg")
+    # ss(full_body_image_path["composite"], "/root/code/test/p.jpg")
     
     return planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason
 
@@ -142,6 +159,7 @@ def run_local_tryon(weather, season, determine, additional_requirements, full_bo
     elif  "TryOn"== func:
         # return clothes_path, clothes_path
         pass
+
     return planA, planB, planC, rag, caption 
 
 
