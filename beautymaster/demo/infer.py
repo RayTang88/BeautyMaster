@@ -4,19 +4,16 @@ import argparse
 import warnings
 warnings.filterwarnings('ignore')
 
-# 根据自己代码位置修改
-# sys.path.append("/root/code/BeautyMaster")
-# sys.path.append('/root/BeautyMaster-dev/beautymaster')
-
 from beautymaster.src.infer_rag_recommend import RagAndRecommend
-# from beautymaster.src.try_on import TryOnInterface
+from beautymaster.src.try_on import TryOnInterface
 # from beautymaster.utils.show import show_func
 
 os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 class Interface:
     def __init__(self,
-                 weights_path, # model.pt path(s)
+                 weights_path, # model.pt path(s),
+                 code_root_path,
                  embedding_model_name,
                  reranker_model_name,
                  vlm_weight_name,
@@ -59,7 +56,7 @@ class Interface:
         self.ragandrecommend = RagAndRecommend(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path, vlm_weight_name, llm_weight_name, available_types, only_use_vlm)
         self.save_path = save_path 
         
-        # self.tryon = TryOnInterface()
+        self.tryon = TryOnInterface(weights_path, code_root_path)
         
     def match(self,
             weather="",
@@ -126,6 +123,7 @@ class Interface:
 def parse_opt():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--weights-path', nargs='+', type=str, default=os.environ.get('MODEL_ROOT'), help='model path(s)')
+	parser.add_argument('--code-root-path', nargs='+', type=str, default=os.environ.get('CODE_ROOT'), help='model path(s)')
 	parser.add_argument('--vlm-weight-name', nargs='+', type=str, default='/InternVL-Chat-V1-5-AWQ/', help='')
 	parser.add_argument('--llm-weight-name', nargs='+', type=str, default='/internlm2-chat-20b-4bits/', help='')
 	parser.add_argument('--embedding-model-name', nargs='+', type=str, default='/bce-embedding-base_v1', help='')

@@ -1,29 +1,28 @@
 import sys
 import importlib
 import numpy as np
-sys.path.append("./BeautyMaster/beautymaster/third_party/IDM-VTON")
-from preprocess.openpose.run_openpose import OpenPose
-from preprocess.humanparsing.run_parsing import Parsing
-from my_get_maks import get_img_agnostic
-from my_get_pose import InferenceAction
 from PIL import Image
-
-try_on_module = importlib.import_module("beautymaster.third_party.IDM-VTON.tryon")
 
 
 class TryOnInterface():
       
   def __init__(self,
-               body_model_path,
-               human_parsing_model_path,
-               try_on_model_path
+               weight_path,
+               code_root_path
                ):
     
-    body_model_path = "/group_share/model/IDM-VTON/openpose/ckpts"
-    config_path = "./beautymaster/third_party/IDM-VTON"
-    densepose_model_path = "/group_share/model/IDM-VTON/densepose"
-    try_on_model_path = "/group_share/model/IDM-VTON/"
-    human_parsing_model_path = "/group_share/model/IDM-VTON/humanparsing"
+    sys.path.append(code_root_path+"/BeautyMaster/beautymaster/third_party/IDM-VTON")
+    from preprocess.openpose.run_openpose import OpenPose
+    from preprocess.humanparsing.run_parsing import Parsing
+    from my_get_maks import get_img_agnostic
+    from my_get_pose import InferenceAction
+    try_on_module = importlib.import_module("beautymaster.third_party.IDM-VTON.tryon")
+    
+    body_model_path = weight_path+"/IDM-VTON/openpose/ckpts"
+    config_path = code_root_path+"/BeautyMaster/beautymaster/third_party/IDM-VTON"
+    densepose_model_path = weight_path+"/IDM-VTON/densepose"
+    try_on_model_path = weight_path+"/IDM-VTON/"
+    human_parsing_model_path = weight_path+"/IDM-VTON/humanparsing"
     
     self.dense_pose = InferenceAction(config_path, densepose_model_path)
     self.body_model = OpenPose(gpu_id=0, body_model_path=body_model_path)

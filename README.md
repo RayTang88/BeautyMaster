@@ -104,15 +104,25 @@ MAX_JOBS=4 pip install -U flash-attn==2.5.8 --no-build-isolation #更快安装fl
 ```
 
 
-### 数据集
+## 数据集
 请参考 [Data.md](docs/Data.md)
 
 
-### 推理
+## 推理
 
+### 设置环境变量
+export MODEL_ROOT="..."
+export CODE_ROOT="..."
+export DATA_ROOT="..."
+
+### gradio界面应用
 ```Python
-cd beautymaster
-python demo/infer.py 
+python $CODE_ROOT/BeautyMaster/beautymaster/demo/app.py
+```
+
+### python推理
+```Python
+python $CODE_ROOT/BeautyMaster/beautymaster/demo/infer.py
 ```
 
 ## 🔒 许可证
