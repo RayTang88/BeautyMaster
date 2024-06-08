@@ -165,7 +165,7 @@ with image_blocks as Match:
     with gr.Row():
         with gr.Column():
             fullbody_img = gr.ImageEditor(sources='upload', type="pil", label='Human. Mask with pen or use auto-masking', interactive=True)
-            gr.Image.upload
+
             with gr.Row():
                 with gr.Row():
                     is_checked = gr.Checkbox(label="Yes", info="Use auto-generated mask (Takes 5 seconds)",value=True)
