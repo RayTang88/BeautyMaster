@@ -3,9 +3,6 @@ import os
 from PIL import Image
 import gradio as gr
 
-print("code-----------------", os.environ.get('CODE_ROOT'))
-print("data-----------------", os.environ.get('DATA_ROOT'))
-print("model-----------------", os.environ.get('MODEL_ROOT'))
 os.system(f'git clone --recursive -b dev https://github.com/RayTang88/BeautyMaster.git')
 
 sys.path.append(os.environ.get('CODE_ROOT')+'/BeautyMaster/')
