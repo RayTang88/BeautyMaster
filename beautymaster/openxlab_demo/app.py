@@ -15,7 +15,7 @@ from beautymaster.demo.infer import Interface, parse_opt
 
 os.system(f"cd ..")
 
-example_path = os.path.join(os.environ.get('CODE_ROOT'),"/BeautyMaster/beautymaster/openxlab_demo/simple_data/")
+example_path = os.environ.get('DATA_ROOT')
 
 upper_list = os.listdir(os.path.join(example_path,"upper_body/images/"))
 upper_list_path = [os.path.join(example_path,"upper_body/images/",garm) for garm in upper_list]
