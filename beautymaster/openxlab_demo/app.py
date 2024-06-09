@@ -13,18 +13,23 @@ from beautymaster.demo.infer import Interface, parse_opt
 os.system(f"cd ..")
 
 example_path = os.environ.get('DATA_ROOT')
+upper_path = example_path+"upper_body/images/"
+upper_list = os.listdir(upper_path)
+upper_list_path = [upper_path+garm for garm in upper_list]
 
-upper_list = os.listdir(os.path.join(example_path,"upper_body/images/"))
-upper_list_path = [os.path.join(example_path,"upper_body/images/",garm) for garm in upper_list]
+lower_path = example_path+"lower_body/images/"
+lower_list = os.listdir(lower_path)
+lower_list_path = [lower_path+garm for garm in lower_list]
 
-lower_list = os.listdir(os.path.join(example_path,"upper_body/images/"))
-lower_list_path = [os.path.join(example_path,"upper_body/images/",garm) for garm in lower_list]
+dresses_path = example_path+"dresses/images/"
+dresses_list = os.listdir(dresses_path)
+dresses_list_path = [dresses_path+garm for garm in dresses_list]
 
-dresses_list = os.listdir(os.path.join(example_path,"upper_body/images/"))
-dresses_list_path = [os.path.join(example_path,"upper_body/images/",garm) for garm in dresses_list]
+human_path = example_path+"fullbody/images/"
+human_list = os.listdir(human_path)
+human_list_path = [human_path+human for human in human_list]
 
-human_list = os.listdir(os.path.join(example_path,"fullbody/images/"))
-human_list_path = [os.path.join(example_path,"fullbody/images/",human) for human in human_list]
+print("dir-------------", upper_path,lower_path, dresses_path, human_path)
 
 def cc(image):
     if image.mode in ('RGBA', 'LA'):
