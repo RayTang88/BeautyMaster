@@ -30,7 +30,6 @@ human_path = example_path+"fullbody/images/"
 human_list = os.listdir(human_path)
 human_list_path = [human_path+human for human in human_list]
 
-print("dir-------------",upper_path, human_path)
 
 def cc(image):
     if image.mode in ('RGBA', 'LA'):
