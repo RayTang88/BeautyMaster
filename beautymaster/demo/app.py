@@ -8,38 +8,40 @@ from beautymaster.demo.infer import Interface, parse_opt
 
 example_path = os.environ.get('DATA_ROOT')
 
-upper_list = os.listdir(os.path.join(example_path,"upper_body/images/"))
-upper_list_path = [os.path.join(example_path,"upper_body/images/",garm) for garm in upper_list]
+# upper_list = os.listdir(os.path.join(example_path,"DressCode/upper_body/images/"))
+# upper_list_path = [os.path.join(example_path,"DressCode/upper_body/images/",garm) for garm in upper_list]
 
-lower_list = os.listdir(os.path.join(example_path,"upper_body/images/"))
-lower_list_path = [os.path.join(example_path,"upper_body/images/",garm) for garm in lower_list]
+# lower_list = os.listdir(os.path.join(example_path,"DressCode/upper_body/images/"))
+# lower_list_path = [os.path.join(example_path,"DressCode/upper_body/images/",garm) for garm in lower_list]
 
-dresses_list = os.listdir(os.path.join(example_path,"upper_body/images/"))
-dresses_list_path = [os.path.join(example_path,"upper_body/images/",garm) for garm in dresses_list]
+# dresses_list = os.listdir(os.path.join(example_path,"DressCode/upper_body/images/"))
+# dresses_list_path = [os.path.join(example_path,"DressCode/upper_body/images/",garm) for garm in dresses_list]
 
-human_list = os.listdir(os.path.join(example_path,"fullbody/images/"))
-human_list_path = [os.path.join(example_path,"fullbody/images/",human) for human in human_list]
+human_list = os.listdir(os.path.join(example_path,"fullbody_cleaned/images/"))
+human_list_path = [os.path.join(example_path,"fullbody_cleaned/images/",human) for human in human_list]
+
+def set_image(match_reslult, idx):
+    clothes_img_A = Image.new("RGB", (500, 300), 'white')
+    clothes_img_B = Image.new("RGB", (500, 300), 'white')
+    match_reason = ""
+    if(len(match_reslult[idx]["images"])==1):
+        clothes_img_A = match_reslult[idx]["images"][0]
+    elif(len(match_reslult[idx]["images"])==2):
+        clothes_img_A = match_reslult[idx]["images"][0]
+        clothes_img_B = match_reslult[idx]["images"][1]
+    match_reason = match_reslult[idx]["match_reason"]    
+    return clothes_img_A, clothes_img_B, match_reason
+
+    
 
 def cc(image):
     if image.mode in ('RGBA', 'LA'):
         image = image.convert('RGB')
     return image 
-
 opt = parse_opt()
 interface = Interface(**vars(opt))
-
 def run_local(weather, season, determine, additional_requirements, full_body_image_path):
-    
-    planA_clothes_img_A = Image.new("RGB", (500, 300), 'white')
-    planA_clothes_img_B = Image.new("RGB", (500, 300), 'white')
-    planB_clothes_img_A = Image.new("RGB", (500, 300), 'white')
-    planB_clothes_img_B = Image.new("RGB", (500, 300), 'white')
-    planC_clothes_img_A = Image.new("RGB", (500, 300), 'white')
-    planC_clothes_img_B = Image.new("RGB", (500, 300), 'white')
-    planA_match_reason = ""
-    planB_match_reason = ""
-    planC_match_reason = ""
-    
+
     #RGBA-RGB
     full_body_image_path = cc(full_body_image_path["composite"])
     
@@ -50,30 +52,17 @@ def run_local(weather, season, determine, additional_requirements, full_body_ima
     additional_requirements)
     
     if len(match_reslult)==3:
-            
-        planA_clothes_img_A = match_reslult[0]["images"][0]
-        planA_clothes_img_B = match_reslult[0]["images"][1]
-        planB_clothes_img_A = match_reslult[1]["images"][0]
-        planB_clothes_img_B = match_reslult[1]["images"][1]
-        planC_clothes_img_A = match_reslult[2]["images"][0]
-        planC_clothes_img_B = match_reslult[2]["images"][1]
-        planA_match_reason = match_reslult[0]["match_reason"]
-        planB_match_reason = match_reslult[1]["match_reason"]
-        planC_match_reason = match_reslult[2]["match_reason"]
-        
+        planA_clothes_img_A, planA_clothes_img_A, planA_match_reason = set_image(match_reslult, 0)
+        planB_clothes_img_A, planB_clothes_img_A, planB_match_reason = set_image(match_reslult, 1)
+        planC_clothes_img_A, planC_clothes_img_A, planC_match_reason = set_image(match_reslult, 2)
+  
     if len(match_reslult)==2:
-        planA_clothes_img_A = match_reslult[0]["images"][0]
-        planA_clothes_img_B = match_reslult[0]["images"][1]
-        planB_clothes_img_A = match_reslult[1]["images"][0]
-        planB_clothes_img_B = match_reslult[1]["images"][1]
-        planA_match_reason = match_reslult[0]["match_reason"]
-        planB_match_reason = match_reslult[1]["match_reason"]
+        planA_clothes_img_A, planA_clothes_img_A, planA_match_reason = set_image(match_reslult, 0)
+        planB_clothes_img_A, planB_clothes_img_A, planB_match_reason = set_image(match_reslult, 1)
         
     if len(match_reslult)==1:
                 
-        planA_clothes_img_A = match_reslult[0]["images"][0]
-        planA_clothes_img_B = match_reslult[0]["images"][1]
-        planA_match_reason = match_reslult[0]["match_reason"]
+        planA_clothes_img_A, planA_clothes_img_A, planA_match_reason = set_image(match_reslult, 0)
 
     return planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason   
 
@@ -182,9 +171,9 @@ with image_blocks as Match:
                 with gr.Row():
                     is_checked_crop = gr.Checkbox(label="Yes", info="Use auto-crop & resizing",value=False)
             # fullbody_img = gr.Image(label="fullbody", sources='upload', type="pil")
-            season = gr.Dropdown(choices=["春季","夏季","秋季","冬季"], label="季节", value="春季")
-            weather = gr.Dropdown(choices=["零下10摄氏度","0摄氏度","10摄氏度","20摄氏度","30摄氏度"], label="温度", value="零下10摄氏度")
-            determine = gr.Dropdown(choices=["约会","逛街","晚宴","工作"], label="目的", value="约会")
+            season = gr.Dropdown(choices=["春季","夏季","秋季","冬季"], label="季节", value="夏季")
+            weather = gr.Dropdown(choices=["零下10摄氏度左右","0摄氏度左右","10摄氏度左右","20摄氏度左右","30摄氏度左右", "40摄氏度左右"], label="温度", value="40摄氏度左右")
+            determine = gr.Dropdown(choices=["约会","逛街","晚宴","工作"], label="目的", value="逛街")
             additional_requirements = gr.Textbox(placeholder="描述您对搭配的特殊需求 ex) 简洁大方，美丽动人", show_label=True, elem_id="prompt")
 
             example = gr.Examples(
@@ -259,10 +248,10 @@ with image_blocks as RAG:
             with gr.Row(elem_id="prompt-container"):
                 with gr.Row():
                     prompt = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="", show_label=False, elem_id="prompt")
-            example = gr.Examples(
-                inputs=clothes_img,
-                examples_per_page=8,
-                examples=upper_list_path)
+            # example = gr.Examples(
+            #     inputs=clothes_img,
+            #     examples_per_page=8,
+            #     examples=upper_list_path)
             
     with gr.Column():
         tryon_button = gr.Button(value="Caption")
