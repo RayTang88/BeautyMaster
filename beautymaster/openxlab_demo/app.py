@@ -13,22 +13,34 @@ os.system(f'cd ./BeautyMaster && python beautymaster/openxlab_demo/download.py')
 os.system(f"cd ..")
 
 example_path = os.environ.get('DATA_ROOT')
-upper_path = example_path+"upper_body/images/"
+# upper_path = example_path+"upper_body/images/"
 
-upper_list = os.listdir(upper_path)
-upper_list_path = [upper_path+garm for garm in upper_list]
+# upper_list = os.listdir(upper_path)
+# upper_list_path = [upper_path+garm for garm in upper_list]
 
-lower_path = example_path+"lower_body/images/"
-lower_list = os.listdir(lower_path)
-lower_list_path = [lower_path+garm for garm in lower_list]
+# lower_path = example_path+"lower_body/images/"
+# lower_list = os.listdir(lower_path)
+# lower_list_path = [lower_path+garm for garm in lower_list]
 
-dresses_path = example_path+"dresses/images/"
-dresses_list = os.listdir(dresses_path)
-dresses_list_path = [dresses_path+garm for garm in dresses_list]
+# dresses_path = example_path+"dresses/images/"
+# dresses_list = os.listdir(dresses_path)
+# dresses_list_path = [dresses_path+garm for garm in dresses_list]
 
 human_path = example_path+"fullbody/images/"
 human_list = os.listdir(human_path)
 human_list_path = [human_path+human for human in human_list]
+
+def set_image(match_reslult, idx):
+    clothes_img_A = Image.new("RGB", (500, 300), 'white')
+    clothes_img_B = Image.new("RGB", (500, 300), 'white')
+    match_reason = ""
+    if(len(match_reslult[idx]["images"])==1):
+        clothes_img_A = match_reslult[idx]["images"][0]
+    elif(len(match_reslult[idx]["images"])==2):
+        clothes_img_A = match_reslult[idx]["images"][0]
+        clothes_img_B = match_reslult[idx]["images"][1]
+    match_reason = match_reslult[idx]["match_reason"]    
+    return clothes_img_A, clothes_img_B, match_reason
 
 
 def cc(image):
@@ -36,22 +48,11 @@ def cc(image):
         image = image.convert('RGB')
     return image 
 
-
+opt = parse_opt()
+interface = Interface(**vars(opt))
 
 def run_local(weather, season, determine, additional_requirements, full_body_image_path):
 
-    opt = parse_opt()
-    interface = Interface(**vars(opt))
-    
-    planA_clothes_img_A = Image.new("RGB", (500, 300), 'white')
-    planA_clothes_img_B = Image.new("RGB", (500, 300), 'white')
-    planB_clothes_img_A = Image.new("RGB", (500, 300), 'white')
-    planB_clothes_img_B = Image.new("RGB", (500, 300), 'white')
-    planC_clothes_img_A = Image.new("RGB", (500, 300), 'white')
-    planC_clothes_img_B = Image.new("RGB", (500, 300), 'white')
-    planA_match_reason = ""
-    planB_match_reason = ""
-    planC_match_reason = ""
     #RGBA-RGB
     full_body_image_path = cc(full_body_image_path["composite"])
     match_reslult, _ = interface.match(weather,
@@ -61,30 +62,17 @@ def run_local(weather, season, determine, additional_requirements, full_body_ima
     additional_requirements)
     
     if len(match_reslult)==3:
-            
-        planA_clothes_img_A = match_reslult[0]["images"][0]
-        planA_clothes_img_B = match_reslult[0]["images"][1]
-        planB_clothes_img_A = match_reslult[1]["images"][0]
-        planB_clothes_img_B = match_reslult[1]["images"][1]
-        planC_clothes_img_A = match_reslult[2]["images"][0]
-        planC_clothes_img_B = match_reslult[2]["images"][1]
-        planA_match_reason = match_reslult[0]["match_reason"]
-        planB_match_reason = match_reslult[1]["match_reason"]
-        planC_match_reason = match_reslult[2]["match_reason"]
+        planA_clothes_img_A, planA_clothes_img_A, planA_match_reason = set_image(match_reslult, 0)
+        planB_clothes_img_A, planB_clothes_img_A, planB_match_reason = set_image(match_reslult, 1)
+        planC_clothes_img_A, planC_clothes_img_A, planC_match_reason = set_image(match_reslult, 2)
         
     if len(match_reslult)==2:
-        planA_clothes_img_A = match_reslult[0]["images"][0]
-        planA_clothes_img_B = match_reslult[0]["images"][1]
-        planB_clothes_img_A = match_reslult[1]["images"][0]
-        planB_clothes_img_B = match_reslult[1]["images"][1]
-        planA_match_reason = match_reslult[0]["match_reason"]
-        planB_match_reason = match_reslult[1]["match_reason"]
+        planA_clothes_img_A, planA_clothes_img_A, planA_match_reason = set_image(match_reslult, 0)
+        planB_clothes_img_A, planB_clothes_img_A, planB_match_reason = set_image(match_reslult, 1)
         
     if len(match_reslult)==1:
                 
-        planA_clothes_img_A = match_reslult[0]["images"][0]
-        planA_clothes_img_B = match_reslult[0]["images"][1]
-        planA_match_reason = match_reslult[0]["match_reason"]
+        planA_clothes_img_A, planA_clothes_img_A, planA_match_reason = set_image(match_reslult, 0)
 
     return planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason   
 
