@@ -8,7 +8,7 @@ from beautymaster.src.infer_rag_recommend import RagAndRecommend
 # from beautymaster.src.try_on import TryOnInterface
 # from beautymaster.utils.show import show_func
 
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 class Interface:
     def __init__(self,
@@ -130,7 +130,7 @@ def parse_opt():
 	parser.add_argument('--reranker-model-name', nargs='+', type=str, default='/bce-reranker-base_v1/', help='')
 	parser.add_argument('--save-path', type=str, default=os.environ.get('DATA_ROOT'), help='save results to project/name')
 	parser.add_argument('--get-num-list', nargs='+', type=int, default=[1, 1, 0, 0], help='model and number of cloth candidates')
-	parser.add_argument('--meaning-list', nargs='+', type=str, default=["我的形象特征", "上衣", "裤子", "裙子"], help='The meaning of each item in num_list')
+	parser.add_argument('--meaning-list', nargs='+', type=str, default=["我的形象特征", "上衣", "裤子", "半身裙", "连衣裙"], help='The meaning of each item in num_list')
 	# parser.add_argument('--weather', type=str, default='30~35摄氏度', help='weather')
 	# parser.add_argument('--season', type=str, default='夏季', help='season')
 	# parser.add_argument('--determine', type=str, default='约会', help='determine')
@@ -138,7 +138,7 @@ def parse_opt():
 	parser.add_argument('--top-n', type=int, default=5, help='rag num')
 	parser.add_argument('--csv-data-path', type=str, default=os.environ.get('DATA_ROOT')+"/DressCode/right_sample_style.csv", help='content')
 	# parser.add_argument('--full-body-image-path', type=str, default='/group_share/data_org/test_data/fullbody/real_image/v2-637c977c47e7794caa8cc80e12f1a369_r.jpg', help='content')
-	parser.add_argument('--available-types', nargs='+', type=str, default=["上衣", "裤子", "裙子"], help='available types')
+	parser.add_argument('--available-types', nargs='+', type=str, default=["上衣", "裤子", "半身裙", "连衣裙"], help='available types')
 	parser.add_argument('--only-use-vlm', nargs='+', type=bool, default=False, help='available types')
 	# parser.add_argument('--additional-requirements', type=str, default='搭配简单大方', help='additional requirements')
 	opt = parser.parse_args()

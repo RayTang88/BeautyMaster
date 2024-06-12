@@ -38,6 +38,9 @@ def creat_database(right_csv_name, error_csv_name):
                             
                             category = root.split("/")[-2]
                             
+                            if "lower_body" != category:
+                                  continue
+                            
                             caption_json, caption_string = interface.caption(image_path)
                             print("idx:%d %s %s"%(i, image_path, caption_string))
                             flag = False
@@ -45,11 +48,14 @@ def creat_database(right_csv_name, error_csv_name):
                                   flag = True
                             if category == "lower_body" and caption_json["category"] == "裤子":
                                   flag = True
-                            if category == "dresses" and caption_json["category"] == "裙子":
+                            if category == "lower_body" and caption_json["category"] == "半身裙":
                                   flag = True
+                            if category == "dresses" and caption_json["category"] == "连衣裙":
+                                  flag = True      
                             data_dict = {}
                             idx = os.path.basename(image_path).replace(".jpg", "")
                             data_dict["id"] = idx
+                            data_dict["category"] = category
                             data_dict["content"] = caption_string
                             if flag:          
                               data_right.append(data_dict)
@@ -69,8 +75,8 @@ def creat_database(right_csv_name, error_csv_name):
                     
 
 def main():
-  right_csv_name = "/group_share/data_org/DressCode/right_sample_style.csv"
-  error_csv_name = "/group_share/data_org/DressCode/error_sample_style.csv"
+  right_csv_name = "/group_share/data_org/DressCode/right_sample_style_sup.csv"
+  error_csv_name = "/group_share/data_org/DressCode/error_sample_style_sup.csv"
   creat_database(right_csv_name, error_csv_name)
       
 

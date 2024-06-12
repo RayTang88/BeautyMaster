@@ -104,7 +104,7 @@ class RagAndRecommend():
         #这个接口1.先根据全身照，描述全身照的身材；2.根据身材llm推荐搭配；3.根据推荐的搭配在数据库里面RAG搜索相似的；4.让他模型在RAG推荐的里面搭配三套，由粗到细。这个接口实现了1,2,3的功能
 
             body_shape_response = self.vlm.infer_vlm_body_shape_func(full_body_image_path, body_shape, body_out_format)
-            match_text, body_shape_descs, gender = self.llm.infer_llm_single_recommend(season, weather, determine, body_shape_response, additional_requirements)
+            match_text, body_shape_descs, gender = self.llm.infer_llm_single_recommend(season, weather, determine, body_shape_response, additional_requirements, self.available_types)
             
         good_json_obj = repair_json(match_text, return_objects=True)
         # print("good_json_obj llm recommend ", good_json_obj)
@@ -130,8 +130,8 @@ class RagAndRecommend():
     
     def infer_llm_raged_recommend_interface(self, full_body_image_path, season, weather, determine, additional_requirements):
         
-        similar_items, body_shape_descs, gender = self.infer_rag_4o_like_func(full_body_image_path, season, weather, determine, additional_requirements)
-        recommended = self.llm.infer_llm_recommend_raged(season, weather, determine, similar_items, body_shape_descs, gender)
+        similar_items, body_shape_descs, gender = self.infer_rag_4o_like_func(full_body_image_path, season, weather, determine, additional_requirements, self.available_types)
+        recommended = self.llm.infer_llm_recommend_raged(season, weather, determine, additional_requirements, similar_items, body_shape_descs, gender)
         
         return recommended, body_shape_descs
     
@@ -146,7 +146,7 @@ class RagAndRecommend():
         good_json_obj = repair_json(caption_response, return_objects=True)
         
         good_json_obj["items"].insert(0, good_json_obj["category"])
-        item_descs = good_json_obj["items"]
+        # item_descs = good_json_obj["items"]
         clothes_shape_descs = '、'.join(good_json_obj["items"])
         
         return good_json_obj, clothes_shape_descs
@@ -183,7 +183,7 @@ class RagAndRecommend():
                     elif "裤子" == category:
                         clothes_path = "/group_share/data_org/DressCode/lower_body/images/" + match_id.split('_')[0]+"_1.jpg"
                     elif "裙子" == category:
-                        clothes_path = "/group_share/data_org/DressCode/dresses/images/" + match_id.split('_')[0]+"_1.jpg"   
+                        clothes_path = "/group_share/data_org/DressCode/dresses/images/" + match_id.split('_')[0]+"_1.jpg"
                     image = Image.open(clothes_path)
                         
                     images.append(image)

@@ -182,8 +182,6 @@ def move_picture(save_txt, error_txt, cleaned_folder, clean_aligned_txt):
     f.close()
     aligned_txt.close()
     fe.close()
-    
-
 
 
 if __name__ == "__main__":
