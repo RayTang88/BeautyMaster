@@ -1,8 +1,9 @@
-from lmdeploy import pipeline, TurbomindEngineConfig
-from lmdeploy.vl import load_image
 import os
 import json
+import pandas as pd
 from tqdm import tqdm 
+from lmdeploy import pipeline, TurbomindEngineConfig
+from lmdeploy.vl import load_image
 
 
 def save_json(data, json_name):
@@ -182,6 +183,50 @@ def move_picture(save_txt, error_txt, cleaned_folder, clean_aligned_txt):
     f.close()
     aligned_txt.close()
     fe.close()
+    
+def readcsv(csv_path, save_path):
+    import csv
+    dress_image_list = os.listdir("/root/data_org/DressCode/dresses/images")
+    # lower_image_list = os.listdir("/root/data_org/DressCode/lower_body/images")
+    upper_image_list = os.listdir("/root/data_org/DressCode/upper_body/images")
+    dress_list = [dress.replace(".jpg", "")  for dress in dress_image_list]
+    # lower_list = [lower.replace(".jpg", "")  for lower in lower_image_list]
+    upper_list = [upper.replace(".jpg", "")  for upper in upper_image_list]
+    result = []
+    with open(csv_path, 'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            idd = row["id"]
+            content = row["content"]
+            idx = row["idx"]
+            category = content.split('、')[0]
+            category_e=""
+            if category == "上衣":
+                if idx in upper_list:
+                    category_e = "uppper_body"
+                else:
+                    continue    
+            elif category == "裤子":
+                continue
+            elif category == "裙子":
+                if idx in dress_list:
+                    category_e = "dresses"
+                    content_c = content.replace("裙子", "连衣裙")
+                    row["content"] = content_c
+                else:
+                    continue    
+            row["category"] = category_e
+            result.append(row)
+    df_right = pd.DataFrame(result)
+    df_right = df_right[["id", "idx", "category", "content"]]
+    df_right.to_csv(save_path, index=False)
+       
+            
+    return result
+    
+    
+    
+    
 
 
 if __name__ == "__main__":
@@ -194,8 +239,12 @@ if __name__ == "__main__":
     # clean_write(save_txt, error_txt, cleaned_yolo, cleaned_yolo_vl1_5)
     clean_aligned_txt = "/root/data/clean_align.txt"
 
-    move_picture(save_txt, error_txt, cleaned_yolo_vl1_5, clean_aligned_txt)
+    # move_picture(save_txt, error_txt, cleaned_yolo_vl1_5, clean_aligned_txt)
     # image_path = "/root/data/fullbody_cleaned/1839_F_Baidu_Female_workplace_pic2.jpg"
     # test_single(image_path)
+    
+    csv_path = "/root/data_org/DressCode/right_sample_style.csv"
+    save_path = "/root/data_org/DressCode/right_sample_style_correct.csv"
+    readcsv(csv_path, save_path)
     
    
