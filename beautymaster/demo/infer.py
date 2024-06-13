@@ -52,8 +52,13 @@ class Interface:
             None
         
         """
+        quantstrings = ["awq", "AWQ", "4bits"]
+        matches_vlm = [s for s in quantstrings if s in vlm_weight_name]
+        matches_llm = [s for s in quantstrings if s in llm_weight_name]
+        vlm_awq=True if matches_vlm else False
+        llm_awq=True if matches_llm else False
         
-        self.ragandrecommend = RagAndRecommend(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path, vlm_weight_name, llm_weight_name, available_types, only_use_vlm)
+        self.ragandrecommend = RagAndRecommend(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path, vlm_weight_name, vlm_awq, llm_weight_name, llm_awq, available_types, only_use_vlm)
         self.save_path = save_path 
         
         # self.tryon = TryOnInterface(weights_path, code_root_path)
@@ -84,7 +89,7 @@ class Interface:
                 return match_result, body_shape_descs
             except Exception as e:
                 Cycles+=1
-                print(f"error: {e}, try again...")
+                print(f"Cycles: {Cycles}/5, error: {e}, try again...")
                 time.sleep(1)  # wait 1 minute
                 
     def tryon(self,
@@ -132,15 +137,15 @@ class Interface:
                 return caption_json, caption_string
             except Exception as e:
                 Cycles+=1
-                print(f"error: {e}, try again...")
+                print(f"Cycles: {Cycles}/5, error: {e}, try again...")
                 time.sleep(1)  # wait 1 minute
 
 def parse_opt():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--weights-path', nargs='+', type=str, default=os.environ.get('MODEL_ROOT'), help='model path(s)')
 	parser.add_argument('--code-root-path', nargs='+', type=str, default=os.environ.get('CODE_ROOT'), help='model path(s)')
-	parser.add_argument('--vlm-weight-name', nargs='+', type=str, default='/InternVL-Chat-V1-5-AWQ/', help='')
-	parser.add_argument('--llm-weight-name', nargs='+', type=str, default='/internlm2-chat-20b-4bits/', help='')
+	parser.add_argument('--vlm-weight-name', nargs='+', type=str, default='/MiniCPM-Llama3-V-2_5/', help='')
+	parser.add_argument('--llm-weight-name', nargs='+', type=str, default='/internlm2-chat-7b/', help='')
 	parser.add_argument('--embedding-model-name', nargs='+', type=str, default='/bce-embedding-base_v1/', help='')
 	parser.add_argument('--reranker-model-name', nargs='+', type=str, default='/bce-reranker-base_v1/', help='')
 	parser.add_argument('--save-path', type=str, default=os.environ.get('DATA_ROOT'), help='save results to project/name')

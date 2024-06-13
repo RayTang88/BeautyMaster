@@ -14,13 +14,15 @@ class RagAndRecommend():
                  reranker_model_name,
                  top_n, csv_data_path,
                  vlm_weight_name,
+                 vlm_awq,
                  llm_weight_name, 
+                 llm_awq,
                  available_types, 
                  only_use_vlm):
         
         self.bceEmbeddingRetriever = BceEmbeddingRetriever(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path)
-        self.vlm = VLM(weights_path, vlm_weight_name)
-        self.llm = LLM(weights_path, llm_weight_name)
+        self.vlm = VLM(weights_path, vlm_weight_name, vlm_awq)
+        self.llm = LLM(weights_path, llm_weight_name, llm_awq)
         
         self.available_types = available_types
         self.only_use_vlm = only_use_vlm

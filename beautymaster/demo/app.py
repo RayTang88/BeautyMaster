@@ -3,6 +3,12 @@ import os
 from PIL import Image
 import gradio as gr
 
+
+if os.environ.get('openxlab'):
+    os.system(f'git clone --recursive -b dev https://github.com/RayTang88/BeautyMaster.git')
+    os.system(f'cd ./BeautyMaster && python beautymaster/openxlab_demo/download.py')
+    os.system(f"cd ..")
+    
 sys.path.append(os.environ.get('CODE_ROOT')+'BeautyMaster/')
 from beautymaster.demo.infer import Interface, parse_opt
 
