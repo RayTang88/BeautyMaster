@@ -183,8 +183,11 @@ def move_picture(save_txt, error_txt, cleaned_folder, clean_aligned_txt):
     f.close()
     aligned_txt.close()
     fe.close()
-    
-def readcsv(csv_path, save_path):
+
+# This function is used to process the document right_sample_style.csv: 
+# 1. Change the category of skirt to dress; 
+# 2. Remove all the data of pants and prepare to replace them with the file in right_sample_style_sup.csv.
+def correct_csv(csv_path, save_path):
     import csv
     dress_image_list = os.listdir("/root/data_org/DressCode/dresses/images")
     # lower_image_list = os.listdir("/root/data_org/DressCode/lower_body/images")
@@ -223,11 +226,32 @@ def readcsv(csv_path, save_path):
        
             
     return result
-    
-    
-    
-    
 
+# Merge two csv files and make the id fields consecutive
+def merge_csv(csv_path, csv_path_sup, save_path):
+
+    df1 = pd.read_csv(csv_path)
+
+    df2 = pd.read_csv(csv_path_sup)
+
+    combined_df = pd.concat([df1, df2], ignore_index=True)
+
+    # Reset the id field to make it continuous
+    combined_df['id'] = range(len(combined_df))
+
+    output_csv_file_path = save_path
+    combined_df.to_csv(output_csv_file_path, index=False)
+    
+# Remove the useless id column
+def remove_csv_columns(save_path, removed_path):
+
+    df = pd.read_csv(save_path)
+    
+    df.drop('id', axis=1, inplace=True)
+
+    output_csv_file_path = removed_path
+    df.to_csv(output_csv_file_path, index=False)   
+  
 
 if __name__ == "__main__":
     root_dir = "/root/data/fullbody/"
@@ -243,8 +267,20 @@ if __name__ == "__main__":
     # image_path = "/root/data/fullbody_cleaned/1839_F_Baidu_Female_workplace_pic2.jpg"
     # test_single(image_path)
     
-    csv_path = "/root/data_org/DressCode/right_sample_style.csv"
-    save_path = "/root/data_org/DressCode/right_sample_style_correct.csv"
-    readcsv(csv_path, save_path)
+    # csv_path = "/root/data_org/DressCode/right_sample_style.csv"
+    # save_path = "/root/data_org/DressCode/right_sample_style_correct.csv"
+    # readcsv(csv_path, save_path)
     
-   
+    csv_path = "/root/data_org/DressCode/right_sample_style_correct.csv"
+    csv_path_sup = "/root/data_org/DressCode/right_sample_style_sup.csv"
+    save_path = "/root/data_org/DressCode/right_sample_style_correct_sup.csv"
+    
+    # csv_path = "/root/data_org/r_test_new.csv"
+    # csv_path_sup = "/root/data_org/r_test_new2.csv"
+    # save_path = "/root/data_org/right_sample_style_correct_sup.csv"
+    # merge_csv(csv_path, csv_path_sup, save_path)
+    
+    save_path = "/root/code/BeautyMaster/beautymaster/openxlab_demo/simple_data/right_sample_style_sup.csv"
+    removed_path = "/root/code/BeautyMaster/beautymaster/openxlab_demo/simple_data/right_sample_style_correct_sup_removed.csv"
+    remove_csv_columns(save_path, removed_path)
+    

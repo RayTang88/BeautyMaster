@@ -1,5 +1,5 @@
 import os
-import sys
+import time
 import argparse
 import warnings
 warnings.filterwarnings('ignore')
@@ -66,18 +66,27 @@ class Interface:
             additional_requirements=""
             ):
         
-        #1 use llm after rag 4o like
-        llm_recommended, body_shape_descs = self.ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
-        
-        #2.Virtual Try-on according the suggestions
-        # match_result = self.tryon.try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
-        match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
-        # print(match_result)
-        #3.Visualize the results of the suggestions to the user
-        # show_func(match_result, self.save_path)
-        
-        return match_result, body_shape_descs
+        # Infinite loop until the code executes successfully
+        Cycles=0
+        while Cycles<5:
+            try:
+                #1 use llm after rag 4o like
     
+                llm_recommended, body_shape_descs = self.ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
+                
+                #2.Virtual Try-on according the suggestions
+                # match_result = self.tryon.try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
+                match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
+                # print(match_result)
+                #3.Visualize the results of the suggestions to the user
+                # show_func(match_result, self.save_path)
+
+                return match_result, body_shape_descs
+            except Exception as e:
+                Cycles+=1
+                print(f"error: {e}, try again...")
+                time.sleep(1)  # wait 1 minute
+                
     def tryon(self,
         clothes="",
         full_body_image_path="",
@@ -110,15 +119,21 @@ class Interface:
             clothes_path="",
             ):
         
-        #1. get clothes caption
-        caption_json, caption_string = self.ragandrecommend.infer_vlm_caption(clothes_path)
+        # Infinite loop until the code executes successfully
+        Cycles=0
+        while Cycles<5:
+            try:
         
-        # print("caption", caption_string)
-        #2. write database
-        
-        
-        return caption_json, caption_string
-        
+                #1. get clothes caption
+                caption_json, caption_string = self.ragandrecommend.infer_vlm_caption(clothes_path)
+                
+                # print("caption", caption_string)
+                #2. write database
+                return caption_json, caption_string
+            except Exception as e:
+                Cycles+=1
+                print(f"error: {e}, try again...")
+                time.sleep(1)  # wait 1 minute
 
 def parse_opt():
 	parser = argparse.ArgumentParser()
@@ -136,10 +151,10 @@ def parse_opt():
 	# parser.add_argument('--determine', type=str, default='约会', help='determine')
 	parser.add_argument('--content', type=str, default='images', help='content')
 	parser.add_argument('--top-n', type=int, default=5, help='rag num')
-	parser.add_argument('--csv-data-path', type=str, default=os.environ.get('DATA_ROOT')+"/DressCode/right_sample_style.csv", help='content')
+	parser.add_argument('--csv-data-path', type=str, default=os.environ.get('DATA_ROOT')+"/right_sample_style_correct_sup_removed.csv", help='content')
 	# parser.add_argument('--full-body-image-path', type=str, default='/group_share/data_org/test_data/fullbody/real_image/v2-637c977c47e7794caa8cc80e12f1a369_r.jpg', help='content')
 	parser.add_argument('--available-types', nargs='+', type=str, default=["上衣", "裤子", "半身裙", "连衣裙"], help='available types')
-	parser.add_argument('--only-use-vlm', nargs='+', type=bool, default=False, help='available types')
+	parser.add_argument('--only-use-vlm', nargs='+', type=bool, default=False, help='only use vlm')
 	# parser.add_argument('--additional-requirements', type=str, default='搭配简单大方', help='additional requirements')
 	opt = parser.parse_args()
 

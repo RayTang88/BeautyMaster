@@ -24,12 +24,10 @@ class BceEmbeddingRetriever():
             'device': 'cuda',
             'use_fp16': True
         }
-        self.reranker = BCERerank(**reranker_args)
-        
-        self.csv_data_path = csv_data_path
+        reranker = BCERerank(**reranker_args)
         
         # init documents
-        documents = CSVLoader(self.csv_data_path).load()
+        documents = CSVLoader(csv_data_path, metadata_columns = ["idx"]).load()
 
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500,
                                                     chunk_overlap=0)
@@ -46,7 +44,7 @@ class BceEmbeddingRetriever():
                 })
 
         self.compression_retriever = ContextualCompressionRetriever(
-            base_compressor=self.reranker, base_retriever=retriever)
+            base_compressor=reranker, base_retriever=retriever)
 
 
     def bce_retriever(self, item_dicts):

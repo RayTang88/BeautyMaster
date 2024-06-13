@@ -19,7 +19,6 @@ class RagAndRecommend():
                  only_use_vlm):
         
         self.bceEmbeddingRetriever = BceEmbeddingRetriever(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path)
-                
         self.vlm = VLM(weights_path, vlm_weight_name)
         self.llm = LLM(weights_path, llm_weight_name)
         
@@ -97,17 +96,23 @@ class RagAndRecommend():
 
     def infer_rag_4o_like_func(self, full_body_image_path, season, weather, determine, additional_requirements):
         
-        #这个接口完全参照4o，根据全身照，推荐搭配，internvl给出的结果和提供的图片穿着有很大关系,搭配的结果不太理想，未启用状态
+        #This interface is completely based on 4o. It recommends matching according to the full-body photo. 
+        # The result given by internvl is closely related to the clothes in the provided picture. 
+        # The matching result is not ideal and is not enabled.
         if self.only_use_vlm:
             match_text = self.vlm.infer_vlm_4o_like_func(full_body_image_path, season, weather, determine)
         else: 
-        #这个接口1.先根据全身照，描述全身照的身材；2.根据身材llm推荐搭配；3.根据推荐的搭配在数据库里面RAG搜索相似的；4.让他模型在RAG推荐的里面搭配三套，由粗到细。这个接口实现了1,2,3的功能
+        #This interface 1. first describes the body shape of the full-body photo; 
+        # 2. recommends matching according to the body shape; 
+        # 3. searches for similar matching in the database RAG based on the recommended matching; 
+        # 4. lets the model match three sets of matching in the RAG recommendation, from coarse to fine. 
+        # This interface implements the functions of 1, 2, and 3.
 
             body_shape_response = self.vlm.infer_vlm_body_shape_func(full_body_image_path, body_shape, body_out_format)
             match_text, body_shape_descs, gender = self.llm.infer_llm_single_recommend(season, weather, determine, body_shape_response, additional_requirements, self.available_types)
             
         good_json_obj = repair_json(match_text, return_objects=True)
-        # print("good_json_obj llm recommend ", good_json_obj)
+        print("good_json_obj rough llm recommend ", good_json_obj)
         item_descs = good_json_obj["items"]
         category_descs = good_json_obj["category"]
         
@@ -129,8 +134,9 @@ class RagAndRecommend():
         return similar_items, body_shape_descs, gender
     
     def infer_llm_raged_recommend_interface(self, full_body_image_path, season, weather, determine, additional_requirements):
-        
-        similar_items, body_shape_descs, gender = self.infer_rag_4o_like_func(full_body_image_path, season, weather, determine, additional_requirements, self.available_types)
+        #rag
+        similar_items, body_shape_descs, gender = self.infer_rag_4o_like_func(full_body_image_path, season, weather, determine, additional_requirements)
+        #llm recomend
         recommended = self.llm.infer_llm_recommend_raged(season, weather, determine, additional_requirements, similar_items, body_shape_descs, gender)
         
         return recommended, body_shape_descs
@@ -173,22 +179,28 @@ class RagAndRecommend():
             images = []
             
             for category, match_id, match_caption in zip(match_category_list, match_id_list, match_caption_list):
-                try:
+                # try:
+                data_root = os.environ.get('DATA_ROOT')
+            
+                if "上衣" == category:
+                    # idx = match_category_list.index("上衣")
+                    # match_id =match_id_list[idx]
+                    # match_caption =match_caption_list[idx]
+                    # The match_id field is in the form of 'match_id': ['idx: 050040_1', 'idx: 019252_1']
+                    clothes_path = data_root + "/upper_body/images/" + match_id.replace("idx: ", "").split('_')[0] + "_1.jpg"
+                elif "裤子" == category:
+                    clothes_path = data_root + "/lower_body/images/" +match_id.replace("idx: ", "").split('_')[0] + "_1.jpg"
+                elif "半身裙" == category:
+                    clothes_path = data_root + "/lower_body/images/" + match_id.replace("idx: ", "").split('_')[0] + "_1.jpg"
+                elif "连衣裙" == category:
+                    clothes_path = data_root + "/dresses/images/" + match_id.replace("idx: ", "").split('_')[0] +"_1.jpg"    
+                print(os.path.exists(clothes_path), clothes_path)    
+                image = Image.open(clothes_path)
                 
-                    if "上衣" == category:
-                        # idx = match_category_list.index("上衣")
-                        # match_id =match_id_list[idx]
-                        # match_caption =match_caption_list[idx]
-                        clothes_path = "/group_share/data_org/DressCode/upper_body/images/" + match_id.split('_')[0]+"_1.jpg"
-                    elif "裤子" == category:
-                        clothes_path = "/group_share/data_org/DressCode/lower_body/images/" + match_id.split('_')[0]+"_1.jpg"
-                    elif "裙子" == category:
-                        clothes_path = "/group_share/data_org/DressCode/dresses/images/" + match_id.split('_')[0]+"_1.jpg"
-                    image = Image.open(clothes_path)
-                        
-                    images.append(image)
-                except FileNotFoundError:
-                    continue
+                    
+                images.append(image)
+                # except FileNotFoundError:
+                #     continue
                         
             match_dict["images"] = images
             match_result.append(match_dict)

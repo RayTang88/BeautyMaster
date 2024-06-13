@@ -12,18 +12,8 @@ from beautymaster.demo.infer import Interface, parse_opt
 def creat_database(right_csv_name, error_csv_name):
   opt = parse_opt()
   interface = Interface(**vars(opt))
-  source="/group_share/data_org/DressCode/"
+  source="/root/code/BeautyMaster/beautymaster/openxlab_demo/simple_data/"
 
-  # model_candidate_clothes_jsons = infer_rag_func(source, get_num_list, flag) #for test, now get list randomly.
-
-  # # decrease the ratio of the k/v cache occupation to 20%
-  # backend_config = TurbomindEngineConfig(cache_max_entry_count=0.2, session_len=8190)
-  # pipe = pipeline('/group_share/model/internlm2-chat-20b_TurboMind/',
-  #                 backend_config=backend_config)
-
-  # parsed_list = llm_recommand(pipe, model_candidate_clothes_jsons, get_num_list, meaning_list)
-  
-  # print(describe)
   data_right = []
   data_error = []
   i = 0
@@ -38,7 +28,7 @@ def creat_database(right_csv_name, error_csv_name):
                             
                             category = root.split("/")[-2]
                             
-                            if "lower_body" != category:
+                            if "fullbody" == category:
                                   continue
                             
                             caption_json, caption_string = interface.caption(image_path)
@@ -54,7 +44,7 @@ def creat_database(right_csv_name, error_csv_name):
                                   flag = True      
                             data_dict = {}
                             idx = os.path.basename(image_path).replace(".jpg", "")
-                            data_dict["id"] = idx
+                            data_dict["idx"] = idx
                             data_dict["category"] = category
                             data_dict["content"] = caption_string
                             if flag:          
@@ -67,18 +57,20 @@ def creat_database(right_csv_name, error_csv_name):
   df_right = pd.DataFrame(data_right)
   df_error = pd.DataFrame(data_error)
 
-  df_right.to_csv(right_csv_name)
-  df_error.to_csv(error_csv_name)
+  df_right.to_csv(right_csv_name, index=False)
+  df_error.to_csv(error_csv_name, index=False)
   
   print("data right number", len(data_right))
   print("data error number", len(data_error))
                     
 
 def main():
-  right_csv_name = "/group_share/data_org/DressCode/right_sample_style_sup.csv"
-  error_csv_name = "/group_share/data_org/DressCode/error_sample_style_sup.csv"
+#   right_csv_name = "/group_share/data_org/DressCode/right_sample_style_sup.csv"
+#   error_csv_name = "/group_share/data_org/DressCode/error_sample_style_sup.csv"
+  
+  right_csv_name = "/root/code/BeautyMaster/beautymaster/openxlab_demo/simple_data/right_sample_style.csv"
+  error_csv_name = "/root/code/BeautyMaster/beautymaster/openxlab_demo/simple_data/error_sample_style.csv"
   creat_database(right_csv_name, error_csv_name)
-      
 
 
 if __name__ == "__main__":

@@ -7,23 +7,24 @@ def parsing_rag_func(rag_4o_like_recommended):
     skirt=""
     dresses=""
     
-    for category, recommends in rag_4o_like_recommended.items():
+    for _, recommends in rag_4o_like_recommended.items():
         
         for recommend in recommends:
             # TODO
-            if(len(recommend.page_content.split("\n")))<3:
+            if(len(recommend.page_content.split("\n")))<2:
                 continue
-            
-            idx = recommend.page_content.split("\n")[1]
-            content = recommend.page_content.split("\n")[2]
-            if category == "上衣":
-                upper+=("%s, %s"%(idx, content))
-            if category == "裤子":
-                lower+=("%s, %s"%(idx, content))
-            if category == "半身裙":
-                skirt+=("%s, %s"%(idx, content))
-            if category == "连衣裙":
-                dresses+=("%s, %s"%(idx, content))
+            idx = recommend.metadata["idx"]
+            category_en = recommend.page_content.split("\n")[0].replace("category: ", "")
+            content = recommend.page_content.split("\n")[1].replace("content: ", "")
+            category = content.replace("content: ", "").split("、")[0]
+            if category == "上衣" and category_en == "upper_body":
+                upper+=("idx: %s, content: %s"%(idx, content))
+            if category == "裤子" and category_en == "lower_body":
+                lower+=("idx: %s, content: %s"%(idx, content))
+            if category == "半身裙" and category_en == "lower_body":
+                skirt+=("idx: %s, content: %s"%(idx, content))
+            if category == "连衣裙" and category_en == "dresses":
+                dresses+=("idx: %s, content: %s"%(idx, content))
 
     return upper, lower, skirt, dresses
     

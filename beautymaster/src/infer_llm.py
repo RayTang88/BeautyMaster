@@ -63,7 +63,7 @@ class LLM():
     #This function is the main interface for llm to make recommendations, after rag, we have get content from database of used in rag.
     def infer_llm_recommend_raged(self, season, weather, determine, additional_requirements, rag_4o_like_recommended, body_shape_descs, gender):
         
-        upper, lower, skirt, dresses = parsing_rag_func(rag_4o_like_recommended) 
+        upper, lower, skirt, dresses = parsing_rag_func(rag_4o_like_recommended)
         
         data = {"season":season, "weather":weather, "gender": gender, "determine": determine, "shape":body_shape_descs,"upper":upper, "lower":lower, "skirt":skirt, "dresses":dresses, "additional_requirements":additional_requirements, "upper_lower_format": upper_lower_format}
 
