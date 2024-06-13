@@ -1,4 +1,5 @@
 ##### python extensions start  #####
+.gitignore
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -6,6 +7,10 @@ __pycache__/
 
 # C extensions
 *.so
+
+#ttf
+
+SimSun.ttf
 
 # Distribution / packaging
 .Python
