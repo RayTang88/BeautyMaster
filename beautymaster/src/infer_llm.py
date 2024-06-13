@@ -5,12 +5,16 @@ from .prompt import match_prompt_template, match_prompt_template_raged, body_out
 from beautymaster.utils.parsing_rag import parsing_rag_func
 
 class LLM():
-    def __init__(self, weights_path, weight_name):
+    def __init__(self, weights_path, weight_name, awq):
         # decrease the ratio of the k/v cache occupation to 20%
-        backend_config = TurbomindEngineConfig(cache_max_entry_count=0.2,
+        backend_config_awq = TurbomindEngineConfig(cache_max_entry_count=0.2,
                                                model_format='awq',
                                                session_len=10240)
-        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config) 
+        
+        backend_config = TurbomindEngineConfig(cache_max_entry_count=0.2,
+                                        session_len=10240)
+        
+        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config) 
         
 
     def llm_parsing_json(self, model_candidate_clothes_jsons, get_num_list, meaning_list):
@@ -44,7 +48,7 @@ class LLM():
         return responses[0].text
 
     #This function is the main interface for llm to make recommendations.
-    def infer_llm_single_recommend(self, season, weather, determine, body_shape_response, additional_requirements):
+    def infer_llm_single_recommend(self, season, weather, determine, body_shape_response, additional_requirements, available_types):
         
         good_json_obj = repair_json(body_shape_response, return_objects=True)
         print("good_json_obj vlm discribe", good_json_obj)
@@ -53,7 +57,7 @@ class LLM():
         
         body_shape_descs = '、'.join(item_descs)
         
-        data = {"season":season, "weather":weather, "gender": gender, "determine": determine, "shape":body_shape_descs, "additional_requirements":additional_requirements, "recommend_format": recommend_format}
+        data = {"season":season, "weather":weather, "gender": gender, "determine": determine, "shape":body_shape_descs, "available_types": available_types, "additional_requirements":additional_requirements, "recommend_format": recommend_format}
         match_prompt = llm_prompt_template_4o.format(**data)
         
         responses = self.pipe([match_prompt])
@@ -61,11 +65,11 @@ class LLM():
         return responses[0].text, body_shape_descs, gender
 
     #This function is the main interface for llm to make recommendations, after rag, we have get content from database of used in rag.
-    def infer_llm_recommend_raged(self, season, weather, determine, rag_4o_like_recommended, body_shape_descs, gender):
+    def infer_llm_recommend_raged(self, season, weather, determine, additional_requirements, rag_4o_like_recommended, body_shape_descs, gender):
         
-        upper, lower, dresses = parsing_rag_func(rag_4o_like_recommended) 
+        upper, lower, skirt, dresses = parsing_rag_func(rag_4o_like_recommended)
         
-        data = {"season":season, "weather":weather, "gender": gender, "determine": determine, "shape":body_shape_descs,"upper":upper, "lower":lower, "dresses":dresses, "order":"搭配风格需要简洁大方", "upper_lower_format": upper_lower_format}
+        data = {"season":season, "weather":weather, "gender": gender, "determine": determine, "shape":body_shape_descs,"upper":upper, "lower":lower, "skirt":skirt, "dresses":dresses, "additional_requirements":additional_requirements, "upper_lower_format": upper_lower_format}
 
         match_prompt = match_prompt_template_raged.format(**data)
         

@@ -162,7 +162,7 @@ torchvision==0.16.2
 tornado==6.4
 tqdm==4.66.2
 traitlets==5.14.2
-transformers==4.36.2
+transformers==4.41.2
 transformers-stream-generator==0.0.5
 triton==2.1.0
 tritonclient==2.44.0
