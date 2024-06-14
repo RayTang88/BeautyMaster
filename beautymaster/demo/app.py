@@ -3,6 +3,14 @@ import os
 from PIL import Image
 import gradio as gr
 
+
+if os.environ.get('openxlab'):
+    os.system(f'git clone --recursive -b dev https://github.com/RayTang88/BeautyMaster.git')
+    os.system(f'cd ./BeautyMaster && python beautymaster/openxlab_demo/download.py')
+    os.system('apt install git')
+    os.system('apt install git-lfs')
+    os.system(f"cd ..")
+    
 sys.path.append(os.environ.get('CODE_ROOT')+'BeautyMaster/')
 from beautymaster.demo.infer import Interface, parse_opt
 
@@ -29,10 +37,9 @@ def set_image(match_reslult, idx):
     elif(len(match_reslult[idx]["images"])==2):
         clothes_img_A = match_reslult[idx]["images"][0]
         clothes_img_B = match_reslult[idx]["images"][1]
-    match_reason = match_reslult[idx]["match_reason"]    
+    match_reason = match_reslult[idx]["match_reason"]
     return clothes_img_A, clothes_img_B, match_reason
 
-    
 
 def cc(image):
     if image.mode in ('RGBA', 'LA'):
@@ -43,6 +50,17 @@ interface = Interface(**vars(opt))
 def run_local(weather, season, determine, additional_requirements, full_body_image_path):
 
     #RGBA-RGB
+    planA_clothes_img_A = Image.new("RGB", (500, 300), 'white')
+    planA_clothes_img_B = Image.new("RGB", (500, 300), 'white')
+    planB_clothes_img_A = Image.new("RGB", (500, 300), 'white')
+    planB_clothes_img_B = Image.new("RGB", (500, 300), 'white')
+    planC_clothes_img_A = Image.new("RGB", (500, 300), 'white')
+    planC_clothes_img_B = Image.new("RGB", (500, 300), 'white')
+    
+    planA_match_reason = ""
+    planB_match_reason = ""
+    planC_match_reason = ""
+    
     full_body_image_path = cc(full_body_image_path["composite"])
     
     match_reslult, _ = interface.match(weather,
@@ -52,17 +70,17 @@ def run_local(weather, season, determine, additional_requirements, full_body_ima
     additional_requirements)
     
     if len(match_reslult)==3:
-        planA_clothes_img_A, planA_clothes_img_A, planA_match_reason = set_image(match_reslult, 0)
-        planB_clothes_img_A, planB_clothes_img_A, planB_match_reason = set_image(match_reslult, 1)
-        planC_clothes_img_A, planC_clothes_img_A, planC_match_reason = set_image(match_reslult, 2)
+        planA_clothes_img_A, planA_clothes_img_B, planA_match_reason = set_image(match_reslult, 0)
+        planB_clothes_img_A, planB_clothes_img_B, planB_match_reason = set_image(match_reslult, 1)
+        planC_clothes_img_A, planC_clothes_img_B, planC_match_reason = set_image(match_reslult, 2)
   
-    if len(match_reslult)==2:
-        planA_clothes_img_A, planA_clothes_img_A, planA_match_reason = set_image(match_reslult, 0)
-        planB_clothes_img_A, planB_clothes_img_A, planB_match_reason = set_image(match_reslult, 1)
+    elif len(match_reslult)==2:
+        planA_clothes_img_A, planA_clothes_img_B, planA_match_reason = set_image(match_reslult, 0)
+        planB_clothes_img_A, planB_clothes_img_B, planB_match_reason = set_image(match_reslult, 1)
         
-    if len(match_reslult)==1:
+    elif len(match_reslult)==1:
                 
-        planA_clothes_img_A, planA_clothes_img_A, planA_match_reason = set_image(match_reslult, 0)
+        planA_clothes_img_A, planA_clothes_img_B, planA_match_reason = set_image(match_reslult, 0)
 
     return planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason   
 
@@ -229,7 +247,7 @@ with image_blocks as Match:
     # match_button.click(run_local_match, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason], api_name='Match')
     # tryon_button.click(run_local_tryon, inputs=[fullbody_img, clothes_img, body_desc, cloth_caption], outputs=[planA, planB, planC], api_name='TryOn')
 image_blocks = gr.Blocks().queue()
-with image_blocks as RAG:
+with image_blocks as Wardrobe:
     with gr.Row():
         with gr.Column():
             fullbody_img = gr.ImageEditor(sources='upload', type="pil", label='Human. Mask with pen or use auto-masking', interactive=True)
@@ -254,7 +272,7 @@ with image_blocks as RAG:
             #     examples=upper_list_path)
             
     with gr.Column():
-        tryon_button = gr.Button(value="Caption")
+        wardrobe_button = gr.Button(value="Put it in matching wardrobe")
         with gr.Accordion(label="Advanced Settings", open=False):
             with gr.Row():
                 denoise_steps = gr.Number(label="Denoising Steps", minimum=20, maximum=40, value=30, step=1)
@@ -263,5 +281,5 @@ with image_blocks as RAG:
     # tryon_button.click(run_local_tryon, inputs=[weather, season, determine, additional_requirements, fullbody_img, clothes_img], outputs=[planA, planB, planC, rag, caption], api_name='run')
 
 
-app = gr.TabbedInterface([Match, RAG], ["Match", "Caption"])
+app = gr.TabbedInterface([Match, Wardrobe], ["Match", "Wardrobe"])
 app.launch()

@@ -3,20 +3,26 @@ import numpy as np
 
 from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig
 from lmdeploy.vl import load_image
-from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, vlm_prompt_template, vlm_prompt_body_template , vlm_prompt_caption_template, upper_shape, upper_choice_list, upper_out_format, lower_shape, lower_choice_list, lower_out_format, dresses_shape, dresses_choice_list, dresses_out_format
+from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, vlm_prompt_template, vlm_prompt_body_template , vlm_prompt_caption_template, upper_shape, upper_choice_list, upper_out_format, lower_shape, lower_choice_list, lower_out_format, dresses_shape, dresses_choice_list, dresses_out_format, skirt_shape, skirt_choice_list, skirt_out_format
 from PIL import Image
 
 class VLM():
     
-    def __init__(self, weights_path, weight_name):
-        backend_config = TurbomindEngineConfig(session_len=163840,  # 图片分辨率较高时请调高session_len
-                                        cache_max_entry_count=0.2, 
+    def __init__(self, weights_path, weight_name, awq):
+        backend_config_awq = TurbomindEngineConfig(session_len=40960,  # 图片分辨率较高时请调高session_len
+                                        cache_max_entry_count=0.05, 
                                         tp=1,
                                         model_format='awq',
                                         # quant_policy=0,
                                         )  # 两个显卡
+        
+        backend_config = TurbomindEngineConfig(session_len=40960,  # 图片分辨率较高时请调高session_len
+                                        cache_max_entry_count=0.05, 
+                                        tp=1,
+                                        # quant_policy=0,
+                                        )  # 两个显卡
 
-        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config, )
+        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config)
 
     def infer_vlm_func(self, weights_path, weight_name, model_candidate_clothes_list, season, weather, determine):
 
@@ -124,6 +130,7 @@ class VLM():
         data = {"available_types": available_types, "upper_shape": upper_shape, "upper_choice_list":upper_choice_list, "upper_out_format":upper_out_format,
         "lower_shape": lower_shape, "lower_choice_list":lower_choice_list, "lower_out_format":lower_out_format,
         "dresses_shape": dresses_shape, "dresses_choice_list":dresses_choice_list, "dresses_out_format":dresses_out_format,
+        "skirt_shape": skirt_shape, "skirt_choice_list":skirt_choice_list, "skirt_out_format":skirt_out_format,
         }
         
         vlm_prompt = vlm_prompt_caption_template.format(**data)
