@@ -9,7 +9,7 @@ anyio==4.3.0
 asttokens==2.4.1
 async-timeout==4.0.3
 attrs==23.2.0
-BCEmbedding==0.1.5
+BCEmbedding
 bitsandbytes==0.43.1
 certifi==2024.2.2
 charset-normalizer==3.3.2
