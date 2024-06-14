@@ -135,3 +135,67 @@ def add():
  
 def test_faiss():
     pass
+
+
+def mysqlserch():
+    import mysql.connector
+    import numpy as np
+    import faiss
+
+    # 连接到 MySQL 数据库
+    conn = mysql.connector.connect(
+        host='your_host',
+        user='your_user',
+        password='your_password',
+        database='your_database'
+    )
+    cursor = conn.cursor()
+
+    # 创建表来存储向量数据和相关信息
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS embeddings (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        data BLOB
+    )
+    ''')
+
+    # 插入示例数据 (嵌入向量)
+    def insert_embedding(vector):
+        # 将向量转换为二进制格式
+        vector_blob = vector.tobytes()
+        cursor.execute('INSERT INTO embeddings (data) VALUES (%s)', (vector_blob,))
+        conn.commit()
+
+    # 生成一些随机向量并插入数据库
+    for _ in range(100):
+        vec = np.random.rand(128).astype('float32')
+        insert_embedding(vec)
+
+    # 从数据库中检索所有向量
+    cursor.execute('SELECT data FROM embeddings')
+    rows = cursor.fetchall()
+
+    # 将二进制数据转换回 NumPy 数组
+    vectors = [np.frombuffer(row[0], dtype='float32') for row in rows]
+    vectors = np.vstack(vectors)
+
+    # 使用 Faiss 构建索引
+    dimension = vectors.shape[1]
+    index = faiss.IndexFlatL2(dimension)
+    index.add(vectors)
+
+    # 执行相似性搜索
+    query_vector = np.random.rand(128).astype('float32').reshape(1, -1)
+    D, I = index.search(query_vector, k=5)  # 搜索最相似的 5 个向量
+
+    print("Distances:", D)
+    print("Indices:", I)
+
+    # 查询原始数据，根据 Faiss 返回的索引从 MySQL 数据库中检索数据
+    for idx in I[0]:
+        cursor.execute('SELECT * FROM embeddings WHERE id=%s', (idx + 1,))
+        print(cursor.fetchone())
+
+    # 关闭数据库连接
+    conn.close()
+

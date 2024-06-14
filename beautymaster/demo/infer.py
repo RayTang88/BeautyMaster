@@ -140,12 +140,12 @@ class Interface:
                 print(f"Cycles: {Cycles}/5, error: {e}, try again...")
                 time.sleep(1)  # wait 1 minute
 
-def parse_opt():
+def parse_opt(vlm_weight_name, llm_weight_name):
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--weights-path', nargs='+', type=str, default=os.environ.get('MODEL_ROOT'), help='model path(s)')
 	parser.add_argument('--code-root-path', nargs='+', type=str, default=os.environ.get('CODE_ROOT'), help='model path(s)')
-	parser.add_argument('--vlm-weight-name', nargs='+', type=str, default='/MiniCPM-Llama3-V-2_5-AWQ/', help='MiniCPM-Llama3-V-2_5/MiniCPM-Llama3-V-2_5-AWQ/InternVL-Chat-V1-5-AWQ')
-	parser.add_argument('--llm-weight-name', nargs='+', type=str, default='/Qwen2-7B-Instruct-AWQ/', help='internlm2-chat-7b/internlm2-chat-20b-4bits')
+	parser.add_argument('--vlm-weight-name', nargs='+', type=str, default=vlm_weight_name, help='MiniCPM-Llama3-V-2_5/MiniCPM-Llama3-V-2_5-AWQ/InternVL-Chat-V1-5-AWQ')
+	parser.add_argument('--llm-weight-name', nargs='+', type=str, default=llm_weight_name, help='internlm2-chat-7b/internlm2-chat-20b-4bits')
 	parser.add_argument('--embedding-model-name', nargs='+', type=str, default='/bce-embedding-base_v1/', help='')
 	parser.add_argument('--reranker-model-name', nargs='+', type=str, default='/bce-reranker-base_v1/', help='')
 	parser.add_argument('--save-path', type=str, default=os.environ.get('DATA_ROOT'), help='save results to project/name')
@@ -186,7 +186,7 @@ def run(weather, season, determine, additional_requirements, full_body_image_pat
 
 if __name__ == "__main__":
     
-    opt = parse_opt()
+    opt = parse_opt('/MiniCPM-Llama3-V-2_5-AWQ/', '/Qwen2-7B-Instruct-AWQ/')
     interface = Interface(**vars(opt))
     weather = "30~35摄氏度"
     season = "夏季"
