@@ -65,11 +65,11 @@ def creat_database(right_csv_name, error_csv_name):
                     
 
 def main():
-#   right_csv_name = "/group_share/data_org/DressCode/right_sample_style_sup.csv"
-#   error_csv_name = "/group_share/data_org/DressCode/error_sample_style_sup.csv"
+  right_csv_name = "/group_share/data_org/DressCode/right_sample_style_sup_rett.csv"
+  error_csv_name = "/group_share/data_org/DressCode/error_sample_style_sup_rett.csv"
   
-  right_csv_name = "/root/code/BeautyMaster/beautymaster/openxlab_demo/simple_data/right_sample_style.csv"
-  error_csv_name = "/root/code/BeautyMaster/beautymaster/openxlab_demo/simple_data/error_sample_style.csv"
+#   right_csv_name = "/root/code/BeautyMaster/beautymaster/openxlab_demo/simple_data/right_sample_style.csv"
+#   error_csv_name = "/root/code/BeautyMaster/beautymaster/openxlab_demo/simple_data/error_sample_style.csv"
   creat_database(right_csv_name, error_csv_name)
 
 

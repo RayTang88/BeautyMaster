@@ -7,6 +7,8 @@ import gradio as gr
 if os.environ.get('openxlab'):
     os.system(f'git clone --recursive -b dev https://github.com/RayTang88/BeautyMaster.git')
     os.system(f'cd ./BeautyMaster && python beautymaster/openxlab_demo/download.py')
+    os.system('apt install git')
+    os.system('apt install git-lfs')
     os.system(f"cd ..")
     
 sys.path.append(os.environ.get('CODE_ROOT')+'BeautyMaster/')
