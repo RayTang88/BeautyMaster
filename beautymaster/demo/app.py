@@ -7,8 +7,10 @@ vlm_weight_name = '/InternVL-Chat-V1-5-AWQ/'
 llm_weight_name = '/internlm2-chat-20b-4bits/'
 
 if os.environ.get('openxlab'):
+    package_path = os.environ.get('CODE_ROOT') + "BeautyMaster/beautymaster/openxlab_demo/lmdeploy-0.4.2-cp310-cp310-manylinux2014_x86_64.whl"
+    os.system(f"pip install {package_path} --force-reinstall -i https://pypi.tuna.tsinghua.edu.cn/simple")
     
-    os.system(f'git clone --recursive -b dev https://github.com/RayTang88/BeautyMaster.git')
+    os.system(f'git clone --recursive -b openxlab-demo https://github.com/RayTang88/BeautyMaster.git')
     # os.system(f'cd ./BeautyMaster && python beautymaster/openxlab_demo/download.py')
     # os.system(f"cd ..")
     # os.system('apt install git')
