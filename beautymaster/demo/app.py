@@ -11,8 +11,8 @@ if os.environ.get('openxlab'):
     os.system(f'git clone --recursive -b dev https://github.com/RayTang88/BeautyMaster.git')
     # os.system(f'cd ./BeautyMaster && python beautymaster/openxlab_demo/download.py')
     # os.system(f"cd ..")
-    # os.system('apt install git')
-    # os.system('apt install git-lfs')
+    os.system('apt install git')
+    os.system('apt install git-lfs')
     base_path = os.environ.get('MODEL_ROOT')+"Qwen2-7B-Instruct-AWQ/"
     os.system(f'git clone https://code.openxlab.org.cn/raytang88/Qwen2-7B-Instruct-AWQ.git {base_path}')
     os.system(f'cd {base_path} && git lfs pull')
