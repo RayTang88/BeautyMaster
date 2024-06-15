@@ -68,6 +68,10 @@ def set_image(match_reslult, idx):
 def cc(image):
     if image.mode in ('RGBA', 'LA'):
         image = image.convert('RGB')
+    elif image.mode in ('RGB'):
+        image = image
+    else:
+        print("unkown mode", image.mode)   
     return image
 opt = parse_opt(vlm_weight_name, llm_weight_name)
 interface = Interface(**vars(opt))
@@ -85,12 +89,14 @@ def run_local(weather, season, determine, additional_requirements, full_body_ima
     planB_match_reason = ""
     planC_match_reason = ""
     
-    full_body_image_path = cc(full_body_image_path["composite"])
+    print("full_body_image mode-------------", full_body_image_path["composite"].mode)
+    full_body_image = cc(full_body_image_path["composite"])
+    print("full_body_image mode-------------", full_body_image.mode)
     
     match_reslult, _ = interface.match(weather,
     season,
     determine,
-    full_body_image_path,
+    full_body_image,
     additional_requirements)
     
     if len(match_reslult)==3:
@@ -266,7 +272,7 @@ image_blocks = gr.Blocks().queue()
 with image_blocks as Wardrobe:
     with gr.Row():
         with gr.Column():        
-            clothes_img = gr.Image(label="上衣", sources='upload', type="pil")
+            clothes_img = gr.Image(label="clothes", sources='upload', type="pil")
             with gr.Row(elem_id="prompt-container"):
                 with gr.Row():
                     prompt = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="", show_label=False, elem_id="prompt")
@@ -274,7 +280,7 @@ with image_blocks as Wardrobe:
 
             with gr.Row(elem_id="prompt-container"):
                 with gr.Row():
-                    category = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="", show_label=False, elem_id="prompt")
+                    category = gr.Textbox(placeholder="Category of garment ex) dresses skirt", label="", show_label=False, elem_id="prompt")
                     caption = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="", show_label=False, elem_id="prompt")
          
             # example = gr.Examples(
@@ -285,13 +291,13 @@ with image_blocks as Wardrobe:
             
     with gr.Column():
         wardrobe_button = gr.Button(value="Put it in matching wardrobe")
-        with gr.Accordion(label="Advanced Settings", open=False):
-            with gr.Row():
-                denoise_steps = gr.Number(label="Denoising Steps", minimum=20, maximum=40, value=30, step=1)
-                seed = gr.Number(label="Seed", minimum=-1, maximum=2147483647, step=1, value=42)
+        # with gr.Accordion(label="Advanced Settings", open=False):
+        #     with gr.Row():
+        #         denoise_steps = gr.Number(label="Denoising Steps", minimum=20, maximum=40, value=30, step=1)
+        #         seed = gr.Number(label="Seed", minimum=-1, maximum=2147483647, step=1, value=42)
 
     wardrobe_button.click(run_local_wardrobe, inputs=[clothes_img, category_input], outputs=[category, caption], api_name='wardrobe')
 
 
 app = gr.TabbedInterface([Match, Wardrobe], ["Match", "Wardrobe"])
-app.launch()
+app.launch(server_name="127.0.0.1", server_port=7869)
