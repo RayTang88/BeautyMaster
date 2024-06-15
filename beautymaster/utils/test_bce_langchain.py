@@ -262,7 +262,7 @@ if __name__ == "__main__":
 
     # 连接到 MySQL 数据库
     conn = mysql.connector.connect(**db_config)
-        # 示例调用
+    # 示例调用
     csv_file_path = 'your_csv_file.csv'
     import_csv_to_db(csv_file_path)
     insert_data(('new_value1', 'new_value2', 'new_valueN'))
