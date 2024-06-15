@@ -254,7 +254,7 @@ if __name__ == "__main__":
 
     # MySQL 配置
     db_config = {
-        'user': 'root',
+        'user': 'ray',
         'password': '123',
         'host': '127.0.0.1',
         'database': 'csv_database'

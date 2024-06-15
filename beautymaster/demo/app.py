@@ -72,7 +72,7 @@ def cc(image):
     return image
 opt = parse_opt(vlm_weight_name, llm_weight_name)
 interface = Interface(**vars(opt))
-def run_local(weather, season, determine, additional_requirements, full_body_image_path):
+def run_local(weather, season, determine, additional_requirements, full_body_image):
 
     #RGBA-RGB
     planA_clothes_img_A = Image.new("RGB", (500, 300), 'white')
@@ -86,9 +86,9 @@ def run_local(weather, season, determine, additional_requirements, full_body_ima
     planB_match_reason = ""
     planC_match_reason = ""
     
-    print("full_body_image mode-------------", full_body_image_path["composite"].mode)
-    full_body_image = cc(full_body_image_path["composite"])
-    print("full_body_image mode-------------", full_body_image.mode)
+    # print("full_body_image mode-------------", full_body_image["composite"].mode)
+    # full_body_image = cc(full_body_image["composite"])
+    # print("full_body_image mode-------------", full_body_image.mode)
     
     match_reslult, _ = interface.match(weather,
     season,
@@ -201,13 +201,13 @@ with image_blocks as Match:
     gr.Markdown("Beauty Master make you beautiful every day. Check out the [source codes](https://github.com/RayTang88/BeautyMaster)")
     with gr.Row():
         with gr.Column():
-            fullbody_img = gr.ImageEditor(sources='upload', type="pil", label='Human. Mask with pen or use auto-masking', interactive=True)
-            with gr.Row():
-                with gr.Row():
-                    is_checked = gr.Checkbox(label="Yes", info="Use auto-generated mask (Takes 5 seconds)",value=True)
-                with gr.Row():
-                    is_checked_crop = gr.Checkbox(label="Yes", info="Use auto-crop & resizing",value=False)
-            # fullbody_img = gr.Image(label="fullbody", sources='upload', type="pil")
+            # fullbody_img = gr.ImageEditor(sources='upload', type="pil", label='Human. Mask with pen or use auto-masking', interactive=True)
+            # with gr.Row():
+            #     with gr.Row():
+            #         is_checked = gr.Checkbox(label="Yes", info="Use auto-generated mask (Takes 5 seconds)",value=True)
+            #     with gr.Row():
+            #         is_checked_crop = gr.Checkbox(label="Yes", info="Use auto-crop & resizing",value=False)
+            fullbody_img = gr.Image(label="fullbody", sources='upload', type="pil")
             season = gr.Dropdown(choices=["春季","夏季","秋季","冬季"], label="季节", value="夏季")
             weather = gr.Dropdown(choices=["零下10摄氏度左右","0摄氏度左右","10摄氏度左右","20摄氏度左右","30摄氏度左右", "40摄氏度左右"], label="温度", value="40摄氏度左右")
             determine = gr.Dropdown(choices=["约会","逛街","晚宴","工作"], label="目的", value="逛街")
@@ -272,18 +272,19 @@ with image_blocks as Wardrobe:
             clothes_img = gr.Image(label="clothes", sources='upload', type="pil")
             with gr.Row(elem_id="prompt-container"):
                 with gr.Row():
+                    category_input = gr.Dropdown(choices=["上衣","裤子","半身裙","连衣裙", "其他"], label="clothes", value="连衣裙")
                     prompt = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="", show_label=False, elem_id="prompt")
-            category_input = gr.Dropdown(choices=["上衣","裤子","半身裙","连衣裙", "其他"], label="clothes", value="连衣裙")
+                    
 
             with gr.Row(elem_id="prompt-container"):
                 with gr.Row():
-                    category = gr.Textbox(placeholder="Category of garment ex) dresses skirt", label="", show_label=False, elem_id="prompt")
-                    caption = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="", show_label=False, elem_id="prompt")
+                    category = gr.Textbox(placeholder="Category of garment ex) dresses skirt", label="category", show_label=True, elem_id="prompt")
+                    caption = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="caption", show_label=True, elem_id="prompt")
          
-            # example = gr.Examples(
-            #     inputs=clothes_img,
-            #     examples_per_page=8,
-            #     examples=upper_list_path)
+            example = gr.Examples(
+                inputs=clothes_img,
+                examples_per_page=8,
+                examples=human_list_path)
   
             
     with gr.Column():
@@ -297,4 +298,4 @@ with image_blocks as Wardrobe:
 
 
 app = gr.TabbedInterface([Match, Wardrobe], ["Match", "Wardrobe"])
-app.launch()
+app.launch(server_port=7869)
