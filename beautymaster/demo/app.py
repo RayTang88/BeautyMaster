@@ -16,18 +16,20 @@ if os.environ.get('openxlab'):
     base_path = os.environ.get('MODEL_ROOT')+"Qwen2-7B-Instruct-AWQ/"
     os.system(f'git clone https://code.openxlab.org.cn/raytang88/Qwen2-7B-Instruct-AWQ.git {base_path}')
     os.system(f'cd {base_path} && git lfs pull')
-    os.system(f"cd ..")
+    os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
     base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
     os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
     os.system(f'cd {base_path} && git lfs pull')
-    os.system(f"cd ..")
+    os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
     base_path = os.environ.get('MODEL_ROOT')+"bce-embedding-base_v1/"
     os.system(f'git clone https://www.modelscope.cn/maidalun/bce-embedding-base_v1.git {base_path}')
+    os.system(f'cd {base_path} && git lfs pull')
 
     base_path = os.environ.get('MODEL_ROOT')+"bce-reranker-base_v1/"
     os.system(f'git clone https://www.modelscope.cn/maidalun/bce-reranker-base_v1.git {base_path}')
+    os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
     vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
