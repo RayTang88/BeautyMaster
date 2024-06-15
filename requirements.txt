@@ -164,8 +164,8 @@ tqdm==4.66.2
 traitlets==5.14.2
 transformers==4.41.2
 transformers-stream-generator==0.0.5
-triton==2.1.0
-tritonclient==2.44.0
+triton
+tritonclient
 typer==0.12.3
 typing-inspect==0.9.0
 typing_extensions==4.9.0
