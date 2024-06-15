@@ -8,7 +8,7 @@ from beautymaster.src.infer_rag_recommend import RagAndRecommend
 # from beautymaster.src.try_on import TryOnInterface
 # from beautymaster.utils.show import show_func
 
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 class Interface:
     def __init__(self,
