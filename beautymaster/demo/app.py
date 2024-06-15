@@ -13,7 +13,7 @@ if os.environ.get('openxlab'):
     os.system(f'cd {base_path} && git lfs pull')
 
     package_path = os.environ.get('CODE_ROOT') + "BeautyMaster/beautymaster/openxlab_demo/lmdeploy-0.4.2-cp310-cp310-manylinux2014_x86_64.whl"
-    os.system(f"pip install {package_path} --force-reinstall -i https://pypi.tuna.tsinghua.edu.cn/simple")
+    os.system(f"pip install {package_path} -i https://pypi.tuna.tsinghua.edu.cn/simple")
     # os.system(f'cd ./BeautyMaster && python beautymaster/openxlab_demo/download.py')
     # os.system(f"cd ..")
     # os.system('apt install git')
@@ -36,7 +36,7 @@ if os.environ.get('openxlab'):
     os.system(f'git clone https://www.modelscope.cn/maidalun/bce-reranker-base_v1.git {base_path}')
     os.system(f'cd {base_path} && git lfs pull')
 
-    os.system(f"pip install torchvision --force-reinstall -i https://pypi.tuna.tsinghua.edu.cn/simple")
+    # os.system(f"pip install torchvision --force-reinstall -i https://pypi.tuna.tsinghua.edu.cn/simple")
     
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
@@ -158,14 +158,14 @@ def run_local_match(weather, season, determine, additional_requirements, full_bo
     return planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason
 
 
-def run_local_wardrobe(weather, season, determine, additional_requirements, full_body_image_path, clothes_path, func):
+def run_local_wardrobe(clothes_path, category_input):
     # func="match"
     # clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg"
-    planA = Image.new("RGB", (500, 300), 'white')
-    planB = Image.new("RGB", (500, 300), 'white')
-    planC = Image.new("RGB", (500, 300), 'white')
-    rag = ""
-    caption = ""
+    # planA = Image.new("RGB", (500, 300), 'white')
+    # planB = Image.new("RGB", (500, 300), 'white')
+    # planC = Image.new("RGB", (500, 300), 'white')
+    category = ""
+    caption_string = ""
     
     # upper_list = os.listdir(os.path.join(example_path,"DressCode/upper_body/images/"))
     # upper_list_path = [os.path.join(example_path,"DressCode/upper_body/images/",garm) for garm in upper_list]
@@ -265,27 +265,23 @@ with image_blocks as Match:
 image_blocks = gr.Blocks().queue()
 with image_blocks as Wardrobe:
     with gr.Row():
-        with gr.Column():
-            fullbody_img = gr.ImageEditor(sources='upload', type="pil", label='Human. Mask with pen or use auto-masking', interactive=True)
-            with gr.Column():
-                with gr.Column():
-                    is_checked = gr.Checkbox(label="Yes", info="Use auto-generated mask (Takes 5 seconds)",value=True)
-                with gr.Column():
-                    is_checked_crop = gr.Checkbox(label="Yes", info="Use auto-crop & resizing",value=False)
-                example = gr.Examples(
-                inputs=fullbody_img,
-                examples_per_page=10,
-                examples=human_list_path
-            )
         with gr.Column():        
-            clothes_img = gr.Image(label="clothes", sources='upload', type="pil")
+            clothes_img = gr.Image(label="上衣", sources='upload', type="pil")
             with gr.Row(elem_id="prompt-container"):
                 with gr.Row():
                     prompt = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="", show_label=False, elem_id="prompt")
+            category_input = gr.Dropdown(choices=["上衣","裤子","半身裙","连衣裙", "其他"], label="clothes", value="连衣裙")
+
+            with gr.Row(elem_id="prompt-container"):
+                with gr.Row():
+                    category = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="", show_label=False, elem_id="prompt")
+                    caption = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="", show_label=False, elem_id="prompt")
+         
             # example = gr.Examples(
             #     inputs=clothes_img,
             #     examples_per_page=8,
             #     examples=upper_list_path)
+  
             
     with gr.Column():
         wardrobe_button = gr.Button(value="Put it in matching wardrobe")
@@ -294,7 +290,7 @@ with image_blocks as Wardrobe:
                 denoise_steps = gr.Number(label="Denoising Steps", minimum=20, maximum=40, value=30, step=1)
                 seed = gr.Number(label="Seed", minimum=-1, maximum=2147483647, step=1, value=42)
 
-    wardrobe_button.click(run_local_wardrobe, inputs=[weather, season, determine, additional_requirements, fullbody_img, clothes_img], outputs=[planA, planB, planC, rag, caption], api_name='run')
+    wardrobe_button.click(run_local_wardrobe, inputs=[clothes_img, category_input], outputs=[category, caption], api_name='wardrobe')
 
 
 app = gr.TabbedInterface([Match, Wardrobe], ["Match", "Wardrobe"])

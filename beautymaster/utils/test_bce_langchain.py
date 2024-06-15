@@ -1,4 +1,5 @@
-# 我们在`BCEmbedding`中提供langchain直接集成的接口。
+import pandas as pd
+import mysql.connector
 from BCEmbedding.tools.langchain import BCERerank
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -7,6 +8,7 @@ from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS as VectorStore
 from langchain_community.vectorstores.utils import DistanceStrategy
+
 
 
 
@@ -199,19 +201,7 @@ def mysqlserch():
     # 关闭数据库连接
     conn.close()
 
-import pandas as pd
-import mysql.connector
 
-# MySQL 配置
-db_config = {
-    'user': 'your_username',
-    'password': 'your_password',
-    'host': 'your_host',
-    'database': 'csv_database'
-}
-
-# 连接到 MySQL 数据库
-conn = mysql.connector.connect(**db_config)
 
 # 读取 CSV 文件并插入数据
 def import_csv_to_db(csv_file_path):
@@ -257,14 +247,29 @@ def delete_data(record_id):
     conn.commit()
     cursor.close()
 
-# 示例调用
-csv_file_path = 'your_csv_file.csv'
-import_csv_to_db(csv_file_path)
-insert_data(('new_value1', 'new_value2', 'new_valueN'))
-query_data()
-update_data(('updated_value1', 'updated_value2'), 1)
-delete_data(2)
 
-# 关闭连接
-conn.close()
+
+
+if __name__ == "__main__":
+
+    # MySQL 配置
+    db_config = {
+        'user': 'root',
+        'password': '123',
+        'host': '127.0.0.1',
+        'database': 'csv_database'
+    }
+
+    # 连接到 MySQL 数据库
+    conn = mysql.connector.connect(**db_config)
+        # 示例调用
+    csv_file_path = 'your_csv_file.csv'
+    import_csv_to_db(csv_file_path)
+    insert_data(('new_value1', 'new_value2', 'new_valueN'))
+    query_data()
+    update_data(('updated_value1', 'updated_value2'), 1)
+    delete_data(2)
+
+    # 关闭连接
+    conn.close()
 
