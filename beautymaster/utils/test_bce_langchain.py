@@ -199,3 +199,72 @@ def mysqlserch():
     # 关闭数据库连接
     conn.close()
 
+import pandas as pd
+import mysql.connector
+
+# MySQL 配置
+db_config = {
+    'user': 'your_username',
+    'password': 'your_password',
+    'host': 'your_host',
+    'database': 'csv_database'
+}
+
+# 连接到 MySQL 数据库
+conn = mysql.connector.connect(**db_config)
+
+# 读取 CSV 文件并插入数据
+def import_csv_to_db(csv_file_path):
+    data = pd.read_csv(csv_file_path)
+    cursor = conn.cursor()
+    for _, row in data.iterrows():
+        sql = "INSERT INTO data_table (column1, column2, columnN) VALUES (%s, %s, %s)"
+        cursor.execute(sql, tuple(row))
+    conn.commit()
+    cursor.close()
+
+# 插入数据
+def insert_data(data):
+    cursor = conn.cursor()
+    sql = "INSERT INTO data_table (column1, column2, columnN) VALUES (%s, %s, %s)"
+    cursor.execute(sql, data)
+    conn.commit()
+    cursor.close()
+
+# 查询数据
+def query_data():
+    cursor = conn.cursor()
+    sql = "SELECT * FROM data_table"
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    for row in results:
+        print(row)
+    cursor.close()
+
+# 更新数据
+def update_data(data, record_id):
+    cursor = conn.cursor()
+    sql = "UPDATE data_table SET column1 = %s, column2 = %s WHERE id = %s"
+    cursor.execute(sql, (*data, record_id))
+    conn.commit()
+    cursor.close()
+
+# 删除数据
+def delete_data(record_id):
+    cursor = conn.cursor()
+    sql = "DELETE FROM data_table WHERE id = %s"
+    cursor.execute(sql, (record_id,))
+    conn.commit()
+    cursor.close()
+
+# 示例调用
+csv_file_path = 'your_csv_file.csv'
+import_csv_to_db(csv_file_path)
+insert_data(('new_value1', 'new_value2', 'new_valueN'))
+query_data()
+update_data(('updated_value1', 'updated_value2'), 1)
+delete_data(2)
+
+# 关闭连接
+conn.close()
+

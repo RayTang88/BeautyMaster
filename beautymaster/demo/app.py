@@ -35,6 +35,9 @@ if os.environ.get('openxlab'):
     base_path = os.environ.get('MODEL_ROOT')+"bce-reranker-base_v1/"
     os.system(f'git clone https://www.modelscope.cn/maidalun/bce-reranker-base_v1.git {base_path}')
     os.system(f'cd {base_path} && git lfs pull')
+
+    os.system(f"pip install torchvision` --force-reinstall -i https://pypi.tuna.tsinghua.edu.cn/simple")
+    
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
     vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
