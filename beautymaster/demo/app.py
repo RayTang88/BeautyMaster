@@ -3,37 +3,41 @@ import os
 from PIL import Image
 import gradio as gr
 
+vlm_weight_name = '/InternVL-Chat-V1-5-AWQ/'
+llm_weight_name = '/internlm2-chat-20b-4bits/'
 
 if os.environ.get('openxlab'):
     
     os.system(f'git clone --recursive -b dev https://github.com/RayTang88/BeautyMaster.git')
-    os.system(f'cd ./BeautyMaster && python beautymaster/openxlab_demo/download.py')
-    os.system(f"cd ..")
-    os.system('apt install git')
-    os.system('apt install git-lfs')
-    base_path = os.environ.get('MODEL_ROOT')+"/Qwen2-7B-Instruct-AWQ/"
+    # os.system(f'cd ./BeautyMaster && python beautymaster/openxlab_demo/download.py')
+    # os.system(f"cd ..")
+    # os.system('apt install git')
+    # os.system('apt install git-lfs')
+    base_path = os.environ.get('MODEL_ROOT')+"Qwen2-7B-Instruct-AWQ/"
     os.system(f'git clone https://code.openxlab.org.cn/raytang88/Qwen2-7B-Instruct-AWQ.git {base_path}')
     os.system(f'cd {base_path} && git lfs pull')
-    
-    base_path = os.environ.get('MODEL_ROOT')+"/MiniCPM-Llama3-V-2_5-AWQ/"
+    os.system(f"cd ..")
+
+    base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
     os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
     os.system(f'cd {base_path} && git lfs pull')
-    
     os.system(f"cd ..")
+
+    base_path = os.environ.get('MODEL_ROOT')+"bce-embedding-base_v1/"
+    os.system(f'git clone https://www.modelscope.cn/maidalun/bce-embedding-base_v1.git {base_path}')
+
+    base_path = os.environ.get('MODEL_ROOT')+"bce-reranker-base_v1/"
+    os.system(f'git clone https://www.modelscope.cn/maidalun/bce-reranker-base_v1.git {base_path}')
+    os.system(f"cd {os.environ.get('CODE_ROOT')}")
+
+    vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
+    llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
+
 
 sys.path.append(os.environ.get('CODE_ROOT')+'BeautyMaster/')
 from beautymaster.demo.infer import Interface, parse_opt
 
 example_path = os.environ.get('DATA_ROOT')
-
-# upper_list = os.listdir(os.path.join(example_path,"DressCode/upper_body/images/"))
-# upper_list_path = [os.path.join(example_path,"DressCode/upper_body/images/",garm) for garm in upper_list]
-
-# lower_list = os.listdir(os.path.join(example_path,"DressCode/upper_body/images/"))
-# lower_list_path = [os.path.join(example_path,"DressCode/upper_body/images/",garm) for garm in lower_list]
-
-# dresses_list = os.listdir(os.path.join(example_path,"DressCode/upper_body/images/"))
-# dresses_list_path = [os.path.join(example_path,"DressCode/upper_body/images/",garm) for garm in dresses_list]
 
 human_list = os.listdir(os.path.join(example_path,"fullbody_cleaned/images/"))
 human_list_path = [os.path.join(example_path,"fullbody_cleaned/images/",human) for human in human_list]
@@ -54,8 +58,8 @@ def set_image(match_reslult, idx):
 def cc(image):
     if image.mode in ('RGBA', 'LA'):
         image = image.convert('RGB')
-    return image 
-opt = parse_opt()
+    return image
+opt = parse_opt(vlm_weight_name, llm_weight_name)
 interface = Interface(**vars(opt))
 def run_local(weather, season, determine, additional_requirements, full_body_image_path):
 
@@ -144,7 +148,7 @@ def run_local_match(weather, season, determine, additional_requirements, full_bo
     return planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason
 
 
-def run_local_tryon(weather, season, determine, additional_requirements, full_body_image_path, clothes_path, func):
+def run_local_wardrobe(weather, season, determine, additional_requirements, full_body_image_path, clothes_path, func):
     # func="match"
     # clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg"
     planA = Image.new("RGB", (500, 300), 'white')
@@ -153,31 +157,23 @@ def run_local_tryon(weather, season, determine, additional_requirements, full_bo
     rag = ""
     caption = ""
     
-    if "Match" == func:
-        # match_reslult = interface.match(weather,
-        # season,
-        # determine,
-        # full_body_image_path,
-        # additional_requirements)
-        planA = clothes_path
-        planB = clothes_path
-        planC = clothes_path
-    elif "RAG" == func:
-        # interface.rag(weather,
-        #     season,
-        #     determine,
-        #     full_body_image_path,
-        #     additional_requirements)
-        pass
-    elif "Caption" == func:
-        # interface.caption(clothes_path)
-        # return clothes_path, clothes_path
-        pass
-    elif  "TryOn"== func:
-        # return clothes_path, clothes_path
-        pass
+    # upper_list = os.listdir(os.path.join(example_path,"DressCode/upper_body/images/"))
+    # upper_list_path = [os.path.join(example_path,"DressCode/upper_body/images/",garm) for garm in upper_list]
 
-    return planA, planB, planC, rag, caption 
+    # lower_list = os.listdir(os.path.join(example_path,"DressCode/upper_body/images/"))
+    # lower_list_path = [os.path.join(example_path,"DressCode/upper_body/images/",garm) for garm in lower_list]
+
+    # dresses_list = os.listdir(os.path.join(example_path,"DressCode/upper_body/images/"))
+    # dresses_list_path = [os.path.join(example_path,"DressCode/upper_body/images/",garm) for garm in dresses_list]
+    #1.get caption
+    caption_json, caption_string = interface.caption(clothes_path)
+    
+    category = caption_json["category"]
+    
+    #2.write database
+    
+    
+    return category, caption_string
 
 
 def is_upload():
@@ -288,7 +284,7 @@ with image_blocks as Wardrobe:
                 denoise_steps = gr.Number(label="Denoising Steps", minimum=20, maximum=40, value=30, step=1)
                 seed = gr.Number(label="Seed", minimum=-1, maximum=2147483647, step=1, value=42)
 
-    # tryon_button.click(run_local_tryon, inputs=[weather, season, determine, additional_requirements, fullbody_img, clothes_img], outputs=[planA, planB, planC, rag, caption], api_name='run')
+    wardrobe_button.click(run_local_wardrobe, inputs=[weather, season, determine, additional_requirements, fullbody_img, clothes_img], outputs=[planA, planB, planC, rag, caption], api_name='run')
 
 
 app = gr.TabbedInterface([Match, Wardrobe], ["Match", "Wardrobe"])
