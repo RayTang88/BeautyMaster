@@ -298,4 +298,4 @@ with image_blocks as Wardrobe:
 
 
 app = gr.TabbedInterface([Match, Wardrobe], ["Match", "Wardrobe"])
-app.launch(server_port=7869)
+app.launch()
