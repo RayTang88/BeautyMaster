@@ -280,13 +280,47 @@ class MyDatabases():
         cursor.execute(sql, (record_id,))
         self.conn.commit()
         cursor.close()
+        
+def search():
+    # from langchain import OpenAI, SQLDatabase
+    from langchain_community.utilities import SQLDatabase
+    from langchain.chains import create_sql_query_chain
+    from langchain_core.runnables import RunnablePassthrough
+    from operator import itemgetter
+    import sys, os
+    
+    sys.path.append(os.environ.get('CODE_ROOT')+"/BeautyMaster/beautymaster")
+    sys.path.append(os.environ.get('CODE_ROOT')+"/BeautyMaster")
+    from src.infer_llm import LLM
+    weights_path=os.environ.get('MODEL_ROOT')
+    llm_weight_name="/Qwen2-7B-Instruct-AWQ/"
+    llm_awq=True
+    llm = LLM(weights_path, llm_weight_name, llm_awq)
+
+    db_user = "ray"
+    db_password = "123"
+    db_host = "localhost"
+    db_name = "Wardrobe"
+    db = SQLDatabase.from_uri(f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}")
+
+    query_chain = create_sql_query_chain(llm, db)
+    # 将"question"键转换为当前table_chain所需的"input"键。
+    table_chain = {"input": itemgetter("question")} | table_chain
+    # 使用table_chain设置table_names_to_use。
+    full_chain = RunnablePassthrough.assign(table_names_to_use=table_chain) | query_chain
+    
+    query = full_chain.invoke(
+    {"question": "Alanis Morisette的全部类型是什么"}
+    )
+    print(query)
+
 
 if __name__ == "__main__":
 
     # MySQL 配置
     db_config = {
         'user': 'root',
-        'password': '123',
+        'password': '',
         'host': 'localhost',
         'database': 'Wardrobe'
     }
@@ -294,17 +328,18 @@ if __name__ == "__main__":
     table_name="sample"
 
     # 示例调用
-    db = MyDatabases(db_config)
-    # db.create_table(table_name=table_name)
-    # db.delete_table(table_name=table_name)
+    # db = MyDatabases(db_config)
+    # # db.create_table(table_name=table_name)
+    # # db.delete_table(table_name=table_name)
 
-    # csv_file_path = '/root/code/BeautyMaster/beautymaster/openxlab_demo/simple_data/right_sample_style_correct_sup_removed.csv'
-    # db.import_csv_to_table(csv_file_path=csv_file_path, table_name=table_name)
-    # db.insert_data(('new_value1', 'new_value2', 'new_valueN'))
-    db.query_data_table(table_name=table_name)
-    # db.update_data(('updated_value1', 'updated_value2'), 1)
-    # db.delete_data(2)
+    # # csv_file_path = '/root/code/BeautyMaster/beautymaster/openxlab_demo/simple_data/right_sample_style_correct_sup_removed.csv'
+    # # db.import_csv_to_table(csv_file_path=csv_file_path, table_name=table_name)
+    # # db.insert_data(('new_value1', 'new_value2', 'new_valueN'))
+    # db.query_data_table(table_name=table_name)
+    # # db.update_data(('updated_value1', 'updated_value2'), 1)
+    # # db.delete_data(2)
 
-    # 关闭连接
-    db.close()
+    # # 关闭连接
+    # db.close()
+    search()
 
