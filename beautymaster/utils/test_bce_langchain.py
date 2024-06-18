@@ -1,5 +1,6 @@
 import pandas as pd
 import mysql.connector
+import pymysql
 from BCEmbedding.tools.langchain import BCERerank
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -202,74 +203,143 @@ def mysqlserch():
     conn.close()
 
 
+class MyDatabases():
 
-# 读取 CSV 文件并插入数据
-def import_csv_to_db(csv_file_path):
-    data = pd.read_csv(csv_file_path)
-    cursor = conn.cursor()
-    for _, row in data.iterrows():
+    def __init__(self, db_config):
+        self.conn = mysql.connector.connect(**db_config)
+    def close(self):
+        self.conn.close()    
+
+    def create_table(self, table_name):
+
+        cursor = self.conn.cursor()
+
+        # 使用预处理语句创建表
+        sql = """CREATE TABLE IF NOT EXISTS {0} (
+                idx VARCHAR(16),
+                category VARCHAR(16),
+                content VARCHAR(256),  
+                embedding FLOAT )""".format(table_name)
+        
+        cursor.execute(sql)
+        self.conn.commit()
+        cursor.close()
+
+    def delete_table(self, table_name):
+        
+        cursor = self.conn.cursor()
+
+        # 使用预处理语句创建表
+        sql = "DROP TABLE IF EXISTS {0}".format(table_name)
+        
+        cursor.execute(sql)
+        self.conn.commit()
+        cursor.close()    
+
+
+    # 读取 CSV 文件并插入数据
+    def import_csv_to_table(self, csv_file_path, table_name):
+        data = pd.read_csv(csv_file_path)
+        cursor = self.conn.cursor()
+        for _, row in data.iterrows():
+            sql = "INSERT INTO {0} (idx, category, content) VALUES (%s, %s, %s)".format(table_name)
+            cursor.execute(sql, tuple(row))
+        self.conn.commit()
+        cursor.close()
+
+    # 插入数据
+    def insert_data_table(self, data):
+        cursor = self.conn.cursor()
         sql = "INSERT INTO data_table (column1, column2, columnN) VALUES (%s, %s, %s)"
-        cursor.execute(sql, tuple(row))
-    conn.commit()
-    cursor.close()
+        cursor.execute(sql, data)
+        self.conn.commit()
+        cursor.close()
 
-# 插入数据
-def insert_data(data):
-    cursor = conn.cursor()
-    sql = "INSERT INTO data_table (column1, column2, columnN) VALUES (%s, %s, %s)"
-    cursor.execute(sql, data)
-    conn.commit()
-    cursor.close()
+    # 查询数据
+    def query_data_table(self, table_name):
+        cursor = self.conn.cursor()
+        sql = "SELECT * FROM {0}".format(table_name)
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        for row in results:
+            print(row)
+        cursor.close()
 
-# 查询数据
-def query_data():
-    cursor = conn.cursor()
-    sql = "SELECT * FROM data_table"
-    cursor.execute(sql)
-    results = cursor.fetchall()
-    for row in results:
-        print(row)
-    cursor.close()
+    # 更新数据
+    def update_data(self, data, record_id):
+        cursor = self.conn.cursor()
+        sql = "UPDATE data_table SET column1 = %s, column2 = %s WHERE idx = %s"
+        cursor.execute(sql, (*data, record_id))
+        self.conn.commit()
+        cursor.close()
 
-# 更新数据
-def update_data(data, record_id):
-    cursor = conn.cursor()
-    sql = "UPDATE data_table SET column1 = %s, column2 = %s WHERE id = %s"
-    cursor.execute(sql, (*data, record_id))
-    conn.commit()
-    cursor.close()
+    # 删除数据
+    def delete_data(self, record_id):
+        cursor = self.conn.cursor()
+        sql = "DELETE FROM data_table WHERE idx = %s"
+        cursor.execute(sql, (record_id,))
+        self.conn.commit()
+        cursor.close()
+        
+def search():
+    # from langchain import OpenAI, SQLDatabase
+    from langchain_community.utilities import SQLDatabase
+    from langchain.chains import create_sql_query_chain
+    from langchain_core.runnables import RunnablePassthrough
+    from operator import itemgetter
+    import sys, os
+    
+    sys.path.append(os.environ.get('CODE_ROOT')+"/BeautyMaster/beautymaster")
+    sys.path.append(os.environ.get('CODE_ROOT')+"/BeautyMaster")
+    from src.infer_llm import LLM
+    weights_path=os.environ.get('MODEL_ROOT')
+    llm_weight_name="/Qwen2-7B-Instruct-AWQ/"
+    llm_awq=True
+    llm = LLM(weights_path, llm_weight_name, llm_awq)
 
-# 删除数据
-def delete_data(record_id):
-    cursor = conn.cursor()
-    sql = "DELETE FROM data_table WHERE id = %s"
-    cursor.execute(sql, (record_id,))
-    conn.commit()
-    cursor.close()
+    db_user = "ray"
+    db_password = "123"
+    db_host = "localhost"
+    db_name = "Wardrobe"
+    db = SQLDatabase.from_uri(f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}")
 
-
+    query_chain = create_sql_query_chain(llm, db)
+    # 将"question"键转换为当前table_chain所需的"input"键。
+    table_chain = {"input": itemgetter("question")} | table_chain
+    # 使用table_chain设置table_names_to_use。
+    full_chain = RunnablePassthrough.assign(table_names_to_use=table_chain) | query_chain
+    
+    query = full_chain.invoke(
+    {"question": "Alanis Morisette的全部类型是什么"}
+    )
+    print(query)
 
 
 if __name__ == "__main__":
 
     # MySQL 配置
     db_config = {
-        'user': 'ray',
-        'password': '123',
-        'host': '127.0.0.1',
-        'database': 'csv_database'
+        'user': 'root',
+        'password': '',
+        'host': 'localhost',
+        'database': 'Wardrobe'
     }
 
-    # 连接到 MySQL 数据库
-    conn = mysql.connector.connect(**db_config)
-    # 示例调用
-    csv_file_path = 'your_csv_file.csv'
-    import_csv_to_db(csv_file_path)
-    insert_data(('new_value1', 'new_value2', 'new_valueN'))
-    query_data()
-    update_data(('updated_value1', 'updated_value2'), 1)
-    delete_data(2)
+    table_name="sample"
 
-    # 关闭连接
-    conn.close()
+    # 示例调用
+    # db = MyDatabases(db_config)
+    # # db.create_table(table_name=table_name)
+    # # db.delete_table(table_name=table_name)
+
+    # # csv_file_path = '/root/code/BeautyMaster/beautymaster/openxlab_demo/simple_data/right_sample_style_correct_sup_removed.csv'
+    # # db.import_csv_to_table(csv_file_path=csv_file_path, table_name=table_name)
+    # # db.insert_data(('new_value1', 'new_value2', 'new_valueN'))
+    # db.query_data_table(table_name=table_name)
+    # # db.update_data(('updated_value1', 'updated_value2'), 1)
+    # # db.delete_data(2)
+
+    # # 关闭连接
+    # db.close()
+    search()
 

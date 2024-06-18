@@ -14,7 +14,7 @@ class LLM():
         backend_config = TurbomindEngineConfig(cache_max_entry_count=0.01,
                                         session_len=10240)
         
-        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config) 
+        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config, log_level='INFO') 
         
 
     def llm_parsing_json(self, model_candidate_clothes_jsons, get_num_list, meaning_list):

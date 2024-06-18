@@ -5,6 +5,8 @@ import gradio as gr
 
 vlm_weight_name = '/InternVL-Chat-V1-5-AWQ/'
 llm_weight_name = '/internlm2-chat-20b-4bits/'
+vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
+llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
 
 if os.environ.get('openxlab'):
 
@@ -87,7 +89,7 @@ def run_local(weather, season, determine, additional_requirements, full_body_ima
     planC_match_reason = ""
     
     # print("full_body_image mode-------------", full_body_image["composite"].mode)
-    # full_body_image = cc(full_body_image["composite"])
+    full_body_image = cc(full_body_image["composite"])
     # print("full_body_image mode-------------", full_body_image.mode)
     
     match_reslult, _ = interface.match(weather,
@@ -201,13 +203,13 @@ with image_blocks as Match:
     gr.Markdown("Beauty Master make you beautiful every day. Check out the [source codes](https://github.com/RayTang88/BeautyMaster)")
     with gr.Row():
         with gr.Column():
-            # fullbody_img = gr.ImageEditor(sources='upload', type="pil", label='Human. Mask with pen or use auto-masking', interactive=True)
-            # with gr.Row():
-            #     with gr.Row():
-            #         is_checked = gr.Checkbox(label="Yes", info="Use auto-generated mask (Takes 5 seconds)",value=True)
-            #     with gr.Row():
-            #         is_checked_crop = gr.Checkbox(label="Yes", info="Use auto-crop & resizing",value=False)
-            fullbody_img = gr.Image(label="fullbody", sources='upload', type="pil")
+            fullbody_img = gr.ImageEditor(sources='upload', type="pil", label='Human. Mask with pen or use auto-masking', interactive=True)
+            with gr.Row():
+                with gr.Row():
+                    is_checked = gr.Checkbox(label="Yes", info="Use auto-generated mask (Takes 5 seconds)",value=True)
+                with gr.Row():
+                    is_checked_crop = gr.Checkbox(label="Yes", info="Use auto-crop & resizing",value=False)
+            # fullbody_img = gr.Image(label="fullbody", sources='upload', type="pil")
             season = gr.Dropdown(choices=["春季","夏季","秋季","冬季"], label="季节", value="夏季")
             weather = gr.Dropdown(choices=["零下10摄氏度左右","0摄氏度左右","10摄氏度左右","20摄氏度左右","30摄氏度左右", "40摄氏度左右"], label="温度", value="40摄氏度左右")
             determine = gr.Dropdown(choices=["约会","逛街","晚宴","工作"], label="目的", value="逛街")

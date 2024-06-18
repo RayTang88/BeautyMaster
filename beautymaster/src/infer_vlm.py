@@ -22,7 +22,7 @@ class VLM():
                                         # quant_policy=0,
                                         )  # 两个显卡
 
-        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config)
+        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config, log_level='INFO')
 
     def infer_vlm_func(self, weights_path, weight_name, model_candidate_clothes_list, season, weather, determine):
 
