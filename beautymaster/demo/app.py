@@ -54,6 +54,8 @@ from beautymaster.demo.infer import Interface, parse_opt
 
 example_path = os.environ.get('DATA_ROOT')
 
+upper_body = os.listdir(os.path.join(example_path,"upper_body/images/"))[:7]
+upper_body_path = [os.path.join(example_path,"upper_body/images/",human) for human in upper_body]
 human_list = os.listdir(os.path.join(example_path,"fullbody_cleaned/images/"))
 human_list_path = [os.path.join(example_path,"fullbody_cleaned/images/",human) for human in human_list]
 
@@ -202,12 +204,12 @@ def is_upload():
     interactive_ = True
     return interactive_
 
-
 image_blocks = gr.Blocks().queue()
 with image_blocks as Match:
-    gr.Markdown("## 🌟👗💄 BeautyMaster 💄👗🌟")
-    gr.Markdown("Beauty Master make you beautiful every day.Due to platform performance, this is a simplified version. If you want to experience the full functionality, Check out the [source codes](https://github.com/RayTang88/BeautyMaster)")
-    gr.Markdown("If you click Match and wait for one minute but still no output, please click Match again!")
+    gr.Markdown("## 🌟👗💄 美妆达人 - 美丽您的每一天 💄👗🌟")
+    gr.Markdown("因为算力性能的问题，目前上传一个简化版本。如果您想体验完整的功能，请移步项目的主页，持续关注我们的后续工作。项目主页：[source codes](https://github.com/RayTang88/BeautyMaster)")
+    gr.Markdown("使用方法：在美妆搭配页面按示例上传一张全身照，点击Match按钮，即可体验，目前我们内置了一个精简的服饰数据库供基础效果展示。")
+    gr.Markdown("注意事项：1.如果点击Match一分钟后未有响应，可再次点击Math按钮尝试；2.试穿功能和美丽衣橱暂未开放，请持续关注我们的后续工作。")
     with gr.Row():
         with gr.Column():
             fullbody_img = gr.ImageEditor(sources='upload', type="pil", label='Human. Mask with pen or use auto-masking', interactive=True)
@@ -220,7 +222,7 @@ with image_blocks as Match:
             season = gr.Dropdown(choices=["春季","夏季","秋季","冬季"], label="季节", value="夏季")
             weather = gr.Dropdown(choices=["零下10摄氏度左右","0摄氏度左右","10摄氏度左右","20摄氏度左右","30摄氏度左右", "40摄氏度左右"], label="温度", value="40摄氏度左右")
             determine = gr.Dropdown(choices=["约会","逛街","晚宴","工作"], label="目的", value="逛街")
-            additional_requirements = gr.Textbox(placeholder="描述您对搭配的特殊需求 ex) 简洁大方，美丽动人", show_label=True, elem_id="prompt")
+            additional_requirements = gr.Textbox(placeholder="描述您对搭配的特殊需求 ex) 简洁大方，美丽动人", show_label=True, label="您的个性搭配需求", elem_id="prompt")
 
             example = gr.Examples(
                 inputs=fullbody_img,
@@ -231,42 +233,42 @@ with image_blocks as Match:
         with gr.Column():
             with gr.Row():
                 with gr.Column(elem_id="prompt-container"):
-                    gr.Markdown("Plan A")
+                    gr.Markdown("推荐方案 1")
                 planA_clothes_img_A = gr.Image(label="clothes", sources='upload', type="pil", height=300)
                 planA_clothes_img_B = gr.Image(label="clothes", sources='upload', type="pil", height=300)
                 with gr.Row(elem_id="prompt-container"):
                     with gr.Row():
-                        planA_match_reason = gr.Textbox(placeholder="Reasons for recommending PlanA", label="match_reason", show_label=True, elem_id="planA_match_reason")
+                        planA_match_reason = gr.Textbox(placeholder="", label="推荐理由", show_label=True, elem_id="planA_match_reason")
             with gr.Row():
                 with gr.Column(elem_id="prompt-container"):
-                    gr.Markdown("Plan B")
+                    gr.Markdown("推荐方案 2")
                 planB_clothes_img_A = gr.Image(label="clothes", sources='upload', type="pil", height=300)
                 planB_clothes_img_B = gr.Image(label="clothes", sources='upload', type="pil", height=300)
                 with gr.Row(elem_id="prompt-container"):
                     with gr.Row():
-                        planB_match_reason = gr.Textbox(placeholder="Reasons for recommending PlanB", label="match_reason", show_label=True, elem_id="planB_match_reason")
+                        planB_match_reason = gr.Textbox(placeholder="", label="推荐理由", show_label=True, elem_id="planB_match_reason")
             with gr.Row():
                 with gr.Column(elem_id="prompt-container"):
-                    gr.Markdown("Plan C")
+                    gr.Markdown("推荐方案 3")
                 planC_clothes_img_A = gr.Image(label="clothes", sources='upload', type="pil", height=300)
                 planC_clothes_img_B = gr.Image(label="clothes", sources='upload', type="pil", height=300)      
                 with gr.Row(elem_id="prompt-container"):
                     with gr.Row():
-                        planC_match_reason = gr.Textbox(placeholder="Reasons for recommending PlanC", label="match_reason", show_label=True, elem_id="planC_match_reason")
+                        planC_match_reason = gr.Textbox(placeholder="", label="推荐理由", show_label=True, elem_id="planC_match_reason")
                         
         with gr.Column():
             # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
-            planA = gr.Image(label="Try on output A", elem_id="Mach_output_A",show_share_button=False, height=300)
+            planA = gr.Image(label="试穿展示 1", elem_id="Mach_output_A",show_share_button=False, height=300)
             # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
-            planB = gr.Image(label="Try on output B", elem_id="Mach_output_B",show_share_button=False, height=300)
+            planB = gr.Image(label="试穿展示 2", elem_id="Mach_output_B",show_share_button=False, height=300)
             # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
-            planC = gr.Image(label="Try on output C", elem_id="Mach_output_C",show_share_button=False, height=300)
+            planC = gr.Image(label="试穿展示 3", elem_id="Mach_output_C",show_share_button=False, height=300)
 
     with gr.Row():
         with gr.Row():
 
             match_button = gr.Button(value="Match", interactive=True)
-            tryon_button = gr.Button(value="TryOn(coming soon...)", interactive=True)
+            tryon_button = gr.Button(value="Try on(coming soon...)", interactive=True)
         # with gr.Accordion(label="Advanced Settings", open=False):
         #     with gr.Row():
         #         denoise_steps = gr.Number(label="Denoising Steps", minimum=20, maximum=40, value=30, step=1)
@@ -276,35 +278,36 @@ with image_blocks as Match:
     # tryon_button.click(run_local_tryon, inputs=[fullbody_img, clothes_img, body_desc, cloth_caption], outputs=[planA, planB, planC], api_name='TryOn')
 image_blocks = gr.Blocks().queue()
 with image_blocks as Wardrobe:
+    gr.Markdown("这里是您的美丽衣橱，您可以将想要搭配的服饰上传到这里。")
     with gr.Row():
         with gr.Column():        
             clothes_img = gr.Image(label="clothes", sources='upload', type="pil")
             with gr.Row(elem_id="prompt-container"):
                 with gr.Row():
-                    category_input = gr.Dropdown(choices=["上衣","裤子","半身裙","连衣裙", "其他"], label="clothes", value="连衣裙")
-                    prompt = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="", show_label=False, elem_id="prompt")
+                    category_input = gr.Dropdown(choices=["上衣","裤子","半身裙","连衣裙", "其他"], label="类别", value="连衣裙")
+                    prompt = gr.Textbox(placeholder="", label="", show_label=False, elem_id="prompt")
                     
 
             with gr.Row(elem_id="prompt-container"):
                 with gr.Row():
-                    category = gr.Textbox(placeholder="Category of garment ex) dresses skirt", label="category", show_label=True, elem_id="prompt")
-                    caption = gr.Textbox(placeholder="Description of garment ex) Short Sleeve Round Neck T-shirts", label="caption", show_label=True, elem_id="prompt")
+                    category = gr.Textbox(placeholder="", label="类别", show_label=True, elem_id="prompt")
+                    caption = gr.Textbox(placeholder="", label="文字说明", show_label=True, elem_id="prompt")
          
             example = gr.Examples(
                 inputs=clothes_img,
                 examples_per_page=8,
-                examples=human_list_path)
+                examples=upper_body_path)
   
             
     with gr.Column():
-        wardrobe_button = gr.Button(value="Put it in matching wardrobe")
+        wardrobe_button = gr.Button(value="Put it in matching wardrobe(coming soon...)")
         # with gr.Accordion(label="Advanced Settings", open=False):
         #     with gr.Row():
         #         denoise_steps = gr.Number(label="Denoising Steps", minimum=20, maximum=40, value=30, step=1)
         #         seed = gr.Number(label="Seed", minimum=-1, maximum=2147483647, step=1, value=42)
 
-    wardrobe_button.click(run_local_wardrobe, inputs=[clothes_img, category_input], outputs=[category, caption], api_name='wardrobe')
+    # wardrobe_button.click(run_local_wardrobe, inputs=[clothes_img, category_input], outputs=[category, caption], api_name='wardrobe')
 
 
-app = gr.TabbedInterface([Match, Wardrobe], ["Match", "Wardrobe"])
+app = gr.TabbedInterface([Match, Wardrobe], ["美妆搭配", "美丽衣橱"])
 app.launch()
