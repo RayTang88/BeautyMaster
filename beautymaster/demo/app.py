@@ -44,7 +44,8 @@ if os.environ.get('openxlab'):
     os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
-    vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
+    # vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
+    vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
     llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
 
 
