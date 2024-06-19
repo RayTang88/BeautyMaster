@@ -158,6 +158,38 @@ class RagAndRecommend():
         clothes_shape_descs = '、'.join(good_json_obj["items"])
         
         return good_json_obj, clothes_shape_descs
+    
+    # Filter out incompatible combinations
+    def filter_output(self, comb):
+        from itertools import combinations
+
+        # Optional List
+        items = ["上衣", "裤子", "半身裙", "连衣裙"]
+
+        # List of unacceptable combinations
+        unacceptable_combinations = [
+            ["上衣", "连衣裙"],
+            ["裤子", "连衣裙"],
+            ["裤子"],
+            ["半身裙"],
+            ["上衣"],
+            ["裤子", "半身裙"],
+            ["连衣裙", "半身裙"],
+        ]
+
+        # Convert unacceptable combinations into sets for easier comparison
+        unacceptable_sets = [set(comb) for comb in unacceptable_combinations]
+
+        comb_set = set(comb)
+        
+        if (comb_set not in unacceptable_sets) and  len(comb_set)<3:
+            if "上衣" in comb and "上衣" != comb[0] :
+                comb.remove("上衣")
+                comb.insert(0, "上衣")
+                
+            return True, comb
+        return False, None
+    
     # Here we only show the matching results without adding tryon results
     def match_only_result_func(self, llm_recommended):
         print("llm_recommended[match_content]", llm_recommended)    
@@ -166,6 +198,12 @@ class RagAndRecommend():
         for match in llm_recommended["match_content"]:
             match_dict = {}
             match_category_list = match["category"]
+                        
+            #Filter out incompatible combinations
+            flag, match_caption_list = self.filter_output(match_category_list)
+            if not flag:
+                continue
+            
             match_id_list = match["match_id"]
             match_caption_list = match["match_caption"]
             match_reason = match["reason"]

@@ -3,9 +3,9 @@ import os
 from PIL import Image
 import gradio as gr
 
-vlm_weight_name = '/InternVL-Chat-V1-5-AWQ/'
-llm_weight_name = '/internlm2-chat-20b-4bits/'
-vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
+# vlm_weight_name = '/InternVL-Chat-V1-5-AWQ/'
+# llm_weight_name = '/internlm2-chat-20b-4bits/'
+vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
 llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
 
 if os.environ.get('openxlab'):
@@ -25,8 +25,13 @@ if os.environ.get('openxlab'):
     os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
-    base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
-    os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
+    # base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
+    # os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
+    # os.system(f'cd {base_path} && git lfs pull')
+    # os.system(f"cd {os.environ.get('CODE_ROOT')}")
+    
+    base_path = os.environ.get('MODEL_ROOT')+"Mini-InternVL-Chat-2B-V1-5-AWQ/"
+    os.system(f'git clone https://code.openxlab.org.cn/raytang88/Mini-InternVL-Chat-2B-V1-5-AWQ.git {base_path}')
     os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
@@ -200,7 +205,8 @@ def is_upload():
 image_blocks = gr.Blocks().queue()
 with image_blocks as Match:
     gr.Markdown("## 🌟👗💄 BeautyMaster 💄👗🌟")
-    gr.Markdown("Beauty Master make you beautiful every day. Check out the [source codes](https://github.com/RayTang88/BeautyMaster)")
+    gr.Markdown("Beauty Master make you beautiful every day.Due to platform performance, this is a simplified version. If you want to experience the full functionality, Check out the [source codes](https://github.com/RayTang88/BeautyMaster)")
+    gr.Markdown("If you click Match and wait for one minute but still no output, please click Match again!")
     with gr.Row():
         with gr.Column():
             fullbody_img = gr.ImageEditor(sources='upload', type="pil", label='Human. Mask with pen or use auto-masking', interactive=True)
