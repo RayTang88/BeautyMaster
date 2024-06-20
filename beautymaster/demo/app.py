@@ -36,11 +36,11 @@ if os.environ.get('openxlab'):
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
     base_path = os.environ.get('MODEL_ROOT')+"bce-embedding-base_v1/"
-    os.system(f'git clone https://www.modelscope.cn/maidalun/bce-embedding-base_v1.git {base_path}')
+    os.system(f'git clone https://code.openxlab.org.cn/raytang88/bce-embedding-base_v1.git {base_path}')
     os.system(f'cd {base_path} && git lfs pull')
 
     base_path = os.environ.get('MODEL_ROOT')+"bce-reranker-base_v1/"
-    os.system(f'git clone https://www.modelscope.cn/maidalun/bce-reranker-base_v1.git {base_path}')
+    os.system(f'git clone https://code.openxlab.org.cn/raytang88/bce-reranker-base_v1.git {base_path}')
     os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
