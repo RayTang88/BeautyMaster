@@ -192,9 +192,17 @@ class RagAndRecommend():
     
     # Here we only show the matching results without adding tryon results
     def match_only_result_func(self, llm_recommended):
-        print("llm_recommended[match_content]", llm_recommended)    
-        assert len(llm_recommended["match_content"]) > 0
+        print("llm_recommended[match_content]", llm_recommended)
+        print("type--- llm_recommended", type(llm_recommended))     
+        print("len--- llm_recommended", len(llm_recommended))  
+        
+        
+        if isinstance(llm_recommended, list):
+            llm_recommended=llm_recommended[0]
+        assert isinstance(llm_recommended, dict)
+        print("type--- llm_recommended2", type(llm_recommended))          
         match_result = []
+        assert len(llm_recommended["match_content"]) > 0
         for match in llm_recommended["match_content"]:
             match_dict = {}
             match_category_list = match["category"]
@@ -203,19 +211,19 @@ class RagAndRecommend():
             flag, match_caption_list = self.filter_output(match_category_list)
             if not flag:
                 continue
-            
+            print("here1111111")
             match_id_list = match["match_id"]
             match_caption_list = match["match_caption"]
             match_reason = match["reason"]
             
             assert len(match_category_list) == len(match_id_list)
             assert len(match_caption_list) == len(match_id_list)
-            
+            print("here222222")
             match_dict["id"] = match["id"]
             match_dict["score"] = match["score"]
             match_dict["category"] = match_category_list
             match_dict["match_reason"] = match_reason
-            
+            print("here333333")
             images = []
             
             for category, match_id, match_caption in zip(match_category_list, match_id_list, match_caption_list):
@@ -227,14 +235,17 @@ class RagAndRecommend():
                     # match_id =match_id_list[idx]
                     # match_caption =match_caption_list[idx]
                     # The match_id field is in the form of 'match_id': ['idx: 050040_1', 'idx: 019252_1']
-                    clothes_path = data_root + "/upper_body/images/" + match_id.replace("idx: ", "").split('_')[0] + "_1.jpg"
+                    clothes_path = data_root + "/upper_body/images/" + match_id.replace("idx:", "").strip().split('_')[0] + "_1.jpg"
                 elif "裤子" == category:
-                    clothes_path = data_root + "/lower_body/images/" +match_id.replace("idx: ", "").split('_')[0] + "_1.jpg"
+                    clothes_path = data_root + "/lower_body/images/" +match_id.replace("idx:", "").strip().split('_')[0] + "_1.jpg"
                 elif "半身裙" == category:
-                    clothes_path = data_root + "/lower_body/images/" + match_id.replace("idx: ", "").split('_')[0] + "_1.jpg"
+                    clothes_path = data_root + "/lower_body/images/" + match_id.replace("idx:", "").strip().split('_')[0] + "_1.jpg"
                 elif "连衣裙" == category:
-                    clothes_path = data_root + "/dresses/images/" + match_id.replace("idx: ", "").split('_')[0] +"_1.jpg"    
-                print(os.path.exists(clothes_path), clothes_path)    
+                    clothes_path = data_root + "/dresses/images/" + match_id.replace("idx:", "").strip().split('_')[0] +"_1.jpg"    
+                print(os.path.exists(clothes_path), clothes_path)  
+                if not os.path.exists(clothes_path):
+                    continue
+                
                 image = Image.open(clothes_path)
                 
                     
