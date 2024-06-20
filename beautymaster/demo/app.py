@@ -207,7 +207,7 @@ def is_upload():
 image_blocks = gr.Blocks().queue()
 with image_blocks as Match:
     gr.Markdown("## 🌟👗💄 美妆达人 - 美丽您的每一天 💄👗🌟")
-    gr.Markdown("因为算力的问题，目前上传一个简化版本。如果您想体验完整的功能，请移步项目的主页并持续关注我们的后续工作。项目主页：[source codes](https://github.com/RayTang88/BeautyMaster)")
+    gr.Markdown("因为算力的问题，目前上传一个简化版本。如果您想体验完整的功能，请移步Github并持续关注我们的后续工作。Github：[source codes](https://github.com/RayTang88/BeautyMaster)")
     gr.Markdown("使用方法：在美妆搭配页面按示例上传一张全身照，点击Match按钮，即可体验，目前我们内置了一个精简的服饰数据库供基础效果展示。")
     gr.Markdown("注意事项：1.如果点击Match一分钟后未有响应，可再次点击Math按钮尝试；2.试穿功能和美丽衣橱暂未开放，请持续关注我们的后续工作。")
     with gr.Row():
