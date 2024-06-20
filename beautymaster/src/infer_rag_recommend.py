@@ -198,7 +198,7 @@ class RagAndRecommend():
         
         
         if isinstance(llm_recommended, list):
-            llm_recommended=llm_recommended[0]
+            llm_recommended = llm_recommended[0]
         assert isinstance(llm_recommended, dict)
         print("type--- llm_recommended2", type(llm_recommended))          
         match_result = []
