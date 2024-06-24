@@ -1,5 +1,13 @@
-**[中文](README.md) | [English](README_en.md)**
-# BeautyMaster
+<div align="center">
+
+  <h1 style="color: #FF0000;"> 美妆达人</h1>
+  
+  [![中文](README.md) ![English](README_en.md)]
+
+  [![DEMO](https://openxlab.org.cn/apps/detail/raytang88/BeautyMaster-OpenXLab)]
+
+  👋 join us on [![Static Badge](https://img.shields.io/badge/-grey?style=social&logo=wechat&label=WeChat)](./assets/wechat.jpg)
+</div>
 
 The "BeautyMaster" uses the InternLM2 large model, XTuner fine-tuning tool, and LMDeploy deployment tool to provide users with personalized fashion matching suggestions. By uploading full-body photos and wardrobe clothing, combined with seasons, temperature, weather, travel purposes and personal needs, the most perfect dressing plan can be customized.
 
@@ -19,7 +27,8 @@ The highlights of the project are as follows:
 
 - Immersive experience 🎨🌟: In the later stage, the matching and dressing will be applied to the user to provide 3D visual effects.
 
-**Welcome Pull request！！！**
+**Welcome Everyone is welcome to pull request and ✨star✨ our project, your ✨star✨ will provide us with the motivation to move forward!!!**
+
 
 ## 💪 Goal
 
