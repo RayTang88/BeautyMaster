@@ -2,9 +2,9 @@
 
   <h1 style="color: #FF0000;"> BeautyMaster</h1>
   
-  ![中文](README.md) ![English](README_en.md)
+  [中文](README.md) | [English](README_en.md)
 
-  ![DEMO](https://openxlab.org.cn/apps/detail/raytang88/BeautyMaster-OpenXLab)
+  [DEMO](https://openxlab.org.cn/apps/detail/raytang88/BeautyMaster-OpenXLab)
 
   👋 join us on [![Static Badge](https://img.shields.io/badge/-grey?style=social&logo=wechat&label=WeChat)](./assets/wechat.jpg)
 </div>
