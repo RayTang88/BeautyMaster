@@ -212,19 +212,19 @@ class RagAndRecommend():
             flag, match_caption_list = self.filter_output(match_category_list)
             if not flag:
                 continue
-            print("here1111111")
+            # print("here1111111")
             match_id_list = match["match_id"]
             match_caption_list = match["match_caption"]
             match_reason = match["reason"]
             
             assert len(match_category_list) == len(match_id_list)
             assert len(match_caption_list) == len(match_id_list)
-            print("here222222")
+            # print("here222222")
             match_dict["id"] = match["id"]
             match_dict["score"] = match["score"]
             match_dict["category"] = match_category_list
             match_dict["match_reason"] = match_reason
-            print("here333333")
+            # print("here333333")
             images = []
             
             for category, match_id, match_caption in zip(match_category_list, match_id_list, match_caption_list):
