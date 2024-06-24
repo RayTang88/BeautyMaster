@@ -188,5 +188,3 @@ av
 onnxruntime==1.16.2
 gradio==4.24.0
 scikit-image
-PyMySQL
-mysql-connector-python
