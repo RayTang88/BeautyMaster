@@ -9,10 +9,10 @@ class LLM():
         # decrease the ratio of the k/v cache occupation to 20%
         backend_config_awq = TurbomindEngineConfig(cache_max_entry_count=0.1,
                                                model_format='awq',
-                                               session_len=8192)
+                                               session_len=4096)
         
         backend_config = TurbomindEngineConfig(cache_max_entry_count=0.1,
-                                        session_len=8192)
+                                        session_len=4096)
         
         self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config, log_level='INFO') 
         
