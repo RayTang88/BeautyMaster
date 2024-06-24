@@ -9,14 +9,14 @@ from PIL import Image
 class VLM():
     
     def __init__(self, weights_path, weight_name, awq):
-        backend_config_awq = TurbomindEngineConfig(session_len=8192,  # 图片分辨率较高时请调高session_len
+        backend_config_awq = TurbomindEngineConfig(session_len=4096,  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.05, 
                                         tp=1,
                                         model_format='awq',
                                         # quant_policy=0,
                                         )  # 两个显卡
         
-        backend_config = TurbomindEngineConfig(session_len=8192,  # 图片分辨率较高时请调高session_len
+        backend_config = TurbomindEngineConfig(session_len=4096,  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.05, 
                                         tp=1,
                                         # quant_policy=0,
