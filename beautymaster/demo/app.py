@@ -287,7 +287,6 @@ with image_blocks as Wardrobe:
                     category_input = gr.Dropdown(choices=["上衣","裤子","半身裙","连衣裙", "其他"], label="类别", value="连衣裙")
                     prompt = gr.Textbox(placeholder="", label="", show_label=False, elem_id="prompt")
                     
-
             with gr.Row(elem_id="prompt-container"):
                 with gr.Row():
                     category = gr.Textbox(placeholder="", label="类别", show_label=True, elem_id="prompt")
