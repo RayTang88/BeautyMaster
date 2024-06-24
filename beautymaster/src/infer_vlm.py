@@ -9,20 +9,20 @@ from PIL import Image
 class VLM():
     
     def __init__(self, weights_path, weight_name, awq):
-        backend_config_awq = TurbomindEngineConfig(session_len=163840,  # 图片分辨率较高时请调高session_len
-                                        cache_max_entry_count=0.2, 
+        backend_config_awq = TurbomindEngineConfig(session_len=4096,  # 图片分辨率较高时请调高session_len
+                                        cache_max_entry_count=0.05, 
                                         tp=1,
                                         model_format='awq',
                                         # quant_policy=0,
                                         )  # 两个显卡
         
-        backend_config = TurbomindEngineConfig(session_len=163840,  # 图片分辨率较高时请调高session_len
-                                        cache_max_entry_count=0.2, 
+        backend_config = TurbomindEngineConfig(session_len=4096,  # 图片分辨率较高时请调高session_len
+                                        cache_max_entry_count=0.05, 
                                         tp=1,
                                         # quant_policy=0,
                                         )  # 两个显卡
 
-        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config)
+        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config, log_level='INFO')
 
     def infer_vlm_func(self, weights_path, weight_name, model_candidate_clothes_list, season, weather, determine):
 

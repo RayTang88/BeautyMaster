@@ -1,9 +1,35 @@
-**[中文](README.md) | [English](README_en.md)**
-# BeautyMaster
+<div align="center">
 
-We hope to train VLM to be a beauty master to help you solve the problem of dressing and beauty.
+  <h1 style="color: #FF0000;"> BeautyMaster</h1>
+  
+  [中文](README.md) | [English](README_en.md)
 
-**Welcome Pull request！！！**
+  [DEMO](https://openxlab.org.cn/apps/detail/raytang88/BeautyMaster-OpenXLab)
+
+  👋 join us on [![Static Badge](https://img.shields.io/badge/-grey?style=social&logo=wechat&label=WeChat)](./assets/wechat.jpg)
+</div>
+
+## 📘 Introduction
+The "BeautyMaster" uses the InternLM2 large model, XTuner fine-tuning tool, and LMDeploy deployment tool to provide users with personalized fashion matching suggestions. By uploading full-body photos and wardrobe clothing, combined with seasons, temperature, weather, travel purposes and personal needs, the most perfect dressing plan can be customized.
+
+The highlights of the project are as follows:
+
+- Fine-tuning of large models 🔧: By fine-tuning the InternLM2 model with the help of XTuner, the accuracy of personalized recommendations is improved;
+
+- Support personalized dressing 👗: Customize personalized fashion matching solutions according to the user's individual needs and occasions;
+
+- Intelligent recommendation 🌦️📅: Combine seasons, temperature, weather and other factors to provide users with practical dressing suggestions;
+
+- Easy to use 📸: Upload photos and clothes to easily obtain fashion matching solutions and say goodbye to choice difficulties;
+
+- Professional guidance 💡🔍: With the help of big data analysis and artificial intelligence technology, create the best fashion look for users;
+
+- Good scalability ✨: It can be expanded to facial makeup, hairstyles, bags and accessories in the later stage;
+
+- Immersive experience 🎨🌟: In the later stage, the matching and dressing will be applied to the user to provide 3D visual effects.
+
+**Welcome Everyone is welcome to pull request and ✨star✨ our project, your ✨star✨ will provide us with the motivation to move forward!!!**
+
 
 ## 💪 Goal
 
@@ -119,8 +145,14 @@ export DATA_ROOT="..."
 
 Note: Set the root path for downloading models, the root path for cloning code, and the root path for data respectively.
 
+### gradio
 ```Python
 python $CODE_ROOT/BeautyMaster/beautymaster/demo/app.py
+```
+
+### python
+```Python
+python $CODE_ROOT/BeautyMaster/beautymaster/demo/infer.py
 ```
 
 

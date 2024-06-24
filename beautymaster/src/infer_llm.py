@@ -7,14 +7,14 @@ from beautymaster.utils.parsing_rag import parsing_rag_func
 class LLM():
     def __init__(self, weights_path, weight_name, awq):
         # decrease the ratio of the k/v cache occupation to 20%
-        backend_config_awq = TurbomindEngineConfig(cache_max_entry_count=0.2,
+        backend_config_awq = TurbomindEngineConfig(cache_max_entry_count=0.1,
                                                model_format='awq',
-                                               session_len=10240)
+                                               session_len=3072)
         
-        backend_config = TurbomindEngineConfig(cache_max_entry_count=0.2,
-                                        session_len=10240)
+        backend_config = TurbomindEngineConfig(cache_max_entry_count=0.1,
+                                        session_len=3072)
         
-        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config) 
+        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config, log_level='INFO') 
         
 
     def llm_parsing_json(self, model_candidate_clothes_jsons, get_num_list, meaning_list):

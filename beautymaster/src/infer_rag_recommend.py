@@ -21,8 +21,9 @@ class RagAndRecommend():
                  only_use_vlm):
         
         self.bceEmbeddingRetriever = BceEmbeddingRetriever(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path)
-        self.vlm = VLM(weights_path, vlm_weight_name, vlm_awq)
         self.llm = LLM(weights_path, llm_weight_name, llm_awq)
+        self.vlm = VLM(weights_path, vlm_weight_name, vlm_awq)
+
         
         self.available_types = available_types
         self.only_use_vlm = only_use_vlm
@@ -158,26 +159,72 @@ class RagAndRecommend():
         clothes_shape_descs = '、'.join(good_json_obj["items"])
         
         return good_json_obj, clothes_shape_descs
+    
+    # Filter out incompatible combinations
+    def filter_output(self, comb):
+        from itertools import combinations
+
+        # Optional List
+        items = ["上衣", "裤子", "半身裙", "连衣裙"]
+
+        # List of unacceptable combinations
+        unacceptable_combinations = [
+            ["上衣", "连衣裙"],
+            ["裤子", "连衣裙"],
+            ["裤子"],
+            ["半身裙"],
+            ["上衣"],
+            ["裤子", "半身裙"],
+            ["连衣裙", "半身裙"],
+        ]
+
+        # Convert unacceptable combinations into sets for easier comparison
+        unacceptable_sets = [set(comb) for comb in unacceptable_combinations]
+
+        comb_set = set(comb)
+        
+        if (comb_set not in unacceptable_sets) and  len(comb_set)<3:
+            if "上衣" in comb and "上衣" != comb[0] :
+                comb.remove("上衣")
+                comb.insert(0, "上衣")
+                
+            return True, comb
+        return False, None
+    
     # Here we only show the matching results without adding tryon results
     def match_only_result_func(self, llm_recommended):
-        print("llm_recommended[match_content]", llm_recommended)    
-        assert len(llm_recommended["match_content"]) > 0
+        print("llm_recommended[match_content]", llm_recommended)
+        print("type--- llm_recommended", type(llm_recommended))     
+        print("len--- llm_recommended", len(llm_recommended))  
+        
+        
+        if isinstance(llm_recommended, list):
+            llm_recommended = llm_recommended[0]
+        assert isinstance(llm_recommended, dict)
+        print("type--- llm_recommended2", type(llm_recommended))          
         match_result = []
+        assert len(llm_recommended["match_content"]) > 0
         for match in llm_recommended["match_content"]:
             match_dict = {}
             match_category_list = match["category"]
+                        
+            #Filter out incompatible combinations
+            flag, match_caption_list = self.filter_output(match_category_list)
+            if not flag:
+                continue
+            # print("here1111111")
             match_id_list = match["match_id"]
             match_caption_list = match["match_caption"]
             match_reason = match["reason"]
             
             assert len(match_category_list) == len(match_id_list)
             assert len(match_caption_list) == len(match_id_list)
-            
+            # print("here222222")
             match_dict["id"] = match["id"]
             match_dict["score"] = match["score"]
             match_dict["category"] = match_category_list
             match_dict["match_reason"] = match_reason
-            
+            # print("here333333")
             images = []
             
             for category, match_id, match_caption in zip(match_category_list, match_id_list, match_caption_list):
@@ -189,14 +236,17 @@ class RagAndRecommend():
                     # match_id =match_id_list[idx]
                     # match_caption =match_caption_list[idx]
                     # The match_id field is in the form of 'match_id': ['idx: 050040_1', 'idx: 019252_1']
-                    clothes_path = data_root + "/upper_body/images/" + match_id.replace("idx: ", "").split('_')[0] + "_1.jpg"
+                    clothes_path = data_root + "/upper_body/images/" + match_id.replace("idx:", "").strip().split('_')[0] + "_1.jpg"
                 elif "裤子" == category:
-                    clothes_path = data_root + "/lower_body/images/" +match_id.replace("idx: ", "").split('_')[0] + "_1.jpg"
+                    clothes_path = data_root + "/lower_body/images/" +match_id.replace("idx:", "").strip().split('_')[0] + "_1.jpg"
                 elif "半身裙" == category:
-                    clothes_path = data_root + "/lower_body/images/" + match_id.replace("idx: ", "").split('_')[0] + "_1.jpg"
+                    clothes_path = data_root + "/lower_body/images/" + match_id.replace("idx:", "").strip().split('_')[0] + "_1.jpg"
                 elif "连衣裙" == category:
-                    clothes_path = data_root + "/dresses/images/" + match_id.replace("idx: ", "").split('_')[0] +"_1.jpg"    
-                print(os.path.exists(clothes_path), clothes_path)    
+                    clothes_path = data_root + "/dresses/images/" + match_id.replace("idx:", "").strip().split('_')[0] +"_1.jpg"    
+                print(os.path.exists(clothes_path), clothes_path)  
+                if not os.path.exists(clothes_path):
+                    continue
+                
                 image = Image.open(clothes_path)
                 
                     

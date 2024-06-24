@@ -1,9 +1,35 @@
-**[中文](README.md) | [English](README_en.md)**
-# 美妆达人
+<div align="center">
 
-我们希望训练一个视觉语言大模型成为成美妆大师，给你提供穿衣和美妆建议。
+  <h1 style="color: #FF0000;"> 美妆达人</h1>
+  
+  [中文](README.md) | [English](README_en.md)
 
-**欢迎大家fork和star我们的项目！！！**
+  [DEMO](https://openxlab.org.cn/apps/detail/raytang88/BeautyMaster-OpenXLab)
+
+  👋 join us on [![Static Badge](https://img.shields.io/badge/-grey?style=social&logo=wechat&label=WeChat)](./assets/wechat.jpg)
+
+</div>
+
+## 📘 简介
+"美妆达人"项目采用 InternLM2 大模型、XTuner 微调工具、LMDeploy 部署工具，为用户提供个性化时尚搭配建议。通过上传全身照和衣柜服装，结合季节、温度、天气、出行目的和个性需求，定制最完美的穿搭方案。
+
+项目的亮点如下：
+
+- 大模型微调🔧：通过借助 XTuner 微调 InternLM2 模型，提高个性化推荐准确度；
+
+- 支持个性化穿搭👗：根据用户的个性需求和场合，定制个性化的时尚搭配方案；
+
+- 智能推荐🌦️📅：结合季节、温度、天气等因素，为用户提供实用的穿衣建议；
+
+- 简单易用📸：上传照片和服装，轻松获取时尚搭配方案，告别选择困难症；
+
+- 专业指导💡🔍：借助大数据分析和人工智能技术，为用户打造最佳时尚造型；
+
+- 良好扩展性✨：后期可扩展到面部妆容、发型、包包手饰；
+
+- 沉浸式体验🎨🌟：后期将搭配穿搭到用户身上，提供3D的视觉效果。
+
+**欢迎大家fork和✨star✨我们的项目,您的✨star✨是我们前进的动力！！！**
 
 ## 💪 目标
 
