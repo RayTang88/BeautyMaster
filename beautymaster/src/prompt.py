@@ -314,7 +314,7 @@ vlm_prompt_body_template = """你是一位时尚搭配大师，你需要为我�
                     示例输出: {body_out_format}。"""
                     
 #7.This template is based on body shape characteristics, using LLM to make preliminary recommendations                   
-llm_prompt_template_4o = """您是一位时尚搭配大师，当前处在{season}， 气温{weather}， 我是{gender}，要去{determine}，我的体型特征如下{shape}，仔细分析并生成包含以下字段的 JSON， 输出："items"、"feature"、"reason"、"category"和"gender"。
+llm_prompt_template_4o = """您是一位时尚搭配大师，当前处在{season}， 气温{weather}， 我是{gender}，要去{determine}，我的体型特征如下:{shape}，仔细分析并生成包含以下字段的 JSON， 输出："items"、"feature"、"reason"、"category"和"gender"。
                     items 字段应该是与shape中描述的我的体型特征相搭配的衣物列表。每件物品都应代表一件衣服的标题，其中包含物品的款式、颜色和适合的性别，注意：利用您对时尚趋势、风格和性别偏好的理解，根据shape字段中描述的我的体型特征，重点结合当前的季节，气温，和我的出行目的，冬季还需要考虑御寒，夏季需要清凉，{additional_requirements}，为我搭配服装提供准确且相关的建议并写入item字段。
                     category需要在{available_types}，这几个服装类型之间进行选择，且和items字段中搭配的服装类型一一对应。
                     gender您必须在[男性、女性、男孩、女孩、无性别]，这几个性别之间进行选择，可以从{gender}中直接获取。

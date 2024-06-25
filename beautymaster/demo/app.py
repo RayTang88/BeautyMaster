@@ -5,6 +5,8 @@ import gradio as gr
 
 vlm_weight_name = '/InternVL-Chat-V1-5-AWQ/'
 llm_weight_name = '/internlm2-chat-20b-4bits/'
+vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
+llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
 
 if os.environ.get('openxlab'):
 
