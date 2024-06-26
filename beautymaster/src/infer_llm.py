@@ -1,4 +1,5 @@
-from lmdeploy import pipeline, TurbomindEngineConfig
+import os
+from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig
 from json_repair import repair_json
 from .ready_prompt import ready_prompt_func
 from .prompt import match_prompt_template, match_prompt_template_raged, body_out_format, llm_prompt_template_4o, recommend_format, upper_lower_format
@@ -9,10 +10,15 @@ class LLM():
         # decrease the ratio of the k/v cache occupation to 20%
         backend_config_awq = TurbomindEngineConfig(cache_max_entry_count=0.1,
                                                model_format='awq',
-                                               session_len=3072)
+                                               session_len=2048 if not os.getenv("LLM_SESSION_LEN") else os.getenv("LLM_SESSION_LEN"))
         
         backend_config = TurbomindEngineConfig(cache_max_entry_count=0.1,
-                                        session_len=3072)
+                                        session_len=2048 if not os.getenv("LLM_SESSION_LEN") else os.getenv("LLM_SESSION_LEN"))
+        
+        self.gen_config = GenerationConfig(top_p=0.8,
+                        top_k=40,
+                        temperature=0,
+                        max_new_tokens=512)
         
         self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config, log_level='INFO') 
         
@@ -22,7 +28,7 @@ class LLM():
         parsed_list = []
         prompt_list = ready_prompt_func(model_candidate_clothes_jsons, get_num_list, meaning_list)
 
-        responses = self.pipe(prompt_list)
+        responses = self.pipe(prompt_list, gen_config=self.gen_config)
         
         for response in responses:
             parsed_list.append(response.text)

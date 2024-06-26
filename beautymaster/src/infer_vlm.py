@@ -5,22 +5,28 @@ from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig
 from lmdeploy.vl import load_image
 from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, vlm_prompt_template, vlm_prompt_body_template , vlm_prompt_caption_template, upper_shape, upper_choice_list, upper_out_format, lower_shape, lower_choice_list, lower_out_format, dresses_shape, dresses_choice_list, dresses_out_format, skirt_shape, skirt_choice_list, skirt_out_format
 from PIL import Image
+from beautymaster.utils.onnx_infer import letterbox
 
 class VLM():
     
     def __init__(self, weights_path, weight_name, awq):
-        backend_config_awq = TurbomindEngineConfig(session_len=4096,  # 图片分辨率较高时请调高session_len
+        backend_config_awq = TurbomindEngineConfig(session_len=2600 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.05, 
                                         tp=1,
                                         model_format='awq',
                                         # quant_policy=0,
                                         )  # 两个显卡
         
-        backend_config = TurbomindEngineConfig(session_len=4096,  # 图片分辨率较高时请调高session_len
+        backend_config = TurbomindEngineConfig(session_len=2600 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.05, 
                                         tp=1,
                                         # quant_policy=0,
                                         )  # 两个显卡
+        
+        self.gen_config = GenerationConfig(top_p=0.8,
+                              top_k=40,
+                              temperature=0,
+                              max_new_tokens=512)
 
         self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config, log_level='INFO')
 
@@ -34,7 +40,7 @@ class VLM():
         # vlm_prompt = prompt.vlm_prompt_template.format("16", "1", "2,3,4,5,6", "7,8,9,10,11", "12,13,14,15,16", season, weather, determine, prompt.a_format)
         vlm_prompt = vlm_prompt_template
         # print(vlm_prompt)
-        response = self.pipe((vlm_prompt, images))
+        response = self.pipe((vlm_prompt, images), gen_config=self.gen_config)
 
         # print(response.text)
         
@@ -121,7 +127,15 @@ class VLM():
             print("Image is OpenCV format")
         else:
             image = load_image(full_body_image_path)
-        response = self.pipe((vlm_prompt, image))
+        
+        # Converting a PIL image to a NumPy array 
+        image.save('/root/data/test_data/pil/your_image1.jpg', 'JPEG', quality=85) 
+        np_image = np.array(image)  
+        np_image, _, _ = letterbox(np_image, new_shape=(1920, 1280)) #hw
+        # Converting a NumPy array  to a PIL image
+        image_pil = Image.fromarray(np_image) 
+
+        response = self.pipe((vlm_prompt, image_pil))
 
         return response.text
     

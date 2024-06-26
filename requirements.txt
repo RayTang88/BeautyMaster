@@ -186,6 +186,6 @@ omegaconf
 pycocotools
 av
 onnxruntime==1.16.2
-gradio==4.24.0
+gradio==4.32.2
 scikit-image
 elasticsearch

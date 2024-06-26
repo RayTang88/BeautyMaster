@@ -21,8 +21,9 @@ class RagAndRecommend():
                  only_use_vlm):
         
         self.bceEmbeddingRetriever = BceEmbeddingRetriever(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path)
-        self.llm = LLM(weights_path, llm_weight_name, llm_awq)
         self.vlm = VLM(weights_path, vlm_weight_name, vlm_awq)
+        self.llm = LLM(weights_path, llm_weight_name, llm_awq)
+
 
         
         self.available_types = available_types
@@ -136,8 +137,10 @@ class RagAndRecommend():
         
         return similar_items, body_shape_descs, gender
     
+    
+    #This is a  main interface ,used to match in infer.py
     def infer_llm_raged_recommend_interface(self, full_body_image_path, season, weather, determine, additional_requirements):
-        #rag
+        #vlm+rag
         similar_items, body_shape_descs, gender = self.infer_rag_4o_like_func(full_body_image_path, season, weather, determine, additional_requirements)
         #llm recomend
         recommended = self.llm.infer_llm_recommend_raged(season, weather, determine, additional_requirements, similar_items, body_shape_descs, gender)
