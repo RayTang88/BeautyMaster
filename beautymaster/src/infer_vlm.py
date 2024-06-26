@@ -129,7 +129,6 @@ class VLM():
             image = load_image(full_body_image_path)
         
         # Converting a PIL image to a NumPy array 
-        image.save('/root/data/test_data/pil/your_image1.jpg', 'JPEG', quality=85) 
         np_image = np.array(image)  
         np_image, _, _ = letterbox(np_image, new_shape=(1920, 1280)) #hw
         # Converting a NumPy array  to a PIL image
