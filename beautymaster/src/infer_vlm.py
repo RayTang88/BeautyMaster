@@ -5,6 +5,7 @@ from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig
 from lmdeploy.vl import load_image
 from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, vlm_prompt_template, vlm_prompt_body_template , vlm_prompt_caption_template, upper_shape, upper_choice_list, upper_out_format, lower_shape, lower_choice_list, lower_out_format, dresses_shape, dresses_choice_list, dresses_out_format, skirt_shape, skirt_choice_list, skirt_out_format
 from PIL import Image
+from beautymaster.utils.onnx_infer import letterbox
 
 class VLM():
     
@@ -126,7 +127,15 @@ class VLM():
             print("Image is OpenCV format")
         else:
             image = load_image(full_body_image_path)
-        response = self.pipe((vlm_prompt, image))
+        
+        # Converting a PIL image to a NumPy array 
+        image.save('/root/data/test_data/pil/your_image1.jpg', 'JPEG', quality=85) 
+        np_image = np.array(image)  
+        np_image, _, _ = letterbox(np_image, new_shape=(1920, 1280)) #hw
+        # Converting a NumPy array  to a PIL image
+        image_pil = Image.fromarray(np_image) 
+
+        response = self.pipe((vlm_prompt, image_pil))
 
         return response.text
     
