@@ -1,3 +1,2 @@
 git
 git-lfs
-mysql-server

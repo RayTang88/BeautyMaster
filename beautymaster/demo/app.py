@@ -6,6 +6,7 @@ import gradio as gr
 vlm_weight_name = '/InternVL-Chat-V1-5-AWQ/'
 llm_weight_name = '/internlm2-chat-20b-4bits/'
 vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
+vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
 llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
 
 if os.environ.get('openxlab'):
@@ -25,15 +26,15 @@ if os.environ.get('openxlab'):
     os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
-    # base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
-    # os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
-    # os.system(f'cd {base_path} && git lfs pull')
-    # os.system(f"cd {os.environ.get('CODE_ROOT')}")
-    
-    base_path = os.environ.get('MODEL_ROOT')+"Mini-InternVL-Chat-2B-V1-5-AWQ/"
-    os.system(f'git clone https://code.openxlab.org.cn/raytang88/Mini-InternVL-Chat-2B-V1-5-AWQ.git {base_path}')
+    base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
+    os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
     os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
+    
+    # base_path = os.environ.get('MODEL_ROOT')+"Mini-InternVL-Chat-2B-V1-5-AWQ/"
+    # os.system(f'git clone https://code.openxlab.org.cn/raytang88/Mini-InternVL-Chat-2B-V1-5-AWQ.git {base_path}')
+    # os.system(f'cd {base_path} && git lfs pull')
+    # os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
     base_path = os.environ.get('MODEL_ROOT')+"bce-embedding-base_v1/"
     os.system(f'git clone https://code.openxlab.org.cn/raytang88/bce-embedding-base_v1.git {base_path}')
@@ -44,8 +45,8 @@ if os.environ.get('openxlab'):
     os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
-    # vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
     vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
+    vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
     llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
 
 
@@ -207,7 +208,7 @@ def is_upload():
 image_blocks = gr.Blocks().queue()
 with image_blocks as Match:
     gr.Markdown("## 🌟👗💄 美妆达人 - 美丽您的每一天 💄👗🌟")
-    gr.Markdown("因为算力的问题，目前上传一个简化版本。如果您想体验完整的功能，请移步Github并持续关注我们的后续工作。Github：[source codes](https://github.com/RayTang88/BeautyMaster)")
+    gr.Markdown("因为算力的问题，目前上传一个简化版本。如果您想体验完整的功能，请移步Github并持续关注我们的后续工作。Github：[source codes](https://github.com/RayTang88/BeautyMaster), 欢迎star🌟")
     gr.Markdown("使用方法：在美妆搭配页面按示例上传一张全身照，点击Match按钮，即可体验，目前我们内置了一个精简的服饰数据库供基础效果展示。")
     gr.Markdown("注意事项：1.如果点击Match一分钟后未有响应，可再次点击Math按钮尝试；2.试穿功能和美丽衣橱暂未开放，请持续关注我们的后续工作。")
     with gr.Row():
