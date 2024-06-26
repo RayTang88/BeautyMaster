@@ -4,7 +4,7 @@
   
   [中文](README.md) | [English](README_en.md)
 
-  [DEMO](https://openxlab.org.cn/apps/detail/raytang88/BeautyMaster-OpenXLab)
+  [DEMO](https://openxlab.org.cn/apps/detail/raytang88/BeautyMaster-OpenXLab) | [VIDEO](https://www.bilibili.com/video/BV1Vz421b7D3)
 
   👋 join us on [![Static Badge](https://img.shields.io/badge/-grey?style=social&logo=wechat&label=WeChat)](./assets/wechat.jpg)
 </div>
