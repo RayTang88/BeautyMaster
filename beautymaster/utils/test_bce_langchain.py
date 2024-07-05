@@ -3,7 +3,7 @@ import mysql.connector
 import pymysql
 from BCEmbedding.tools.langchain import BCERerank
 from langchain.retrievers import ContextualCompressionRetriever
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter, ChineseTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -30,6 +30,8 @@ def test_bce():
     ).load()
 
     selected_fields = ["content"]
+
+    # documents = CSVLoader(csv_data_path, metadata_columns = ["idx"]).load()
 
     # documents1=[]
 
@@ -61,9 +63,12 @@ def test_bce():
     #     '/workspace/GitProjects/BCEmbedding/BCEmbedding/tools/eval_rag/eval_pdfs/Comp_en_llama2.pdf'
     # ).load()
 
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500,
+    # text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500,
+    #                                             chunk_overlap=0)
+    text_splitter = ChineseTextSplitter(chunk_size=640,
                                                 chunk_overlap=0)
-    texts = text_splitter.split_documents(documents)
+     
+    texts = text_splitter.split_documents(documents2)
 
     # example 1. retrieval with embedding and reranker
     retriever = VectorStore.from_documents(
@@ -341,5 +346,6 @@ if __name__ == "__main__":
 
     # # 关闭连接
     # db.close()
-    search()
+    # search()
+    test_bce()
 
