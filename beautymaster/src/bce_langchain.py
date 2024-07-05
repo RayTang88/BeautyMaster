@@ -29,7 +29,7 @@ class BceEmbeddingRetriever():
         # init documents
         documents = CSVLoader(csv_data_path, metadata_columns = ["idx"]).load()
 
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500,
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=640,
                                                     chunk_overlap=0)
         texts = text_splitter.split_documents(documents)
 
