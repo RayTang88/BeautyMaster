@@ -29,7 +29,7 @@ class TryOnInterface():
     self.parsing_mask = Parsing(gpu_id=0, human_parsing_model_path=human_parsing_model_path)
     self.try_on = try_on_module.TryOn(try_on_model_path)
 
-  def get_try_on_result(self, full_body_path, clothes_path, full_body_caption, clothes_caption, idx):
+  def get_try_on_result(self, full_body_path, clothes_path, full_body_caption, clothes_caption, category):
     if isinstance(full_body_path, Image.Image):
       img_o=full_body_path
     elif isinstance(full_body_path, np.ndarray):
@@ -59,7 +59,15 @@ class TryOnInterface():
     # pose_data = pose_data.reshape((-1, 2))
     # print(pose_data)
     # exit()
-    agnostic = get_img_agnostic(img_o.copy(), parsed, pose_data)
+    agnostic = None
+    if "上衣" == category:
+      agnostic = get_img_agnostic(img_o.copy(), parsed, pose_data)
+
+    elif "裤子" == category or "半身裙" == category:
+      agnostic = get_img_agnostic2(img_o.copy(), parsed, pose_data)
+
+    elif "连衣裙" == category:
+      agnostic = get_img_agnostic3(img_o.copy(), parsed, pose_data)
     # agnostic.save('my_pre_data/mask.jpg')
     # exit()
 
@@ -105,14 +113,14 @@ class TryOnInterface():
           assert len(match_caption_list) == len(match_id_list)
 
           if "上衣" in match_category_list:
-
+            #The position of the clothes in the list
             idx = match_category_list.index("上衣")
             match_id =match_id_list[idx]
             match_caption =match_caption_list[idx]
 
             clothes_path = "/group_share/data_org/DressCode/upper_body/images/" + match_id.split('_')[0]+"_1.jpg"
 
-            image = self.get_try_on_result(full_body_image_path, clothes_path, body_shape_descs, match_caption, int(id))
+            image = self.get_try_on_result(full_body_image_path, clothes_path, body_shape_descs, match_caption, int(idx))
 
             match_dict["id"] = match["id"]
             match_dict["score"] = match["score"]
@@ -123,6 +131,45 @@ class TryOnInterface():
             match_result.append(match_dict)
 
     return match_result
+  
+
+  def try_on_func_all(self, llm_recommended, full_body_image_path, body_shape_descs):
+      print("llm_recommended[match_content]", llm_recommended)    
+      assert len(llm_recommended["match_content"]) > 0
+      match_result = []
+      for match in llm_recommended["match_content"]:
+          match_dict = {}
+          id = match["id"]
+          match_category_list = match["category"]
+          match_id_list = match["match_id"]
+          match_caption_list = match["match_caption"]
+          match_reason = match["reason"]
+          score = match["score"]
+
+          assert len(match_category_list) == len(match_id_list)
+          assert len(match_caption_list) == len(match_id_list)
+
+          # if "上衣" in match_category_list:
+          for category in match_caption_list:      
+            #The position of the clothes in the list
+            idx = match_category_list.index(category)
+            match_id =match_id_list[idx]
+            match_caption =match_caption_list[idx]
+
+            clothes_path = "/group_share/data_org/DressCode/upper_body/images/" + match_id.split('_')[0]+"_1.jpg"
+
+            image = self.get_try_on_result(full_body_image_path, clothes_path, body_shape_descs, match_caption, category)
+
+            match_dict["id"] = match["id"]
+            match_dict["score"] = match["score"]
+            match_dict["category"] = match_category_list
+            match_dict["match_reason"] = match_reason
+            match_dict["image"] = image
+            
+            match_result.append(match_dict)
+
+      return match_result
+
   
   def try_on_simple_func(self, clothes_path, full_body_image_path, body_shape_descs, match_caption):
         
