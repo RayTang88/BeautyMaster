@@ -1,3 +1,6 @@
+
+
+import os
 import sys
 import importlib
 import numpy as np
@@ -137,36 +140,68 @@ class TryOnInterface():
       print("llm_recommended[match_content]", llm_recommended)    
       assert len(llm_recommended["match_content"]) > 0
       match_result = []
+      if isinstance(llm_recommended, list):
+            llm_recommended = llm_recommended[0]
+      assert isinstance(llm_recommended, dict)
+      print("type--- llm_recommended2", type(llm_recommended))          
+      match_result = []
+      assert len(llm_recommended["match_content"]) > 0
       for match in llm_recommended["match_content"]:
           match_dict = {}
-          id = match["id"]
           match_category_list = match["category"]
+                        
+          #Filter out incompatible combinations
+          flag, match_caption_list = self.filter_output(match_category_list)
+          if not flag:
+                continue
+            # print("here1111111")
           match_id_list = match["match_id"]
           match_caption_list = match["match_caption"]
           match_reason = match["reason"]
-          score = match["score"]
-
+            
           assert len(match_category_list) == len(match_id_list)
           assert len(match_caption_list) == len(match_id_list)
+          # print("here222222")
+          match_dict["id"] = match["id"]
+          match_dict["score"] = match["score"]
+          match_dict["category"] = match_category_list
+          match_dict["match_reason"] = match_reason
+          # print("here333333")
+          images = []
+          
+          for category, match_id, match_caption in zip(match_category_list, match_id_list, match_caption_list):
+              # try:
+              data_root = os.environ.get('DATA_ROOT')
+          
+              if "上衣" == category:
+                  # idx = match_category_list.index("上衣")
+                  # match_id =match_id_list[idx]
+                  # match_caption =match_caption_list[idx]
+                  # The match_id field is in the form of 'match_id': ['idx: 050040_1', 'idx: 019252_1']
+                  clothes_path = data_root + "/upper_body/images/" + match_id.replace("idx:", "").strip().split('_')[0] + "_1.jpg"
+              elif "裤子" == category:
+                  clothes_path = data_root + "/lower_body/images/" +match_id.replace("idx:", "").strip().split('_')[0] + "_1.jpg"
+              elif "半身裙" == category:
+                  clothes_path = data_root + "/lower_body/images/" + match_id.replace("idx:", "").strip().split('_')[0] + "_1.jpg"
+              elif "连衣裙" == category:
+                  clothes_path = data_root + "/dresses/images/" + match_id.replace("idx:", "").strip().split('_')[0] +"_1.jpg"    
+              print(os.path.exists(clothes_path), clothes_path)  
+              if not os.path.exists(clothes_path):
+                  continue
+                
+              image = Image.open(clothes_path)
+              images.append(image)
 
-          # if "上衣" in match_category_list:
-          for category in match_caption_list:      
-            #The position of the clothes in the list
-            idx = match_category_list.index(category)
-            match_id =match_id_list[idx]
-            match_caption =match_caption_list[idx]
+          tryon_image = self.get_try_on_result(full_body_image_path, images, body_shape_descs, match_caption, category)
+          match_dict["id"] = match["id"]
+          match_dict["score"] = match["score"]
+          match_dict["category"] = match_category_list
+          match_dict["match_reason"] = match_reason
+          match_dict["image"] = image
+          match_dict["tryon_image"] = tryon_image
 
-            clothes_path = "/group_share/data_org/DressCode/upper_body/images/" + match_id.split('_')[0]+"_1.jpg"
-
-            image = self.get_try_on_result(full_body_image_path, clothes_path, body_shape_descs, match_caption, category)
-
-            match_dict["id"] = match["id"]
-            match_dict["score"] = match["score"]
-            match_dict["category"] = match_category_list
-            match_dict["match_reason"] = match_reason
-            match_dict["image"] = image
             
-            match_result.append(match_dict)
+          match_result.append(match_dict)
 
       return match_result
 
