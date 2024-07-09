@@ -5,7 +5,7 @@ from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig
 from lmdeploy.vl import load_image
 from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, vlm_prompt_template, vlm_prompt_body_template , vlm_prompt_caption_template, upper_shape, upper_choice_list, upper_out_format, lower_shape, lower_choice_list, lower_out_format, dresses_shape, dresses_choice_list, dresses_out_format, skirt_shape, skirt_choice_list, skirt_out_format
 from PIL import Image
-from beautymaster.utils.onnx_infer import letterbox
+from beautymaster.utils.onnx_infer import letterbox, letterbox_keep_new_shape
 
 class VLM():
     
@@ -130,7 +130,7 @@ class VLM():
         
         # Converting a PIL image to a NumPy array 
         np_image = np.array(image)  
-        np_image, _, _ = letterbox(np_image, new_shape=(1920, 1280)) #hw
+        np_image, _, _ = letterbox_keep_new_shape(np_image, new_shape=(1920, 1280)) #hw
         # Converting a NumPy array  to a PIL image
         image_pil = Image.fromarray(np_image) 
 
