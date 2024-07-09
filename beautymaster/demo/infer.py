@@ -5,7 +5,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 from beautymaster.src.infer_rag_recommend import RagAndRecommend
-# from beautymaster.src.try_on import TryOnInterface
+from beautymaster.src.try_on import TryOnInterface
 # from beautymaster.utils.show import show_func
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
@@ -61,9 +61,9 @@ class Interface:
         self.ragandrecommend = RagAndRecommend(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path, vlm_weight_name, vlm_awq, llm_weight_name, llm_awq, available_types, only_use_vlm)
         self.save_path = save_path 
         
-        # self.tryon = TryOnInterface(weights_path, code_root_path)
+        self.try_on_class = TryOnInterface(weights_path, code_root_path)
         
-    def match(self,
+    def match_interface(self,
             weather="",
             season="",
             determine="",
@@ -92,20 +92,33 @@ class Interface:
                 print(f"Cycles: {Cycles}/5, error: {e}, try again...")
                 time.sleep(1)  # wait 1 minute
                 
-    def tryon(self,
-        clothes="",
+    def try_on_interface(self,
+        weather="",
+        season="",
+        determine="",
         full_body_image_path="",
-        body_shape_descs="",
-        match_caption=""
+        additional_requirements=""
         ):
-        match_result = ""
-        #1.Virtual Try-on according the suggestions
-        # match_result = self.tryon.try_on_func(clothes, full_body_image_path, body_shape_descs, match_caption)
-        # print(match_result)
-        #2.Visualize the results of the suggestions to the user
-        # show_func(match_result, self.save_path)
-        
-        return match_result
+                # Infinite loop until the code executes successfully
+        Cycles=0
+        while Cycles<5:
+            try:
+                #1 use llm after rag 4o like
+    
+                llm_recommended, body_shape_descs = self.ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
+                
+                #2.Virtual Try-on according the suggestions
+                match_result = self.try_on_class.try_on_func_all(llm_recommended, full_body_image_path, body_shape_descs)
+                # match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
+                # print(match_result)
+                #3.Visualize the results of the suggestions to the user
+                # show_func(match_result, self.save_path)
+
+                return match_result, body_shape_descs
+            except Exception as e:
+                Cycles+=1
+                print(f"Cycles: {Cycles}/5, error: {e}, try again...")
+                time.sleep(1)
         
     def rag(self,
             weather="",
@@ -120,7 +133,7 @@ class Interface:
         
         return rag_4o_like_recommended
         
-    def caption(self,
+    def caption_interface(self,
             clothes_path="",
             ):
         
