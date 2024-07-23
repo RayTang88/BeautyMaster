@@ -2,6 +2,7 @@ import os
 import time
 import argparse
 import warnings
+import torch
 warnings.filterwarnings('ignore')
 
 from beautymaster.src.infer_rag_recommend import RagAndRecommend
@@ -25,7 +26,8 @@ class Interface:
                  available_types,
                  top_n,
                  content,
-                 only_use_vlm
+                 only_use_vlm,
+                 openxlab
                  ) -> None:
         """
         Args:
@@ -58,11 +60,25 @@ class Interface:
         vlm_awq=True if matches_vlm else False
         llm_awq=True if matches_llm else False
         
-        self.ragandrecommend = RagAndRecommend(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path, vlm_weight_name, vlm_awq, llm_weight_name, llm_awq, available_types, only_use_vlm)
-        self.save_path = save_path 
-        
-        self.try_on_class = TryOnInterface(weights_path, code_root_path)
-        
+        # self.ragandrecommend = RagAndRecommend(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path, vlm_weight_name, vlm_awq, llm_weight_name, llm_awq, available_types, only_use_vlm, openxlab)
+        # self.try_on_class = TryOnInterface(weights_path, code_root_path)
+        self.save_path = save_path
+        self.weights_path = weights_path
+        self.embedding_model_name = embedding_model_name
+        self.reranker_model_name = reranker_model_name
+        self.vlm_weight_name = vlm_weight_name
+        self.llm_weight_name = llm_weight_name
+        self.csv_data_path = csv_data_path
+        self.available_types = available_types
+        self.top_n = top_n
+        self.only_use_vlm = only_use_vlm
+        self.vlm_awq = vlm_awq
+        self.llm_awq = llm_awq
+        self.code_root_path = code_root_path
+        self.openxlab = openxlab
+        self.llm_recommended = ""
+        self.body_shape_descs = ""
+            
     def match_interface(self,
             weather="",
             season="",
@@ -73,15 +89,18 @@ class Interface:
         
         # Infinite loop until the code executes successfully
         Cycles=0
-        while Cycles<5:
+        while Cycles<2:
+            torch.cuda.synchronize()
+            torch.cuda.empty_cache()
             try:
                 #1 use llm after rag 4o like
+                ragandrecommend = RagAndRecommend(self.weights_path, self.embedding_model_name, self.reranker_model_name, self.top_n, self.csv_data_path, self.vlm_weight_name, self.vlm_awq, self.llm_weight_name, self.llm_awq, self.available_types, self.only_use_vlm, self.openxlab)
     
-                llm_recommended, body_shape_descs = self.ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
+                llm_recommended, body_shape_descs = ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
                 
                 #2.Virtual Try-on according the suggestions
                 # match_result = self.tryon.try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
-                match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
+                match_result = ragandrecommend.match_only_result_func(llm_recommended)
                 # print(match_result)
                 #3.Visualize the results of the suggestions to the user
                 # show_func(match_result, self.save_path)
@@ -101,25 +120,33 @@ class Interface:
         ):
         # Infinite loop until the code executes successfully
         Cycles=0
-        while Cycles<5:
-            try:
-                #1 use llm after rag 4o like
-    
-                llm_recommended, body_shape_descs = self.ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
-                
-                #2.Virtual Try-on according the suggestions
-                match_result = self.try_on_class.try_on_func_all(llm_recommended, full_body_image_path, body_shape_descs)
-                # match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
-                # print(match_result)
-                #3.Visualize the results of the suggestions to the user
-                # show_func(match_result, self.save_path)
+        while Cycles<2:
 
-                return match_result, body_shape_descs
+            try:
+                with torch.no_grad():
+                    #1 use llm after rag 4o like
+                    ragandrecommend = RagAndRecommend(self.weights_path, self.embedding_model_name, self.reranker_model_name, self.top_n, self.csv_data_path, self.vlm_weight_name, self.vlm_awq, self.llm_weight_name, self.llm_awq, self.available_types, self.only_use_vlm, self.openxlab)    
+                    self.llm_recommended, self.body_shape_descs = ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
+                    
+                    torch.cuda.synchronize()
+                    torch.cuda.empty_cache()
+
+                    #2.Virtual Try-on according the suggestions
+                    try_on_class = TryOnInterface(self.weights_path, self.code_root_path)
+                    match_result = try_on_class.try_on_func_all(self.llm_recommended, full_body_image_path, self.body_shape_descs)
+                    # torch.cuda.synchronize()
+                    # torch.cuda.empty_cache()
+                    # match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
+                    # print(match_result)
+                    #3.Visualize the results of the suggestions to the user
+                    # show_func(match_result, self.save_path).
+
+                    return match_result, self.body_shape_descs
             except Exception as e:
                 Cycles+=1
                 print(f"Cycles: {Cycles}/5, error: {e}, try again...")
                 time.sleep(1)
-        
+
     def rag(self,
             weather="",
             season="",
@@ -127,8 +154,8 @@ class Interface:
             full_body_image_path="",
             additional_requirements=""
             ):
-        
-        rag_4o_like_recommended, _, _ = self.ragandrecommend.infer_rag_4o_like_func(full_body_image_path, season, weather, determine, additional_requirements)
+        ragandrecommend = RagAndRecommend(self.weights_path, self.embedding_model_name, self.reranker_model_name, self.top_n, self.csv_data_path, self.vlm_weight_name, self.vlm_awq, self.llm_weight_name, self.llm_awq, self.available_types, self.only_use_vlm, self.openxlab)
+        rag_4o_like_recommended, _, _ = ragandrecommend.infer_rag_4o_like_func(full_body_image_path, season, weather, determine, additional_requirements)
         print("rag_4o_like_recommended" , rag_4o_like_recommended)
         
         return rag_4o_like_recommended
@@ -139,11 +166,14 @@ class Interface:
         
         # Infinite loop until the code executes successfully
         Cycles=0
-        while Cycles<5:
+        while Cycles<2:
+            torch.cuda.synchronize()
+            torch.cuda.empty_cache()
             try:
         
                 #1. get clothes caption
-                caption_json, caption_string = self.ragandrecommend.infer_vlm_caption(clothes_path)
+                ragandrecommend = RagAndRecommend(self.weights_path, self.embedding_model_name, self.reranker_model_name, self.top_n, self.csv_data_path, self.vlm_weight_name, self.vlm_awq, self.llm_weight_name, self.llm_awq, self.available_types, self.only_use_vlm, self.openxlab)
+                caption_json, caption_string = ragandrecommend.infer_vlm_caption(clothes_path)
                 
                 # print("caption", caption_string)
                 #2. write database
@@ -173,6 +203,7 @@ def parse_opt(vlm_weight_name, llm_weight_name):
 	# parser.add_argument('--full-body-image-path', type=str, default='/group_share/data_org/test_data/fullbody/real_image/v2-637c977c47e7794caa8cc80e12f1a369_r.jpg', help='content')
 	parser.add_argument('--available-types', nargs='+', type=str, default=["上衣", "裤子", "半身裙", "连衣裙"], help='available types')
 	parser.add_argument('--only-use-vlm', nargs='+', type=bool, default=False, help='only use vlm')
+	parser.add_argument('--openxlab', nargs='+', type=bool, default=True, help='only use vlm')
 	# parser.add_argument('--additional-requirements', type=str, default='搭配简单大方', help='additional requirements')
 	opt = parser.parse_args()
 

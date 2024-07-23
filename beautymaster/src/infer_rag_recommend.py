@@ -2,8 +2,8 @@ import os
 import random
 from json_repair import repair_json
 from PIL import Image
-from .infer_vlm import VLM
-from .infer_llm import LLM
+from .infer_vlm_torch import VLM
+from .infer_llm_torch import LLM
 from .bce_langchain import BceEmbeddingRetriever
 from .prompt import vlm_prompt_body_template, body_shape, body_out_format
 
@@ -18,11 +18,12 @@ class RagAndRecommend():
                  llm_weight_name, 
                  llm_awq,
                  available_types, 
-                 only_use_vlm):
+                 only_use_vlm,
+                 openxlab=False):
         
         self.bceEmbeddingRetriever = BceEmbeddingRetriever(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path)
-        self.vlm = VLM(weights_path, vlm_weight_name, vlm_awq)
-        self.llm = LLM(weights_path, llm_weight_name, llm_awq)
+        self.vlm = VLM(weights_path, vlm_weight_name, vlm_awq, openxlab)
+        self.llm = LLM(weights_path, llm_weight_name, llm_awq, openxlab)
 
 
         
@@ -144,6 +145,7 @@ class RagAndRecommend():
         similar_items, body_shape_descs, gender = self.infer_rag_4o_like_func(full_body_image_path, season, weather, determine, additional_requirements)
         #llm recomend
         recommended = self.llm.infer_llm_recommend_raged(season, weather, determine, additional_requirements, similar_items, body_shape_descs, gender)
+        # recommended = ""
         
         return recommended, body_shape_descs
     

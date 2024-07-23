@@ -11,11 +11,13 @@ def parsing_rag_func(rag_4o_like_recommended):
         
         for recommend in recommends:
             # TODO
-            if(len(recommend.page_content.split("\n")))<2:
+            if(len(recommend.page_content.split("\n")))<1:
                 continue
             idx = recommend.metadata["idx"]
-            category_en = recommend.page_content.split("\n")[0].replace("category: ", "")
-            content = recommend.page_content.split("\n")[1].replace("content: ", "")
+            # category_en = recommend.page_content.split("\n")[0].replace("category: ", "")
+            category_en = recommend.metadata["category"]
+            # content = recommend.page_content.split("\n")[1].replace("content: ", "")
+            content = recommend.page_content.replace("content: ", "")
             category = content.replace("content: ", "").split("、")[0]
             if category == "上衣" and category_en == "upper_body":
                 upper+=("idx: %s, content: %s; "%(idx, content))

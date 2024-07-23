@@ -1,17 +1,14 @@
 import os
-from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig
+from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig, PytorchEngineConfig
 from json_repair import repair_json
 from .ready_prompt import ready_prompt_func
 from .prompt import match_prompt_template, match_prompt_template_raged, body_out_format, llm_prompt_template_4o, recommend_format, upper_lower_format
 from beautymaster.utils.parsing_rag import parsing_rag_func
 
 class LLM():
-    def __init__(self, weights_path, weight_name, awq):
+    def __init__(self, weights_path, weight_name, awq, openxlab=False):
         # decrease the ratio of the k/v cache occupation to 20%
-        backend_config_awq = TurbomindEngineConfig(cache_max_entry_count=0.1,
-                                               model_format='awq',
-                                               session_len=2048 if not os.getenv("LLM_SESSION_LEN") else os.getenv("LLM_SESSION_LEN"))
-        
+
         backend_config = TurbomindEngineConfig(cache_max_entry_count=0.1,
                                         session_len=2048 if not os.getenv("LLM_SESSION_LEN") else os.getenv("LLM_SESSION_LEN"))
         
@@ -20,7 +17,20 @@ class LLM():
                         temperature=0,
                         max_new_tokens=512)
         
-        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config, log_level='INFO') 
+        
+        if awq:
+            backend_config = TurbomindEngineConfig(cache_max_entry_count=0.1,
+                                               model_format='awq',
+                                               session_len=2048 if not os.getenv("LLM_SESSION_LEN") else os.getenv("LLM_SESSION_LEN"))
+        elif openxlab:
+            backend_config = PytorchEngineConfig(session_len=2048 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
+                                        cache_max_entry_count=0.05, 
+                                        tp=1,
+                                        # quant_policy=0,
+                                        )  # 两个显卡
+
+        
+        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config, log_level='INFO') 
         
 
     def llm_parsing_json(self, model_candidate_clothes_jsons, get_num_list, meaning_list):
