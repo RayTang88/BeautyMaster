@@ -2,18 +2,19 @@
 
 import os
 import sys
+import torch
 import importlib
 import numpy as np
 from PIL import Image
 
-sys.path.append(os.environ.get('CODE_ROOT')+"/BeautyMaster/beautymaster/third_party/IDM-VTON")
+#idm-vton
+sys.path.insert(0, os.environ.get('CODE_ROOT')+"/BeautyMaster/beautymaster/third_party/IDM-VTON")
 from preprocess.openpose.run_openpose import OpenPose
 from preprocess.humanparsing.run_parsing import Parsing
 from my_get_maks import get_img_agnostic, get_img_agnostic2, get_img_agnostic3
 from my_get_pose import InferenceAction
 try_on_module = importlib.import_module("beautymaster.third_party.IDM-VTON.tryon")
 from beautymaster.utils.onnx_infer import letterbox_keep_new_shape
-
 
 class TryOnInterface():
       
@@ -110,7 +111,7 @@ class TryOnInterface():
       # pose = Image.open('/root/kj_work/IDM-VTON_old/my_tryon_test_data/pose.jpg')
       
       tryon_result = self.try_on.tryon(p1, p2, pose,  cloth, tryon_result, agnostic)
-      tryon_result.save('/root/data/try_on_data/middle/tryon_result_%s.jpg'%(match_id))
+      # tryon_result.save('/root/data/try_on_data/middle/tryon_result_%s.jpg'%(match_id))
     
     return tryon_result
 
@@ -251,6 +252,30 @@ class TryOnInterface():
           match_result.append(match_dict)
 
       return match_result
+    
+  # this func is for try on for match result which come from match_only_result_func
+  def try_on_func_form_match_result(self, match_result, full_body_image_path, body_shape_descs):
+        
+      try_on_result=[]
+      for match_dict in match_result:
+          try_on_dict = {}  
+          match_category_list = match_dict["category"]
+          match_id_list = match_dict["match_id"]
+          idd = match_dict["id"]
+          match_caption_list = match_dict["match_caption"]
+          images = match_dict["images"]
+    
+   
+          assert len(match_category_list) == len(match_id_list)
+          assert len(match_caption_list) == len(match_id_list)
+          
+          tryon_image = self.get_try_on_result(full_body_image_path, images, body_shape_descs, match_caption_list, match_category_list, idd)
+          # tryon_image.save('/root/data/try_on_data/middle/tryon_image_%s.jpg'%(match["id"]))
+          try_on_dict["id"] = idd
+          try_on_dict["tryon_image"] = tryon_image
+          try_on_result.append(try_on_dict)
+
+      return try_on_result   
 
   
   def try_on_simple_func(self, clothes_path, full_body_image_path, body_shape_descs, match_caption):
@@ -258,5 +283,4 @@ class TryOnInterface():
     id =0
     image = self.get_try_on_result(full_body_image_path, clothes_path, body_shape_descs, match_caption, int(id))
 
-    return image  
-
+    return image

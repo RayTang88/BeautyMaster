@@ -32,6 +32,7 @@ class VLM():
         self.model = AutoModel.from_pretrained(
             model_path,
             torch_dtype=torch.bfloat16,
+            device_map="auto",
             low_cpu_mem_usage=True,
             trust_remote_code=True
         ).eval().cuda()
