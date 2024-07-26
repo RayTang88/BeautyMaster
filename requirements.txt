@@ -62,7 +62,7 @@ langchain-community
 langchain-core
 langchain-text-splitters
 langsmith==0.1.67
-lmdeploy==0.5.1
+lmdeploy==0.5.2
 markdown-it-py==3.0.0
 markdown2==2.4.13
 MarkupSafe==2.1.3
