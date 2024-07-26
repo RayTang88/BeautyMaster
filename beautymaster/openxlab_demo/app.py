@@ -139,7 +139,7 @@ def run_local_match(weather, season, determine, additional_requirements, full_bo
     full_body_image = cc(full_body_image["composite"])
     # print("full_body_image mode-------------", full_body_image.mode)
     
-    match_reslult, body_shape_descs = interface.match_interface(weather,
+    match_result, body_shape_descs = interface.match_interface(weather,
     season,
     determine,
     full_body_image,
@@ -159,7 +159,7 @@ def run_local_match(weather, season, determine, additional_requirements, full_bo
         planA_clothes_img_A, planA_clothes_img_B, planA_match_reason = set_image(match_reslult, 0)
     torch.cuda.synchronize()
     torch.cuda.empty_cache()
-    return planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, match_reslult, body_shape_descs  
+    return planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, match_result, body_shape_descs  
 
 def run_local_tryon(weather, season, determine, additional_requirements, full_body_image):
     opt = parse_opt(vlm_weight_name, llm_weight_name)
@@ -221,7 +221,7 @@ def run_local_tryon_only(full_body_image, match_reslult, body_shape_descs):
     # planC_match_reason = ""
     planA_try_on = Image.new("RGB", (500, 300), 'white')
     planB_try_on = Image.new("RGB", (500, 300), 'white')
-    planC_try_on = Image.new("RGB", (500, 300), 'white')
+    # planC_try_on = Image.new("RGB", (500, 300), 'white')
     
     
     # print("full_body_image mode-------------", full_body_image["composite"].mode)
@@ -322,24 +322,24 @@ with image_blocks as Match:
             with gr.Row():
                 with gr.Column(elem_id="prompt-container"):
                     gr.Markdown("推荐方案 1")
-                planA_clothes_img_A = gr.Image(label="clothes", sources='upload', type="pil", height=300)
-                planA_clothes_img_B = gr.Image(label="clothes", sources='upload', type="pil", height=300)
+                planA_clothes_img_A = gr.Image(label="Garment", sources='upload', type="pil", height=300)
+                planA_clothes_img_B = gr.Image(label="Garment", sources='upload', type="pil", height=300)
                 with gr.Row(elem_id="prompt-container"):
                     with gr.Row():
                         planA_match_reason = gr.Textbox(placeholder="", label="推荐理由", show_label=True, elem_id="planA_match_reason")
             with gr.Row():
                 with gr.Column(elem_id="prompt-container"):
                     gr.Markdown("推荐方案 2")
-                planB_clothes_img_A = gr.Image(label="clothes", sources='upload', type="pil", height=300)
-                planB_clothes_img_B = gr.Image(label="clothes", sources='upload', type="pil", height=300)
+                planB_clothes_img_A = gr.Image(label="Garment", sources='upload', type="pil", height=300)
+                planB_clothes_img_B = gr.Image(label="Garment", sources='upload', type="pil", height=300)
                 with gr.Row(elem_id="prompt-container"):
                     with gr.Row():
                         planB_match_reason = gr.Textbox(placeholder="", label="推荐理由", show_label=True, elem_id="planB_match_reason")
             # with gr.Row():
             #     with gr.Column(elem_id="prompt-container"):
             #         gr.Markdown("推荐方案 3")
-            #     planC_clothes_img_A = gr.Image(label="clothes", sources='upload', type="pil", height=300)
-            #     planC_clothes_img_B = gr.Image(label="clothes", sources='upload', type="pil", height=300)      
+            #     planC_clothes_img_A = gr.Image(label="Garment", sources='upload', type="pil", height=300)
+            #     planC_clothes_img_B = gr.Image(label="Garment", sources='upload', type="pil", height=300)      
             #     with gr.Row(elem_id="prompt-container"):
             #         with gr.Row():
             #             planC_match_reason = gr.Textbox(placeholder="", label="推荐理由", show_label=True, elem_id="planC_match_reason")
@@ -363,19 +363,19 @@ with image_blocks as Match:
         #         denoise_steps = gr.Number(label="Denoising Steps", minimum=20, maximum=40, value=30, step=1)
         #         seed = gr.Number(label="Seed", minimum=-1, maximum=2147483647, step=1, value=42)
     # match_button.click(run_local, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason], api_name='Match')
-    match_reslult = gr.State([])
+    match_result = gr.State([])
     body_shape_descs = gr.State("")
     
-    match_button.click(run_local_match, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, match_reslult, body_shape_descs], api_name='Match')
+    match_button.click(run_local_match, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, match_result, body_shape_descs], api_name='Match')
     # tryon_button.click(run_local_tryon, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason, planA, planB, planC], api_name='TryOn')
-    tryon_button.click(run_local_tryon_only, inputs=[fullbody_img, match_reslult, body_shape_descs], outputs=[planA, planB], api_name='TryOn')
+    tryon_button.click(run_local_tryon_only, inputs=[fullbody_img, match_result, body_shape_descs], outputs=[planA, planB], api_name='TryOn')
 
 image_blocks = gr.Blocks().queue()
 with image_blocks as Wardrobe:
     gr.Markdown("这里是您的美丽衣橱，您可以将想要搭配的服饰上传到这里。")
     with gr.Row():
         with gr.Column():        
-            clothes_img = gr.Image(label="clothes", sources='upload', type="pil")
+            clothes_img = gr.Image(label="Garment", sources='upload', type="pil")
             with gr.Row(elem_id="prompt-container"):
                 with gr.Row():
                     category_input = gr.Dropdown(choices=["上衣","裤子","半身裙","连衣裙", "其他"], label="类别", value="连衣裙")

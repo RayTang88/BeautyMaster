@@ -156,7 +156,7 @@ tokenizers
 tomli==2.0.1
 tomlkit==0.12.0
 toolz==0.12.1
-torch==2.3.1
+torch==2.2.2
 torchaudio
 torchvision
 tornado==6.4
@@ -191,4 +191,4 @@ scikit-image
 elasticsearch
 rank_bm25
 diffusers==0.28.2
-autoawq
+# autoawq

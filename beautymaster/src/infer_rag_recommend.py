@@ -2,8 +2,10 @@ import os
 import random
 from json_repair import repair_json
 from PIL import Image
-from .infer_vlm_torch import VLM
-from .infer_llm_torch import LLM
+# from .infer_vlm_torch import VLM
+# from .infer_llm_torch import LLM
+from .infer_vlm import VLM
+from .infer_llm import LLM
 from .bce_langchain import BceEmbeddingRetriever
 from .prompt import vlm_prompt_body_template, body_shape, body_out_format
 
@@ -236,8 +238,8 @@ class RagAndRecommend():
             match_caption_list = match["match_caption"]
             match_reason = match["reason"]
             
-            assert len(match_category_list) == len(match_id_list)
-            assert len(match_caption_list) == len(match_id_list)
+            assert len(match_category_list) == len(match_id_list), f"error: len(match_category_list):%d != len(match_id_list):%d"%(len(match_category_list), len(match_id_list))
+            assert len(match_caption_list) == len(match_id_list), f"error: len(match_caption_list):%d != len(match_id_list):%d"%(len(match_caption_list), len(match_id_list))
             # print("here222222")
             match_dict["id"] = match["id"]
             match_dict["score"] = match["score"]

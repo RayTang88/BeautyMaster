@@ -117,7 +117,7 @@ class TryOnInterface():
       
       cloth_image = resize_and_padding(clothes_path, (768, 1024))
 
-      cloth_type = "overall"
+      cloth_type = "lower"
       if "上衣" == category:
         cloth_type = "upper"      
         # agnostic = get_img_agnostic(img_o.copy(), parsed, pose_data)
