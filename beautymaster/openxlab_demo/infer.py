@@ -1,8 +1,8 @@
 import os
 import time
-import torch
 import argparse
 import warnings
+import torch
 warnings.filterwarnings('ignore')
 
 from beautymaster.src.infer_rag_recommend import RagAndRecommend
@@ -44,11 +44,9 @@ class Interface:
             meaning_list:
             csv_data_path:
             available_types:
-            bce_top_n:
+            top_n:
             content:
             only_use_vlm:
-            openxlab:
-            recommend_top_n:
 
         Returns:
             None
@@ -63,13 +61,29 @@ class Interface:
         vlm_awq=True if matches_vlm else False
         llm_awq=True if matches_llm else False
         
-        self.ragandrecommend = RagAndRecommend(weights_path, embedding_model_name, reranker_model_name, bce_top_n, recommend_top_n, csv_data_path, vlm_weight_name, vlm_awq, llm_weight_name, llm_awq, available_types, only_use_vlm, openxlab)
-        self.save_path = save_path 
+        # self.ragandrecommend = RagAndRecommend(weights_path, embedding_model_name, reranker_model_name, bce_top_n, recommend_top_n, csv_data_path, vlm_weight_name, vlm_awq, llm_weight_name, llm_awq, available_types, only_use_vlm, openxlab)
+        # self.try_on_class = TryOnInterface(weights_path, code_root_path)
+        self.save_path = save_path
+        self.weights_path = weights_path
+        self.embedding_model_name = embedding_model_name
+        self.reranker_model_name = reranker_model_name
+        self.vlm_weight_name = vlm_weight_name
+        self.llm_weight_name = llm_weight_name
+        self.csv_data_path = csv_data_path
+        self.available_types = available_types
+        self.bce_top_n = bce_top_n
+        self.recommend_top_n = recommend_top_n
+        self.only_use_vlm = only_use_vlm
+        self.vlm_awq = vlm_awq
+        self.llm_awq = llm_awq
+        self.code_root_path = code_root_path
+        self.openxlab = openxlab
+        self.llm_recommended = ""
+        self.body_shape_descs = ""
         
-        self.try_on_class = TryOnInterface(weights_path, code_root_path)
-        
+        self.cycle=0
         self.total=1
-        
+            
     def match_interface(self,
             weather="",
             season="",
@@ -79,55 +93,64 @@ class Interface:
             ):
         
         # Infinite loop until the code executes successfully
-        Cycles=0
-        while Cycles<self.total:
-            try:
-                with torch.no_grad():
-                    #1 use llm after rag 4o like
-        
-                    llm_recommended, body_shape_descs = self.ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
-                    
-                    #2.Virtual Try-on according the suggestions
-                    # match_result = self.tryon.try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
-                    match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
-                    # print(match_result)
-                    #3.Visualize the results of the suggestions to the user
-                    # show_func(match_result, self.save_path)
-
-                    return match_result, body_shape_descs
-            except Exception as e:
-                Cycles+=1
-                print(f"Cycles: {Cycles}/{self.total}, error: {e}, try again...")
-                time.sleep(1)  # wait 1 minute
+        self.cycle=0
+        while self.cycle<1:
+            # torch.cuda.synchronize()
+            # torch.cuda.empty_cache()
+            # try:
+                #1 use llm after rag 4o like
+                ragandrecommend = RagAndRecommend(self.weights_path, self.embedding_model_name, self.reranker_model_name, self.bce_top_n, self.recommend_top_n, self.csv_data_path, self.vlm_weight_name, self.vlm_awq, self.llm_weight_name, self.llm_awq, self.available_types, self.only_use_vlm, self.openxlab)
+    
+                llm_recommended, body_shape_descs = ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
                 
-    def try_on_interface(self,
-        weather="",
-        season="",
-        determine="",
-        full_body_image_path="",
-        additional_requirements=""
-        ):
-        # Infinite loop until the code executes successfully
-        Cycles=0
-        while Cycles<self.total:
-            try:
-                with torch.no_grad():
-                    #1 use llm after rag 4o like
-        
-                    llm_recommended, body_shape_descs = self.ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
-                    
-                    #2.Virtual Try-on according the suggestions
-                    match_result = self.try_on_class.try_on_func_all(llm_recommended, full_body_image_path, body_shape_descs)
-                    # match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
-                    # print(match_result)
-                    #3.Visualize the results of the suggestions to the user
-                    # show_func(match_result, self.save_path)
+                #2.Virtual Try-on according the suggestions
+                # match_result = self.tryon.try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
+                match_result = ragandrecommend.match_only_result_func(llm_recommended)
+                # print(match_result)
+                #3.Visualize the results of the suggestions to the user
+                # show_func(match_result, self.save_path)
 
-                    return match_result, body_shape_descs
-            except Exception as e:
-                Cycles+=1
-                print(f"Cycles: {Cycles}/{self.total}, error: {e}, try again...")
-                time.sleep(1)
+                return match_result, body_shape_descs
+            # except Exception as e:
+            #     self.cycle+=1
+            #     print(f"Cycles: {self.cycle}/{self.total}, error: {e}, try again...")
+            #     time.sleep(1)  # wait 1 minute
+                
+    # def try_on_interface(self,
+    #     weather="",
+    #     season="",
+    #     determine="",
+    #     full_body_image_path="",
+    #     additional_requirements=""
+    #     ):
+    #     # Infinite loop until the code executes successfully
+    #     Cycles=0
+    #     while Cycles<2:
+
+    #         try:
+    #             with torch.no_grad():
+    #                 #1 use llm after rag 4o like
+    #                 ragandrecommend = RagAndRecommend(self.weights_path, self.embedding_model_name, self.reranker_model_name, self.top_n, self.csv_data_path, self.vlm_weight_name, self.vlm_awq, self.llm_weight_name, self.llm_awq, self.available_types, self.only_use_vlm, self.openxlab)    
+    #                 self.llm_recommended, self.body_shape_descs = ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
+                    
+    #                 torch.cuda.synchronize()
+    #                 torch.cuda.empty_cache()
+
+    #                 #2.Virtual Try-on according the suggestions
+    #                 try_on_class = TryOnInterface(self.weights_path, self.code_root_path)
+    #                 match_result = try_on_class.try_on_func_all(self.llm_recommended, full_body_image_path, self.body_shape_descs)
+    #                 # torch.cuda.synchronize()
+    #                 # torch.cuda.empty_cache()
+    #                 # match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
+    #                 # print(match_result)
+    #                 #3.Visualize the results of the suggestions to the user
+    #                 # show_func(match_result, self.save_path).
+
+    #                 return match_result, self.body_shape_descs
+    #         except Exception as e:
+    #             Cycles+=1
+    #             print(f"Cycles: {Cycles}/5, error: {e}, try again...")
+    #             time.sleep(1)
     
     def try_on_only_interface(self,
         match_result,
@@ -140,10 +163,10 @@ class Interface:
         ):
         # Infinite loop until the code executes successfully
 
-        cycle=0
-        while cycle<self.total:
+        self.cycle=0
+        while self.cycle<1:
 
-            try:
+            # try:
                 with torch.no_grad():
                     #1 use llm after rag 4o like
                     # ragandrecommend = RagAndRecommend(self.weights_path, self.embedding_model_name, self.reranker_model_name, self.top_n, self.csv_data_path, self.vlm_weight_name, self.vlm_awq, self.llm_weight_name, self.llm_awq, self.available_types, self.only_use_vlm, self.openxlab)    
@@ -153,8 +176,8 @@ class Interface:
                     # torch.cuda.empty_cache()
 
                     #2.Virtual Try-on according the suggestions
-
-                    try_on_result = self.try_on_class.try_on_func_form_match_result(match_result, full_body_image_path, body_shape_descs, num_inference_steps, guidance_scale, seed, show_type)
+                    try_on_class = TryOnInterface(self.weights_path, self.code_root_path)
+                    try_on_result = try_on_class.try_on_func_form_match_result(match_result, full_body_image_path, body_shape_descs, num_inference_steps, guidance_scale, seed, show_type)
                     # torch.cuda.synchronize()
                     # torch.cuda.empty_cache()
                     # match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
@@ -163,11 +186,12 @@ class Interface:
                     # show_func(match_result, self.save_path).
 
                     return try_on_result
-            except Exception as e:
-                cycle+=1
-                print(f"Cycles: {cycle}/{self.total}, error: {e}, try again...")
-                time.sleep(1)  # wait 1 minute
-                    
+            # except Exception as e:
+            #     self.cycle+=1
+            #     print(f"Cycles: {self.cycle}/{self.total}, error: {e}, try again...")
+            #     time.sleep(1)  # wait 1 minute
+                
+
     def rag(self,
             weather="",
             season="",
@@ -175,8 +199,8 @@ class Interface:
             full_body_image_path="",
             additional_requirements=""
             ):
-        
-        rag_4o_like_recommended, _, _ = self.ragandrecommend.infer_rag_4o_like_func(full_body_image_path, season, weather, determine, additional_requirements)
+        ragandrecommend = RagAndRecommend(self.weights_path, self.embedding_model_name, self.reranker_model_name, self.bce_top_n, self.recommend_top_n, self.csv_data_path, self.vlm_weight_name, self.vlm_awq, self.llm_weight_name, self.llm_awq, self.available_types, self.only_use_vlm, self.openxlab)
+        rag_4o_like_recommended, _, _ = ragandrecommend.infer_rag_4o_like_func(full_body_image_path, season, weather, determine, additional_requirements)
         print("rag_4o_like_recommended" , rag_4o_like_recommended)
         
         return rag_4o_like_recommended
@@ -186,19 +210,22 @@ class Interface:
             ):
         
         # Infinite loop until the code executes successfully
-        Cycles=0
-        while Cycles<self.total:
+        self.cycle=0
+        while self.cycle<1:
+            # torch.cuda.synchronize()
+            # torch.cuda.empty_cache()
             try:
         
                 #1. get clothes caption
-                caption_json, caption_string = self.ragandrecommend.infer_vlm_caption(clothes_path)
+                ragandrecommend = RagAndRecommend(self.weights_path, self.embedding_model_name, self.reranker_model_name, self.top_n, self.csv_data_path, self.vlm_weight_name, self.vlm_awq, self.llm_weight_name, self.llm_awq, self.available_types, self.only_use_vlm, self.openxlab)
+                caption_json, caption_string = ragandrecommend.infer_vlm_caption(clothes_path)
                 
                 # print("caption", caption_string)
                 #2. write database
                 return caption_json, caption_string
             except Exception as e:
-                Cycles+=1
-                print(f"Cycles: {Cycles}/{self.total}, error: {e}, try again...")
+                self.cycle+=1
+                print(f"Cycles: {self.cycle}/{self.total}, error: {e}, try again...")
                 time.sleep(1)  # wait 1 minute
 
 def parse_opt(vlm_weight_name, llm_weight_name):

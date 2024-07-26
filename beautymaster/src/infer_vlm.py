@@ -1,23 +1,17 @@
 import os
 import numpy as np
 
-from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig
+from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig, PytorchEngineConfig
 from lmdeploy.vl import load_image
 from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, vlm_prompt_template, vlm_prompt_body_template , vlm_prompt_caption_template, upper_shape, upper_choice_list, upper_out_format, lower_shape, lower_choice_list, lower_out_format, dresses_shape, dresses_choice_list, dresses_out_format, skirt_shape, skirt_choice_list, skirt_out_format
 from PIL import Image
-from beautymaster.utils.onnx_infer import letterbox
+from beautymaster.utils.onnx_infer import letterbox, letterbox_keep_new_shape
 
 class VLM():
     
-    def __init__(self, weights_path, weight_name, awq):
-        backend_config_awq = TurbomindEngineConfig(session_len=2600 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
-                                        cache_max_entry_count=0.05, 
-                                        tp=1,
-                                        model_format='awq',
-                                        # quant_policy=0,
-                                        )  # 两个显卡
-        
-        backend_config = TurbomindEngineConfig(session_len=2600 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
+    def __init__(self, weights_path, weight_name, awq, openxlab=False):
+    
+        backend_config = TurbomindEngineConfig(session_len=3600 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.05, 
                                         tp=1,
                                         # quant_policy=0,
@@ -27,8 +21,23 @@ class VLM():
                               top_k=40,
                               temperature=0,
                               max_new_tokens=512)
+        
+        if awq:
+            backend_config = TurbomindEngineConfig(session_len=3600 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
+                                        cache_max_entry_count=0.05, 
+                                        tp=1,
+                                        model_format='awq',
+                                        # quant_policy=0,
+                                        )  # 两个显卡
+        elif openxlab:
+            backend_config = PytorchEngineConfig(session_len=2600 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
+                                        cache_max_entry_count=0.05, 
+                                        tp=1,
+                                        # quant_policy=0,
+                                        )  # 两个显卡
 
-        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config_awq if awq else backend_config, log_level='INFO')
+
+        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config, log_level='INFO')
 
     def infer_vlm_func(self, weights_path, weight_name, model_candidate_clothes_list, season, weather, determine):
 
@@ -130,7 +139,7 @@ class VLM():
         
         # Converting a PIL image to a NumPy array 
         np_image = np.array(image)  
-        np_image, _, _ = letterbox(np_image, new_shape=(1920, 1280)) #hw
+        np_image, _, _ = letterbox_keep_new_shape(np_image, new_shape=(1920, 1280)) #hw
         # Converting a NumPy array  to a PIL image
         image_pil = Image.fromarray(np_image) 
 

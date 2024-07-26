@@ -4,6 +4,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.retrievers import BM25Retriever
+from langchain.retrievers import EnsembleRetriever
 from langchain_community.vectorstores import FAISS as VectorStore
 from langchain_community.vectorstores.utils import DistanceStrategy
 
@@ -27,14 +29,14 @@ class BceEmbeddingRetriever():
         reranker = BCERerank(**reranker_args)
         
         # init documents
-        documents = CSVLoader(csv_data_path, metadata_columns = ["idx"]).load()
+        documents = CSVLoader(csv_data_path, metadata_columns = ["idx", "category"]).load()
 
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500,
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=640,
                                                     chunk_overlap=0)
         texts = text_splitter.split_documents(documents)
 
         # example 1. retrieval with embedding and reranker
-        retriever = VectorStore.from_documents(
+        vb_retriever = VectorStore.from_documents(
             texts, self.embed_model,
             distance_strategy=DistanceStrategy.MAX_INNER_PRODUCT).as_retriever(
                 search_type='similarity',
@@ -42,9 +44,14 @@ class BceEmbeddingRetriever():
                     'score_threshold': 0.3,
                     'k': 10
                 })
+            
+        bm25retriever = BM25Retriever.from_documents(documents=texts)
+        bm25retriever.k = 10 
+        
+        ensemble_retriever = EnsembleRetriever(retrievers=[bm25retriever, vb_retriever], weights=[0.4, 0.6]) 
 
         self.compression_retriever = ContextualCompressionRetriever(
-            base_compressor=reranker, base_retriever=retriever)
+            base_compressor=reranker, base_retriever=ensemble_retriever)
 
 
     def bce_retriever(self, item_dicts):

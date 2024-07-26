@@ -7,6 +7,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.retrievers import BM25Retriever
+from langchain.retrievers import EnsembleRetriever
 from langchain_community.vectorstores import FAISS as VectorStore
 from langchain_community.vectorstores.utils import DistanceStrategy
 
@@ -25,11 +27,17 @@ def test_bce():
         '/root/data_org/test_data/sample_style2.csv'
     ).load()
 
+    # documents2 = CSVLoader(
+    #     '/group_share/data_org/DressCode/right_sample_style_correct_sup_removed.csv', metadata_columns = ["id", "idx"]
+    # ).load()
+    
     documents2 = CSVLoader(
-        '/root/data_org/test_data/sample_style.csv', metadata_columns = ["id", "idx"]
+        '/group_share/data_org/DressCode/right_sample_style_correct_sup_removed.csv', metadata_columns = ["idx", "category"]
     ).load()
 
     selected_fields = ["content"]
+
+    # documents = CSVLoader(csv_data_path, metadata_columns = ["idx"]).load()
 
     # documents1=[]
 
@@ -61,12 +69,15 @@ def test_bce():
     #     '/workspace/GitProjects/BCEmbedding/BCEmbedding/tools/eval_rag/eval_pdfs/Comp_en_llama2.pdf'
     # ).load()
 
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500,
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=640,
                                                 chunk_overlap=0)
-    texts = text_splitter.split_documents(documents)
+    # text_splitter = ChineseTextSplitter(chunk_size=640,
+    #                                             chunk_overlap=0)
+     
+    texts = text_splitter.split_documents(documents2)
 
     # example 1. retrieval with embedding and reranker
-    retriever = VectorStore.from_documents(
+    vb_retriever = VectorStore.from_documents(
         texts, embed_model,
         distance_strategy=DistanceStrategy.MAX_INNER_PRODUCT).as_retriever(
             search_type='similarity',
@@ -74,12 +85,20 @@ def test_bce():
                 'score_threshold': 0.3,
                 'k': 10
             })
+        
+        
+    bm25retriever = BM25Retriever.from_documents(documents=texts)
+    bm25retriever.k = 10 
+    
+    ensemble_retriever = EnsembleRetriever(retrievers=[bm25retriever, vb_retriever], weights=[0.4, 0.6]) 
 
     compression_retriever = ContextualCompressionRetriever(
-        base_compressor=reranker, base_retriever=retriever)
+        base_compressor=reranker, base_retriever=ensemble_retriever)
 
     response = compression_retriever.get_relevant_documents('这件上衣适合夏季穿着，风格休闲，长袖V领，材质为纯棉，版型宽松，颜色为白色')
     # response = compression_retriever.invoke('衣适合夏季穿着，风格休闲，长袖V领，材质为纯棉，版型宽松，颜色为白色')
+    
+  
     print(response)
 
 
@@ -341,5 +360,6 @@ if __name__ == "__main__":
 
     # # 关闭连接
     # db.close()
-    search()
+    # search()
+    test_bce()
 

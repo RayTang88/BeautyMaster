@@ -2,6 +2,8 @@ import os
 import random
 from json_repair import repair_json
 from PIL import Image
+# from .infer_vlm_torch import VLM
+# from .infer_llm_torch import LLM
 from .infer_vlm import VLM
 from .infer_llm import LLM
 from .bce_langchain import BceEmbeddingRetriever
@@ -12,22 +14,25 @@ class RagAndRecommend():
                  weights_path,
                  embedding_model_name,
                  reranker_model_name,
-                 top_n, csv_data_path,
+                 bce_top_n, recommend_top_n,
+                 csv_data_path,
                  vlm_weight_name,
                  vlm_awq,
                  llm_weight_name, 
                  llm_awq,
                  available_types, 
-                 only_use_vlm):
+                 only_use_vlm,
+                 openxlab=False):
         
-        self.bceEmbeddingRetriever = BceEmbeddingRetriever(weights_path, embedding_model_name, reranker_model_name, top_n, csv_data_path)
-        self.vlm = VLM(weights_path, vlm_weight_name, vlm_awq)
-        self.llm = LLM(weights_path, llm_weight_name, llm_awq)
+        self.bceEmbeddingRetriever = BceEmbeddingRetriever(weights_path, embedding_model_name, reranker_model_name, bce_top_n, csv_data_path)
+        self.vlm = VLM(weights_path, vlm_weight_name, vlm_awq, openxlab)
+        self.llm = LLM(weights_path, llm_weight_name, llm_awq, openxlab)
 
 
         
         self.available_types = available_types
         self.only_use_vlm = only_use_vlm
+        self.recommend_top_n = recommend_top_n
  
     def random_get(self, images_path, num, content):
         content_list = []
@@ -143,7 +148,8 @@ class RagAndRecommend():
         #vlm+rag
         similar_items, body_shape_descs, gender = self.infer_rag_4o_like_func(full_body_image_path, season, weather, determine, additional_requirements)
         #llm recomend
-        recommended = self.llm.infer_llm_recommend_raged(season, weather, determine, additional_requirements, similar_items, body_shape_descs, gender)
+        recommended = self.llm.infer_llm_recommend_raged(season, weather, determine, additional_requirements, similar_items, body_shape_descs, gender, self.recommend_top_n)
+        # recommended = ""
         
         return recommended, body_shape_descs
     
@@ -200,14 +206,26 @@ class RagAndRecommend():
         print("type--- llm_recommended", type(llm_recommended))     
         print("len--- llm_recommended", len(llm_recommended))  
         
-        
+        # becacuse the out of llm may have many style(fuck)
+        # ex：0.{'match_content': [{...}]}；1.[{'match_content': [{...}]}]；2.[{'match_content': {...}]；3.[{...}]
+        # 0 
+        llm_recommended_with_match_content = llm_recommended
+        # 1
         if isinstance(llm_recommended, list):
-            llm_recommended = llm_recommended[0]
-        assert isinstance(llm_recommended, dict)
-        print("type--- llm_recommended2", type(llm_recommended))          
+            llm_recommended_with_match_content = llm_recommended[0]
+        assert isinstance(llm_recommended_with_match_content, dict)
+        print("type--- llm_recommended2", type(llm_recommended_with_match_content))          
         match_result = []
-        assert len(llm_recommended["match_content"]) > 0
-        for match in llm_recommended["match_content"]:
+        if "match_content" in llm_recommended_with_match_content:
+            llm_recommended_list = llm_recommended_with_match_content["match_content"]
+            # 2
+            if isinstance(llm_recommended_list, dict):
+                llm_recommended_list = [llm_recommended_list]
+        # 3
+        else:
+            llm_recommended_list = llm_recommended    
+        assert len(llm_recommended_list) > 0
+        for match in llm_recommended_list:
             match_dict = {}
             match_category_list = match["category"]
                         
@@ -220,13 +238,15 @@ class RagAndRecommend():
             match_caption_list = match["match_caption"]
             match_reason = match["reason"]
             
-            assert len(match_category_list) == len(match_id_list)
-            assert len(match_caption_list) == len(match_id_list)
+            assert len(match_category_list) == len(match_id_list), f"error: len(match_category_list):%d != len(match_id_list):%d"%(len(match_category_list), len(match_id_list))
+            assert len(match_caption_list) == len(match_id_list), f"error: len(match_caption_list):%d != len(match_id_list):%d"%(len(match_caption_list), len(match_id_list))
             # print("here222222")
             match_dict["id"] = match["id"]
             match_dict["score"] = match["score"]
             match_dict["category"] = match_category_list
             match_dict["match_reason"] = match_reason
+            match_dict["match_caption"] = match_caption_list
+            match_dict["match_id"] = match_id_list
             # print("here333333")
             images = []
             

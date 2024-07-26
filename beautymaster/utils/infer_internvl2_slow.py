@@ -1,11 +1,9 @@
-from transformers import AutoTokenizer, AutoModel
+import numpy as np
 import torch
 import torchvision.transforms as T
 from PIL import Image
-
 from torchvision.transforms.functional import InterpolationMode
-
-
+from transformers import AutoModel, AutoTokenizer
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
@@ -85,120 +83,41 @@ def load_image(image_file, input_size=448, max_num=6):
     pixel_values = torch.stack(pixel_values)
     return pixel_values
 
-path = "/root/model/InternVL-Chat-V1-5"
-# If you have an 80G A100 GPU, you can put the entire model on a single GPU.
+
+path = '/group_share/model/InternVL2-2B/'
 model = AutoModel.from_pretrained(
     path,
     torch_dtype=torch.bfloat16,
     low_cpu_mem_usage=True,
-    trust_remote_code=True,
-    # 
-    ).eval()
-
+    trust_remote_code=True).eval().cuda()
 
 tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
+
+image_path = '/root/code/BeautyMaster/beautymaster/openxlab_demo/simple_data/fullbody_cleaned/images/1_1_F_Bing_pic.jpg'
+
 # set the max number of tiles in `max_num`
-
-
-# JSON data
-const_prompt="""{
-    "id": "<random_number_string>",
-    "image": "<image_name>",
-    "conversations": [
-        {
-        "from": "human",
-        "value": "<image>\nDescribe this image."
-        },
-        {
-        "from": "gpt",
-        "value": "<answer1>"
-        },
-        {
-        "from": "human",
-        "value": "What kind of clothing is it?You should choose from the following options: T-shirts, shirts, skirts, whatever?"
-        },
-
-        {
-        "from": "gpt",
-        "value": "<answer2>"
-        },
-        {
-        "from": "human",
-        "value": "Describe the details of the dress. Is it off-shoulder?"
-        },
-        {
-        "from": "gpt",
-        "value": "<answer3>"
-        },
-        {
-        "from": "human",
-        "value": "Describe the style of clothing.You should choose from the following options:  Casual, formal, whatever?"
-        },
-        {
-        "from": "gpt",
-        "value": "<answer4>"
-        },
-        {
-        "from": "human",
-        "value": "What color are the clothes?"
-        },
-        {
-        "from": "gpt",
-        "value": "<answer5>"
-        },
-        {
-        "from": "human",
-        "value": "what type of print on the clothes? You should choose from the following options:  no, text, log, whatever?"
-        },
-        {
-        "from": "gpt",
-        "value": "<answer6>"
-        },
-        {
-        "from": "human",
-        "value": "What is the material of the clothes? You should choose from the following options: cotton fabric, synthetic fabric, whatever"
-        },
-        {
-        "from": "gpt",
-        "value": "<answer7>"
-        },
-        {
-        "from": "human",
-        "value": "How about the length of the sleeves?  You should choose from the following options: Long sleeve, short sleeve, sleeveless, whatever"
-        },
-        {
-        "from": "gpt",
-        "value": "<answer8>"
-        },
-
-    ]
-}"""
-
-# Converts JSON data to a string and escapes double quotes and curly braces
-json_string = const_prompt.replace('"', '\\"').replace('{', '\\{').replace('}', '\\}').replace('\n', '\\n')
-
-# Embed the escaped JSON string in the prompt
-prompt = f"Create a data set for me in the following format:\n {json_string} \nRequest: Questions and answers, please generate to me. Questions and answers should tightly grasp the content of the image itself, must be strictly from the image content, can not make up, if the image is not, please answer do not know."
-
+pixel_values = load_image(image_path, max_num=6).to(torch.bfloat16).cuda()
 
 generation_config = dict(
     num_beams=1,
-    max_new_tokens=512,
+    max_new_tokens=1024,
     do_sample=False,
 )
-image_counts=[]
-images = []
-for i in range(3):
-    pixel_values1 = load_image('/root/data/b17ab66100f34037b1a83e4c9e7c97a4_th.jpg', max_num=6).to(torch.bfloat16).cuda()
 
-    image_counts.append(pixel_values1.size(0))
-    images.append(pixel_values1)
-pixel_values = torch.cat(images, dim=0)
+# # pure-text conversation (纯文本对话)
+# question = 'Hello, who are you?'
+# response, history = model.chat(tokenizer, None, question, generation_config, history=None, return_history=True)
+# print(f'User: {question}')
+# print(f'Assistant: {response}')
 
-questions = [prompt] * len(image_counts)
-responses = model.batch_chat(tokenizer, pixel_values,
-                             image_counts=image_counts,
-                             questions=questions,
-                             generation_config=generation_config)
-for question, response in zip(questions, responses):
-    print(response)
+# question = 'Can you tell me a story?'
+# response, history = model.chat(tokenizer, None, question, generation_config, history=history, return_history=True)
+# print(f'User: {question}')
+# print(f'Assistant: {response}')
+
+# single-image single-round conversation (单图单轮对话)
+question = '<image>\nPlease describe the image shortly.'
+response = model.chat(tokenizer, pixel_values, question, generation_config)
+print(f'User: {question}')
+print(f'Assistant: {response}')
+
