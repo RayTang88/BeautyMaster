@@ -1,83 +1,12 @@
 import sys
 import os
 import torch
+import asyncio
 from PIL import Image
 import gradio as gr
 
-vlm_weight_name = '/InternVL-Chat-V1-5-AWQ/'
-llm_weight_name = '/internlm2-chat-20b-4bits/'
-vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
-vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
-llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
-
-# vlm_weight_name = 'InternVL2-2B-AWQ/'
-# llm_weight_name = 'internlm2_5-7b-chat/'
-# llm_weight_name = 'internlm2_5-7b-chat-4bit'
-# llm_weight_name = "Yi-1.5-6B-Chat"
-
-if os.environ.get('openxlab'):
-
-    base_path = os.environ.get('CODE_ROOT')+"BeautyMaster/"
-    os.system(f'git clone --recursive -b openxlab-demo https://github.com/RayTang88/BeautyMaster.git {base_path}')
-              
-    # base_path = os.environ.get('MODEL_ROOT')+"lmdeploy_0-4-2_cpm_v2-5/"
-    # os.system(f'git clone https://code.openxlab.org.cn/raytang88/lmdeploy_0-4-2_cpm_v2-5.git {base_path}')
-    # os.system(f'cd {base_path} && git lfs pull')
-    # package_path = base_path + "lmdeploy-0.4.2-cp310-cp310-manylinux2014_x86_64.whl"
-    # os.system(f"pip install {package_path} -i https://pypi.tuna.tsinghua.edu.cn/simple")
-    # os.system(f"cd {os.environ.get('CODE_ROOT')}")
-
-    base_path = os.environ.get('MODEL_ROOT')+"Qwen2-7B-Instruct-AWQ/"
-    os.system(f'git clone https://code.openxlab.org.cn/raytang88/Qwen2-7B-Instruct-AWQ.git {base_path}')
-    os.system(f'cd {base_path} && git lfs pull')
-    os.system(f"cd {os.environ.get('CODE_ROOT')}")
-
-    base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
-    os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
-    os.system(f'cd {base_path} && git lfs pull')
-    os.system(f"cd {os.environ.get('CODE_ROOT')}")
-    
-    # base_path = os.environ.get('MODEL_ROOT')+"Mini-InternVL-Chat-2B-V1-5-AWQ/"
-    # os.system(f'git clone https://code.openxlab.org.cn/raytang88/Mini-InternVL-Chat-2B-V1-5-AWQ.git {base_path}')
-    # os.system(f'cd {base_path} && git lfs pull')
-    # os.system(f"cd {os.environ.get('CODE_ROOT')}")
-
-    base_path = os.environ.get('MODEL_ROOT')+"bce-embedding-base_v1/"
-    os.system(f'git clone https://code.openxlab.org.cn/raytang88/bce-embedding-base_v1.git {base_path}')
-    os.system(f'cd {base_path} && git lfs pull')
-
-    base_path = os.environ.get('MODEL_ROOT')+"bce-reranker-base_v1/"
-    os.system(f'git clone https://code.openxlab.org.cn/raytang88/bce-reranker-base_v1.git {base_path}')
-    os.system(f'cd {base_path} && git lfs pull')
-    os.system(f"cd {os.environ.get('CODE_ROOT')}")
-    
-    base_path = os.environ.get('MODEL_ROOT')+"CatVTON/"
-    os.system(f'git clone https://code.openxlab.org.cn/raytang88/CatVTON.git {base_path}')
-    os.system(f'cd {base_path} && git lfs pull')
-    os.system(f"cd {os.environ.get('CODE_ROOT')}")
-    
-    #densepose
-    os.system(f'pip install git+https://github.com/facebookresearch/detectron2@main#subdirectory=projects/DensePose')
-
-    # vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
-    vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
-    llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
-    
-    # vlm_weight_name = 'InternVL2-2B-AWQ/'
-    # llm_weight_name = 'internlm2_5-7b-chat-4bit'
-
-
 sys.path.append(os.environ.get('CODE_ROOT')+'BeautyMaster/')
 from beautymaster.demo.infer import Interface, parse_opt
-
-example_path = os.environ.get('DATA_ROOT')
-
-upper_body = os.listdir(os.path.join(example_path,"upper_body/images/"))[:7]
-upper_body_path = [os.path.join(example_path,"upper_body/images/",human) for human in upper_body]
-human_list = os.listdir(os.path.join(example_path,"fullbody/images/"))
-human_list_path = [os.path.join(example_path,"fullbody/images/",human) for human in human_list]
-# match_reslult = []
-# body_shape_descs = ""
 
 def set_image(match_reslult, idx):
     clothes_img_A = Image.new("RGB", (500, 300), 'white')
@@ -92,24 +21,24 @@ def set_image(match_reslult, idx):
 
     return clothes_img_A, clothes_img_B, match_reason
 
-# def set_image_try_on(match_reslult, idx):
-#     clothes_img_A = Image.new("RGB", (500, 300), 'white')
-#     clothes_img_B = Image.new("RGB", (500, 300), 'white')
-#     match_reason = ""
-#     if(len(match_reslult[idx]["images"])==1):
-#         clothes_img_A = match_reslult[idx]["images"][0]
-#     elif(len(match_reslult[idx]["images"])==2):
-#         clothes_img_A = match_reslult[idx]["images"][0]
-#         clothes_img_B = match_reslult[idx]["images"][1]
-#     match_reason = match_reslult[idx]["match_reason"]
-#     try_on_img = match_reslult[idx]["tryon_image"]
-#     return clothes_img_A, clothes_img_B, match_reason, try_on_img
-
 def set_image_try_on(match_reslult, idx):
-    
+    clothes_img_A = Image.new("RGB", (500, 300), 'white')
+    clothes_img_B = Image.new("RGB", (500, 300), 'white')
+    match_reason = ""
+    if(len(match_reslult[idx]["images"])==1):
+        clothes_img_A = match_reslult[idx]["images"][0]
+    elif(len(match_reslult[idx]["images"])==2):
+        clothes_img_A = match_reslult[idx]["images"][0]
+        clothes_img_B = match_reslult[idx]["images"][1]
+    match_reason = match_reslult[idx]["match_reason"]
     try_on_img = match_reslult[idx]["tryon_image"]
+    return clothes_img_A, clothes_img_B, match_reason, try_on_img
+
+# def set_image_try_on(match_reslult, idx):
     
-    return try_on_img
+#     try_on_img = match_reslult[idx]["tryon_image"]
+    
+#     return try_on_img
 
 
 def cc(image):
@@ -121,7 +50,7 @@ def cc(image):
         print("unkown mode", image.mode)   
     return image
 
-# def reset_local_func(instruction_txtbox: gr.Textbox,
+# async def reset_local_func(instruction_txtbox: gr.Textbox,
 #                            state_chatbot: Sequence, session_id: int):
 #     """reset the session.
 
@@ -130,11 +59,10 @@ def cc(image):
 #         state_chatbot (Sequence): the chatting history
 #         session_id (int): the session id
 #     """
-#     state_chatbot = []
-#     # renew a session
-#     global_session_id += 1
-#     session_id = global_session_id
-#     asyncio.sleep(0)
+#     with interface.lock:
+#         interface.global_session_id += 1
+#     session_id = interface.global_session_id
+#     await asyncio.sleep(0)
 #     return (state_chatbot, state_chatbot, instruction_txtbox, session_id)
 
 def run_local_match(weather, season, determine, additional_requirements, full_body_image):
@@ -180,50 +108,63 @@ def run_local_match(weather, season, determine, additional_requirements, full_bo
     # return planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason
 
 def run_local_tryon(weather, season, determine, additional_requirements, full_body_image):
-    # opt = parse_opt(vlm_weight_name, llm_weight_name)
-    # interface = Interface(**vars(opt))
-    # func="match"
-    # clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg"
-    planA_clothes_img_A = Image.new("RGB", (500, 300), 'white')
-    planA_clothes_img_B = Image.new("RGB", (500, 300), 'white')
-    planB_clothes_img_A = Image.new("RGB", (500, 300), 'white')
-    planB_clothes_img_B = Image.new("RGB", (500, 300), 'white')
-    planC_clothes_img_A = Image.new("RGB", (500, 300), 'white')
-    planC_clothes_img_B = Image.new("RGB", (500, 300), 'white')
-    planA_match_reason = ""
-    planB_match_reason = ""
-    planC_match_reason = ""
-    planA_try_on = Image.new("RGB", (500, 300), 'white')
-    planB_try_on = Image.new("RGB", (500, 300), 'white')
-    planC_try_on = Image.new("RGB", (500, 300), 'white')
-    
-    
-    # print("full_body_image mode-------------", full_body_image["composite"].mode)
-    full_body_image = cc(full_body_image["composite"])
-    # print("full_body_image mode-------------", full_body_image.mode)
-    
-    match_result, _ = interface.try_on_interface(weather,
-    season,
-    determine,
-    full_body_image,
-    additional_requirements)
-
-    if len(match_result)==3:
-        planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planA_try_on = set_image_try_on(match_reslult, 0)
-        planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planB_try_on = set_image_try_on(match_reslult, 1)
-        # planC_clothes_img_A, planC_clothes_img_B, planC_match_reason, planC_try_on = set_image_try_on(match_reslult, 2)
+   
+    try:
+        opt = parse_opt(vlm_weight_name, llm_weight_name)
+        interface = Interface(**vars(opt))
+        # opt = parse_opt(vlm_weight_name, llm_weight_name)
+        # interface = Interface(**vars(opt))
+        # func="match"
+        # clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg"
   
-    elif len(match_result)==2:
-        planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planA_try_on = set_image_try_on(match_reslult, 0)
-        planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planB_try_on = set_image_try_on(match_reslult, 1)
+        # while Cycles<total:
         
-    elif len(match_result)==1:
-        planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planA_try_on = set_image_try_on(match_reslult, 0)
-    # torch.cuda.synchronize()
-    # torch.cuda.empty_cache()
-    return planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planA_try_on, planB_try_on
+        planA_clothes_img_A = Image.new("RGB", (500, 300), 'white')
+        planA_clothes_img_B = Image.new("RGB", (500, 300), 'white')
+        planB_clothes_img_A = Image.new("RGB", (500, 300), 'white')
+        planB_clothes_img_B = Image.new("RGB", (500, 300), 'white')
+        # planC_clothes_img_A = Image.new("RGB", (500, 300), 'white')
+        # planC_clothes_img_B = Image.new("RGB", (500, 300), 'white')
+        planA_match_reason = ""
+        planB_match_reason = ""
+        # planC_match_reason = ""
+        planA_try_on = Image.new("RGB", (500, 300), 'white')
+        planB_try_on = Image.new("RGB", (500, 300), 'white')
+        # planC_try_on = Image.new("RGB", (500, 300), 'white')
+        
+        
+        # print("full_body_image mode-------------", full_body_image["composite"].mode)
+        full_body_image = cc(full_body_image["composite"])
+        # print("full_body_image mode-------------", full_body_image.mode)
+        
+        match_result, _ = interface.try_on_interface(weather,
+        season,
+        determine,
+        full_body_image,
+        additional_requirements)
 
-def run_local_tryon_only(full_body_image, match_reslult, body_shape_descs):
+        if len(match_result)==3:
+            planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planA_try_on = set_image_try_on(match_result, 0)
+            planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planB_try_on = set_image_try_on(match_result, 1)
+            # planC_clothes_img_A, planC_clothes_img_B, planC_match_reason, planC_try_on = set_image_try_on(match_reslult, 2)
+
+        elif len(match_result)==2:
+            planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planA_try_on = set_image_try_on(match_result, 0)
+            planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planB_try_on = set_image_try_on(match_result, 1)
+                    
+        elif len(match_result)==1:
+            planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planA_try_on = set_image_try_on(match_result, 0)
+                # torch.cuda.synchronize()
+                # torch.cuda.empty_cache()
+        return planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planA_try_on, planB_try_on
+    
+    except Exception as e:
+ 
+        print(f"error: {e}, try again...")
+       
+    
+
+def run_local_tryon_only(full_body_image, match_result, body_shape_descs):
     # opt = parse_opt(vlm_weight_name, llm_weight_name)
     # interface = Interface(**vars(opt))
     # func="match"
@@ -245,10 +186,10 @@ def run_local_tryon_only(full_body_image, match_reslult, body_shape_descs):
     # print("full_body_image mode-------------", full_body_image["composite"].mode)
     full_body_image = cc(full_body_image["composite"])
     # print("full_body_image mode-------------", full_body_image.mode)
-    if(len(match_reslult) < 1):
+    if(len(match_result) < 1):
         return planA_try_on, planB_try_on
         
-    try_on_result= interface.try_on_only_interface(match_reslult, full_body_image, body_shape_descs)
+    try_on_result= interface.try_on_only_interface(match_result, full_body_image, body_shape_descs)
 
     if len(try_on_result)==3:
         planA_try_on = set_image_try_on(try_on_result, 0)
@@ -302,18 +243,91 @@ def is_upload():
 
 
 
-
 if __name__ == '__main__':
+
+
+    vlm_weight_name = '/InternVL-Chat-V1-5-AWQ/'
+    llm_weight_name = '/internlm2-chat-20b-4bits/'
+    vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
+    vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
+    llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
+
+    # vlm_weight_name = 'InternVL2-8B-AWQ/'
+    # llm_weight_name = 'internlm2_5-7b-chat/'
+    # llm_weight_name = 'internlm2_5-7b-chat-4bit'
+    # llm_weight_name = "Yi-1.5-6B-Chat"
+
+    if os.environ.get('openxlab'):
+
+        base_path = os.environ.get('CODE_ROOT')+"BeautyMaster/"
+        os.system(f'git clone --recursive -b openxlab-demo https://github.com/RayTang88/BeautyMaster.git {base_path}')
+                
+        # base_path = os.environ.get('MODEL_ROOT')+"lmdeploy_0-4-2_cpm_v2-5/"
+        # os.system(f'git clone https://code.openxlab.org.cn/raytang88/lmdeploy_0-4-2_cpm_v2-5.git {base_path}')
+        # os.system(f'cd {base_path} && git lfs pull')
+        # package_path = base_path + "lmdeploy-0.4.2-cp310-cp310-manylinux2014_x86_64.whl"
+        # os.system(f"pip install {package_path} -i https://pypi.tuna.tsinghua.edu.cn/simple")
+        # os.system(f"cd {os.environ.get('CODE_ROOT')}")
+
+        base_path = os.environ.get('MODEL_ROOT')+"Qwen2-7B-Instruct-AWQ/"
+        os.system(f'git clone https://code.openxlab.org.cn/raytang88/Qwen2-7B-Instruct-AWQ.git {base_path}')
+        os.system(f'cd {base_path} && git lfs pull')
+        os.system(f"cd {os.environ.get('CODE_ROOT')}")
+
+        base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
+        os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
+        os.system(f'cd {base_path} && git lfs pull')
+        os.system(f"cd {os.environ.get('CODE_ROOT')}")
+        
+        # base_path = os.environ.get('MODEL_ROOT')+"Mini-InternVL-Chat-2B-V1-5-AWQ/"
+        # os.system(f'git clone https://code.openxlab.org.cn/raytang88/Mini-InternVL-Chat-2B-V1-5-AWQ.git {base_path}')
+        # os.system(f'cd {base_path} && git lfs pull')
+        # os.system(f"cd {os.environ.get('CODE_ROOT')}")
+
+        base_path = os.environ.get('MODEL_ROOT')+"bce-embedding-base_v1/"
+        os.system(f'git clone https://code.openxlab.org.cn/raytang88/bce-embedding-base_v1.git {base_path}')
+        os.system(f'cd {base_path} && git lfs pull')
+
+        base_path = os.environ.get('MODEL_ROOT')+"bce-reranker-base_v1/"
+        os.system(f'git clone https://code.openxlab.org.cn/raytang88/bce-reranker-base_v1.git {base_path}')
+        os.system(f'cd {base_path} && git lfs pull')
+        os.system(f"cd {os.environ.get('CODE_ROOT')}")
+        
+        base_path = os.environ.get('MODEL_ROOT')+"CatVTON/"
+        os.system(f'git clone https://code.openxlab.org.cn/raytang88/CatVTON.git {base_path}')
+        os.system(f'cd {base_path} && git lfs pull')
+        os.system(f"cd {os.environ.get('CODE_ROOT')}")
+        
+        #densepose
+        os.system(f'pip install git+https://github.com/facebookresearch/detectron2@main#subdirectory=projects/DensePose')
+
+        # vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
+        vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
+        llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
+        
+        # vlm_weight_name = 'InternVL2-2B-AWQ/'
+        # llm_weight_name = 'internlm2_5-7b-chat-4bit'
+
     
-    opt = parse_opt(vlm_weight_name, llm_weight_name)
-    interface = Interface(**vars(opt))
-    
+    # opt = parse_opt(vlm_weight_name, llm_weight_name)
+    # interface = Interface(**vars(opt))
+
+    example_path = os.environ.get('DATA_ROOT')
+
+    upper_body = os.listdir(os.path.join(example_path,"upper_body/images/"))[:7]
+    upper_body_path = [os.path.join(example_path,"upper_body/images/",human) for human in upper_body]
+    human_list = os.listdir(os.path.join(example_path,"fullbody/images/"))
+    human_list_path = [os.path.join(example_path,"fullbody/images/",human) for human in human_list]
+    # match_reslult = []
+        
     image_blocks = gr.Blocks().queue()
     
     with image_blocks as Match:
+        state_session_id = gr.State(0)
+
         gr.Markdown("## 🌟👗💄 美妆达人 - 美丽您的每一天 💄👗🌟")
         gr.Markdown("因为算力的问题，目前上传一个简化版本。如果您想体验完整的功能，请移步Github并持续关注我们的后续工作。Github：[source codes](https://github.com/RayTang88/BeautyMaster), 欢迎star🌟")
-        gr.Markdown("使用方法：1.在美妆搭配页面按示例上传一张全身照，点击Match按钮，大模型会给出穿搭建议；2.点击Try On，将推荐的穿搭建议给您试穿展示。目前我们内置了一个精简的服饰数据库供基础效果展示。 如果使用过程中出现错误提示，请重复前面的步骤即可，感谢您的使用！")
+        gr.Markdown("使用方法：在美妆搭配页面按示例上传一张全身照，点击Match按钮，模型会给出穿搭建议并为您试穿展示。目前我们内置了精简的服饰数据库供基础效果展示。如使用过程中出现错误提示，请重复前面的步骤，感谢您的使用！")
         
         with gr.Row():
             with gr.Column():
@@ -379,20 +393,22 @@ if __name__ == '__main__':
         with gr.Row():
             with gr.Row():
 
-                match_button = gr.Button(value="step-1.Match", interactive=True)
-                tryon_button = gr.Button(value="step-2.Try on", interactive=True)
+                # match_button = gr.Button(value="step-1.Match", interactive=True)
+                tryon_button = gr.Button(value="Match", interactive=True)
+                # reset_button = gr.Button(value="Reset", interactive=True)
             # with gr.Accordion(label="Advanced Settings", open=False):
             #     with gr.Row():
             #         denoise_steps = gr.Number(label="Denoising Steps", minimum=20, maximum=40, value=30, step=1)
             #         seed = gr.Number(label="Seed", minimum=-1, maximum=2147483647, step=1, value=42)
         # match_button.click(run_local, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason], api_name='Match')
-        match_result = gr.State([])
-        body_shape_descs = gr.State('')
+        # match_result = gr.State([])
+        # body_shape_descs = gr.State('')
         
-        match_button.click(run_local_match, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, match_result, body_shape_descs], api_name='Match')
+        # match_button.click(run_local_match, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, match_result, body_shape_descs], api_name='Match')
         # match_button.click(run_local_match, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason], api_name='Match')
-        # tryon_button.click(run_local_tryon, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planC_clothes_img_A, planC_clothes_img_B, planC_match_reason, planA, planB, planC], api_name='TryOn')
-        tryon_button.click(run_local_tryon_only, inputs=[fullbody_img, match_result, body_shape_descs], outputs=[planA, planB], api_name='TryOn')
+        tryon_button.click(run_local_tryon, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planA, planB], api_name='TryOn')
+        # tryon_button.click(run_local_tryon_only, inputs=[fullbody_img, match_result, body_shape_descs], outputs=[planA, planB], api_name='TryOn')
+        
 
     image_blocks = gr.Blocks().queue()
     with image_blocks as Wardrobe:

@@ -238,16 +238,30 @@ class TryOnInterface():
   
 
   def try_on_func_all(self, llm_recommended, full_body_image_path, body_shape_descs, num_inference_steps, guidance_scale, seed, show_type):
-      print("llm_recommended[match_content]", llm_recommended)    
-      assert len(llm_recommended["match_content"]) > 0
-      match_result = []
+      print("llm_recommended[match_content]", llm_recommended)
+      print("type--- llm_recommended", type(llm_recommended))     
+      print("len--- llm_recommended", len(llm_recommended))  
+      
+      # becacuse the out of llm may have many style(fuck)
+      # ex：0.{'match_content': [{...}]}；1.[{'match_content': [{...}]}]；2.[{'match_content': {...}]；3.[{...}]
+      # 0 
+      llm_recommended_with_match_content = llm_recommended
+      # 1
       if isinstance(llm_recommended, list):
-            llm_recommended = llm_recommended[0]
-      assert isinstance(llm_recommended, dict)
-      print("type--- llm_recommended2", type(llm_recommended))
+          llm_recommended_with_match_content = llm_recommended[0]
+      assert isinstance(llm_recommended_with_match_content, dict)
+      print("type--- llm_recommended2", type(llm_recommended_with_match_content))          
       match_result = []
-      assert len(llm_recommended["match_content"]) > 0
-      for match in llm_recommended["match_content"]:
+      if "match_content" in llm_recommended_with_match_content:
+          llm_recommended_list = llm_recommended_with_match_content["match_content"]
+          # 2
+          if isinstance(llm_recommended_list, dict):
+              llm_recommended_list = [llm_recommended_list]
+      # 3
+      else:
+          llm_recommended_list = llm_recommended    
+      assert len(llm_recommended_list) > 0
+      for match in llm_recommended_list:
           match_dict = {}
           match_category_list = match["category"]
                         

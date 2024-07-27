@@ -8,6 +8,8 @@ warnings.filterwarnings('ignore')
 from beautymaster.src.infer_rag_recommend import RagAndRecommend
 from beautymaster.src.try_on_cat import TryOnInterface
 # from beautymaster.utils.show import show_func
+# from lmdeploy.serve.async_engine import AsyncEngine
+# from threading import Lock
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
@@ -69,6 +71,11 @@ class Interface:
         self.try_on_class = TryOnInterface(weights_path, code_root_path)
         
         self.total=1
+
+        # async_engine: AsyncEngine = None
+        # global_session_id: int = 0
+        # lock = Lock()
+
         
     def match_interface(self,
             weather="",
@@ -105,37 +112,42 @@ class Interface:
         season="",
         determine="",
         full_body_image_path="",
-        additional_requirements=""
+        additional_requirements="",
+        num_inference_steps=80,
+        guidance_scale=2.5,
+        seed=42,
+        show_type="result only",
         ):
         # Infinite loop until the code executes successfully
-        Cycles=0
-        while Cycles<self.total:
-            try:
-                with torch.no_grad():
-                    #1 use llm after rag 4o like
-        
-                    llm_recommended, body_shape_descs = self.ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
-                    
-                    #2.Virtual Try-on according the suggestions
-                    match_result = self.try_on_class.try_on_func_all(llm_recommended, full_body_image_path, body_shape_descs)
-                    # match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
-                    # print(match_result)
-                    #3.Visualize the results of the suggestions to the user
-                    # show_func(match_result, self.save_path)
+        # Cycles=0
+        # while Cycles<self.total:
+            # try:
+        with torch.no_grad():
+            #1 use llm after rag 4o like
 
-                    return match_result, body_shape_descs
-            except Exception as e:
-                Cycles+=1
-                print(f"Cycles: {Cycles}/{self.total}, error: {e}, try again...")
-                time.sleep(1)
+            llm_recommended, body_shape_descs = self.ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
+            
+            #2.Virtual Try-on according the suggestions
+            match_result = self.try_on_class.try_on_func_all(llm_recommended, full_body_image_path, body_shape_descs, num_inference_steps, guidance_scale, seed, show_type)
+            # match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
+            # print(match_result)
+            #3.Visualize the results of the suggestions to the user
+            # show_func(match_result, self.save_path)
+            print("mmmmm-------------", match_result)
+
+            return match_result, body_shape_descs
+            # except Exception as e:
+            #     Cycles+=1
+            #     print(f"Cycles: {Cycles}/{self.total}, error: {e}, try again...")
+            #     time.sleep(1)
     
     def try_on_only_interface(self,
         match_result,
         full_body_image_path="",
         body_shape_descs="",
-        num_inference_steps=20,
+        num_inference_steps=80,
         guidance_scale=2.5,
-        seed=1024,
+        seed=42,
         show_type="result only",
         ):
         # Infinite loop until the code executes successfully

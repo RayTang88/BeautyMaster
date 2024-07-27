@@ -309,7 +309,7 @@ body_out_format = """{"items": ["金色", "长发", "大波浪", "黄色皮肤",
 ##6.3 this template is for vlm describe the body shape 
 vlm_prompt_body_template = """你是一位时尚搭配大师，你需要为我搭配服装，但是做这个之前你需要仔细观察并描述我的体型特征，请从{shape}这几个维度分析,分析{feature}并生成包含以下字段的 JSON 输出："items"和"gender"。
                     items 字段应该是图片中的我的体型特征，与shape中字段一一对应。注意：禁止出现图片中包含物品的描述, 图片只能用来分析我的体型特征。不要在输出中包含 ```json ``` 标签。
-                    gender 字段必须根据图片内容判别图中人物的性别，在[男性、女性、男孩、女孩、无性别]，这几个性别之中进行选择。
+                    gender 字段必须根据图片内容判别图中人物的性别，在[男性、女性、男孩、女孩]，这几个性别之中进行选择。
                     示例输入：代表皮肤白皙的女生的图像。
                     示例输出: {body_out_format}，请严格遵循此格式输出。"""
                     
@@ -317,7 +317,7 @@ vlm_prompt_body_template = """你是一位时尚搭配大师，你需要为我�
 llm_prompt_template_4o = """您是一位时尚搭配大师，当前处在{season}， 气温{weather}， 我是{gender}，要去{determine}，我的体型特征如下:{shape}，仔细分析并生成包含以下字段的 JSON， 输出："items"、"feature"、"reason"、"category"和"gender"。
                     items 字段应该是与shape中描述的我的体型特征相搭配的衣物列表。每件物品都应代表一件衣服的标题，其中包含物品的款式、颜色和适合的性别，注意：利用您对时尚趋势、风格和性别偏好的理解，根据shape字段中描述的我的体型特征，重点结合当前的季节，气温，和我的出行目的，冬季还需要考虑御寒，夏季需要清凉，{additional_requirements}，为我搭配服装提供准确且相关的建议并写入item字段。
                     category需要在{available_types}，这几个服装类型之间进行选择，且和items字段中搭配的服装类型一一对应。
-                    gender您必须在[男性、女性、男孩、女孩、无性别]，这几个性别之中进行选择，可以从{gender}中直接获取。
+                    gender您必须在[男性、女性、男孩、女孩]，这几个性别之中进行选择，可以从{gender}中直接获取。
                     feature 字段是分析的我的体型特征,可以从{shape}中直接获取。
                     reason 字段是选择item字段中搭配的简明理由概述。
                     不要在输出中包含 ```json ``` 的文字。
