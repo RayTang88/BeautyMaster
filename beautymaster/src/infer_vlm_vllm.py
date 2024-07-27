@@ -6,12 +6,14 @@ from lmdeploy.vl import load_image
 from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, vlm_prompt_template, vlm_prompt_body_template , vlm_prompt_caption_template, upper_shape, upper_choice_list, upper_out_format, lower_shape, lower_choice_list, lower_out_format, dresses_shape, dresses_choice_list, dresses_out_format, skirt_shape, skirt_choice_list, skirt_out_format
 from PIL import Image
 from beautymaster.utils.onnx_infer import letterbox, letterbox_keep_new_shape
+from vllm import LLM, SamplingParams
+from transformers import AutoTokenizer
 
 class VLM():
     
     def __init__(self, weights_path, weight_name, awq, openxlab=False):
     
-        backend_config = TurbomindEngineConfig(session_len=3200 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
+        backend_config = TurbomindEngineConfig(session_len=3600 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.05, 
                                         tp=1,
                                         # quant_policy=0,
@@ -23,21 +25,27 @@ class VLM():
                               max_new_tokens=512)
         
         if awq:
-            backend_config = TurbomindEngineConfig(session_len=3200 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
+            backend_config = TurbomindEngineConfig(session_len=3600 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.05, 
                                         tp=1,
                                         model_format='awq',
                                         # quant_policy=0,
                                         )  # 两个显卡
         elif openxlab:
-            backend_config = PytorchEngineConfig(session_len=3200 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
+            backend_config = PytorchEngineConfig(session_len=2600 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.05, 
                                         tp=1,
                                         # quant_policy=0,
                                         )  # 两个显卡
 
 
-        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config, log_level='INFO')
+        # 2.5
+        self.tokenizer = AutoTokenizer.from_pretrained(weights_path + weight_name, trust_remote_code=True)
+        self.pipe = LLM(
+            model=weights_path + weight_name,
+            trust_remote_code=True, quantization="AWQ"
+        )
+        self.sampling_params = SamplingParams(temperature=0.2, max_tokens=64)
 
     def infer_vlm_func(self, weights_path, weight_name, model_candidate_clothes_list, season, weather, determine):
 
@@ -141,11 +149,26 @@ class VLM():
         np_image = np.array(image)  
         np_image, _, _ = letterbox_keep_new_shape(np_image, new_shape=(1920, 1280)) #hw
         # Converting a NumPy array  to a PIL image
-        image_pil = Image.fromarray(np_image) 
+        image_pil = Image.fromarray(np_image)
 
-        response = self.pipe((vlm_prompt, image_pil))
+        messages = [{
+            'role': 'user',
+            'content': f'(<image>./</image>)\n{vlm_prompt}'
+        }]
+        match_prompt = self.tokenizer.apply_chat_template(messages,
+                                            tokenize=False,
+                                            add_generation_prompt=True) 
+        
+        inputs = {
+            "prompt": match_prompt,
+            "multi_modal_data": {
+                "image": image_pil
+            },
+        }
+        
+        responses = self.pipe.generate(inputs, sampling_params=self.sampling_params)
 
-        return response.text
+        return responses[0].outputs[0].text
     
     def infer_vlm_clothes_caption_func(self, clothes_image_path, available_types):
             

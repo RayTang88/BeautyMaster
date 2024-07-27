@@ -4,6 +4,8 @@ from json_repair import repair_json
 from PIL import Image
 # from .infer_vlm_torch import VLM
 # from .infer_llm_torch import LLM
+# from .infer_vlm_vllm import VLM
+# from .infer_llm_vllm import LLM
 from .infer_vlm import VLM
 from .infer_llm import LLM
 from .bce_langchain import BceEmbeddingRetriever
