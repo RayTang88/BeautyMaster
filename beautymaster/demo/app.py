@@ -8,6 +8,73 @@ import gradio as gr
 sys.path.append(os.environ.get('CODE_ROOT')+'BeautyMaster/')
 from beautymaster.demo.infer import Interface, parse_opt
 
+
+vlm_weight_name = '/InternVL-Chat-V1-5-AWQ/'
+llm_weight_name = '/internlm2-chat-20b-4bits/'
+vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
+vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
+llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
+
+# vlm_weight_name = 'InternVL2-8B-AWQ/'
+# llm_weight_name = 'internlm2_5-7b-chat/'
+# llm_weight_name = 'internlm2_5-7b-chat-4bit'
+# llm_weight_name = "Yi-1.5-6B-Chat"
+
+if os.environ.get('openxlab'):
+
+    base_path = os.environ.get('CODE_ROOT')+"BeautyMaster/"
+    os.system(f'git clone --recursive -b openxlab-demo https://github.com/RayTang88/BeautyMaster.git {base_path}')
+            
+    # base_path = os.environ.get('MODEL_ROOT')+"lmdeploy_0-4-2_cpm_v2-5/"
+    # os.system(f'git clone https://code.openxlab.org.cn/raytang88/lmdeploy_0-4-2_cpm_v2-5.git {base_path}')
+    # os.system(f'cd {base_path} && git lfs pull')
+    # package_path = base_path + "lmdeploy-0.4.2-cp310-cp310-manylinux2014_x86_64.whl"
+    # os.system(f"pip install {package_path} -i https://pypi.tuna.tsinghua.edu.cn/simple")
+    # os.system(f"cd {os.environ.get('CODE_ROOT')}")
+
+    base_path = os.environ.get('MODEL_ROOT')+"Qwen2-7B-Instruct-AWQ/"
+    os.system(f'git clone https://code.openxlab.org.cn/raytang88/Qwen2-7B-Instruct-AWQ.git {base_path}')
+    os.system(f'cd {base_path} && git lfs pull')
+    os.system(f"cd {os.environ.get('CODE_ROOT')}")
+
+    base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
+    os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
+    os.system(f'cd {base_path} && git lfs pull')
+    os.system(f"cd {os.environ.get('CODE_ROOT')}")
+    
+    # base_path = os.environ.get('MODEL_ROOT')+"Mini-InternVL-Chat-2B-V1-5-AWQ/"
+    # os.system(f'git clone https://code.openxlab.org.cn/raytang88/Mini-InternVL-Chat-2B-V1-5-AWQ.git {base_path}')
+    # os.system(f'cd {base_path} && git lfs pull')
+    # os.system(f"cd {os.environ.get('CODE_ROOT')}")
+
+    base_path = os.environ.get('MODEL_ROOT')+"bce-embedding-base_v1/"
+    os.system(f'git clone https://code.openxlab.org.cn/raytang88/bce-embedding-base_v1.git {base_path}')
+    os.system(f'cd {base_path} && git lfs pull')
+
+    base_path = os.environ.get('MODEL_ROOT')+"bce-reranker-base_v1/"
+    os.system(f'git clone https://code.openxlab.org.cn/raytang88/bce-reranker-base_v1.git {base_path}')
+    os.system(f'cd {base_path} && git lfs pull')
+    os.system(f"cd {os.environ.get('CODE_ROOT')}")
+    
+    base_path = os.environ.get('MODEL_ROOT')+"CatVTON/"
+    os.system(f'git clone https://code.openxlab.org.cn/raytang88/CatVTON.git {base_path}')
+    os.system(f'cd {base_path} && git lfs pull')
+    os.system(f"cd {os.environ.get('CODE_ROOT')}")
+    
+    #densepose
+    os.system(f'pip install git+https://github.com/facebookresearch/detectron2@main#subdirectory=projects/DensePose')
+
+    # vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
+    vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
+    llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
+    
+    # vlm_weight_name = 'InternVL2-2B-AWQ/'
+    # llm_weight_name = 'internlm2_5-7b-chat-4bit'
+
+    
+    # opt = parse_opt(vlm_weight_name, llm_weight_name)
+    # interface = Interface(**vars(opt))
+
 def set_image(match_reslult, idx):
     clothes_img_A = Image.new("RGB", (500, 300), 'white')
     clothes_img_B = Image.new("RGB", (500, 300), 'white')
@@ -241,79 +308,9 @@ def is_upload():
     interactive_ = True
     return interactive_
 
-
-
 if __name__ == '__main__':
 
-
-    vlm_weight_name = '/InternVL-Chat-V1-5-AWQ/'
-    llm_weight_name = '/internlm2-chat-20b-4bits/'
-    vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
-    vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
-    llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
-
-    # vlm_weight_name = 'InternVL2-8B-AWQ/'
-    # llm_weight_name = 'internlm2_5-7b-chat/'
-    # llm_weight_name = 'internlm2_5-7b-chat-4bit'
-    # llm_weight_name = "Yi-1.5-6B-Chat"
-
-    if os.environ.get('openxlab'):
-
-        base_path = os.environ.get('CODE_ROOT')+"BeautyMaster/"
-        os.system(f'git clone --recursive -b openxlab-demo https://github.com/RayTang88/BeautyMaster.git {base_path}')
-                
-        # base_path = os.environ.get('MODEL_ROOT')+"lmdeploy_0-4-2_cpm_v2-5/"
-        # os.system(f'git clone https://code.openxlab.org.cn/raytang88/lmdeploy_0-4-2_cpm_v2-5.git {base_path}')
-        # os.system(f'cd {base_path} && git lfs pull')
-        # package_path = base_path + "lmdeploy-0.4.2-cp310-cp310-manylinux2014_x86_64.whl"
-        # os.system(f"pip install {package_path} -i https://pypi.tuna.tsinghua.edu.cn/simple")
-        # os.system(f"cd {os.environ.get('CODE_ROOT')}")
-
-        base_path = os.environ.get('MODEL_ROOT')+"Qwen2-7B-Instruct-AWQ/"
-        os.system(f'git clone https://code.openxlab.org.cn/raytang88/Qwen2-7B-Instruct-AWQ.git {base_path}')
-        os.system(f'cd {base_path} && git lfs pull')
-        os.system(f"cd {os.environ.get('CODE_ROOT')}")
-
-        base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
-        os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
-        os.system(f'cd {base_path} && git lfs pull')
-        os.system(f"cd {os.environ.get('CODE_ROOT')}")
-        
-        # base_path = os.environ.get('MODEL_ROOT')+"Mini-InternVL-Chat-2B-V1-5-AWQ/"
-        # os.system(f'git clone https://code.openxlab.org.cn/raytang88/Mini-InternVL-Chat-2B-V1-5-AWQ.git {base_path}')
-        # os.system(f'cd {base_path} && git lfs pull')
-        # os.system(f"cd {os.environ.get('CODE_ROOT')}")
-
-        base_path = os.environ.get('MODEL_ROOT')+"bce-embedding-base_v1/"
-        os.system(f'git clone https://code.openxlab.org.cn/raytang88/bce-embedding-base_v1.git {base_path}')
-        os.system(f'cd {base_path} && git lfs pull')
-
-        base_path = os.environ.get('MODEL_ROOT')+"bce-reranker-base_v1/"
-        os.system(f'git clone https://code.openxlab.org.cn/raytang88/bce-reranker-base_v1.git {base_path}')
-        os.system(f'cd {base_path} && git lfs pull')
-        os.system(f"cd {os.environ.get('CODE_ROOT')}")
-        
-        base_path = os.environ.get('MODEL_ROOT')+"CatVTON/"
-        os.system(f'git clone https://code.openxlab.org.cn/raytang88/CatVTON.git {base_path}')
-        os.system(f'cd {base_path} && git lfs pull')
-        os.system(f"cd {os.environ.get('CODE_ROOT')}")
-        
-        #densepose
-        os.system(f'pip install git+https://github.com/facebookresearch/detectron2@main#subdirectory=projects/DensePose')
-
-        # vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
-        vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
-        llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
-        
-        # vlm_weight_name = 'InternVL2-2B-AWQ/'
-        # llm_weight_name = 'internlm2_5-7b-chat-4bit'
-
-    
-    # opt = parse_opt(vlm_weight_name, llm_weight_name)
-    # interface = Interface(**vars(opt))
-
     example_path = os.environ.get('DATA_ROOT')
-
     upper_body = os.listdir(os.path.join(example_path,"upper_body/images/"))[:7]
     upper_body_path = [os.path.join(example_path,"upper_body/images/",human) for human in upper_body]
     human_list = os.listdir(os.path.join(example_path,"fullbody/images/"))
