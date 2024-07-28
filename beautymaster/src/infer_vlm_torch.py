@@ -41,7 +41,7 @@ class VLM():
 
         self.generation_config = dict(
         num_beams=1,
-        max_new_tokens=512,
+        max_new_tokens=1024,
         do_sample=False,
         )    
 

@@ -17,7 +17,7 @@ llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
 # vlm_weight_name = 'InternVL2-8B-AWQ/'
 # llm_weight_name = 'internlm2_5-7b-chat/'
 # llm_weight_name = 'internlm2_5-7b-chat-4bit'
-# llm_weight_name = "Yi-1.5-6B-Chat"
+llm_weight_name = "Yi-6B-Chat-4bits/"
 
 if os.environ.get('openxlab'):
 
