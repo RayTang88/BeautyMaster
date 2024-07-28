@@ -93,24 +93,24 @@ class Interface:
             ):
         
         # Infinite loop until the code executes successfully
-        self.cycle=0
-        while self.cycle<1:
+        # self.cycle=0
+        # while self.cycle<1:
             # torch.cuda.synchronize()
             # torch.cuda.empty_cache()
             # try:
-                #1 use llm after rag 4o like
-                ragandrecommend = RagAndRecommend(self.weights_path, self.embedding_model_name, self.reranker_model_name, self.bce_top_n, self.recommend_top_n, self.csv_data_path, self.vlm_weight_name, self.vlm_awq, self.llm_weight_name, self.llm_awq, self.available_types, self.only_use_vlm, self.openxlab)
-    
-                llm_recommended, body_shape_descs = ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
-                
-                #2.Virtual Try-on according the suggestions
-                # match_result = self.tryon.try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
-                match_result = ragandrecommend.match_only_result_func(llm_recommended)
-                # print(match_result)
-                #3.Visualize the results of the suggestions to the user
-                # show_func(match_result, self.save_path)
+        #1 use llm after rag 4o like
+        ragandrecommend = RagAndRecommend(self.weights_path, self.embedding_model_name, self.reranker_model_name, self.bce_top_n, self.recommend_top_n, self.csv_data_path, self.vlm_weight_name, self.vlm_awq, self.llm_weight_name, self.llm_awq, self.available_types, self.only_use_vlm, self.openxlab)
 
-                return match_result, body_shape_descs
+        llm_recommended, body_shape_descs = ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
+        
+        #2.Virtual Try-on according the suggestions
+        # match_result = self.tryon.try_on_func(llm_recommended, full_body_image_path, body_shape_descs)
+        match_result = ragandrecommend.match_only_result_func(llm_recommended)
+        # print(match_result)
+        #3.Visualize the results of the suggestions to the user
+        # show_func(match_result, self.save_path)
+
+        return match_result, body_shape_descs
             # except Exception as e:
             #     self.cycle+=1
             #     print(f"Cycles: {self.cycle}/{self.total}, error: {e}, try again...")
@@ -156,36 +156,36 @@ class Interface:
         match_result,
         full_body_image_path="",
         body_shape_descs="",
-        num_inference_steps=20,
+        num_inference_steps=50,
         guidance_scale=2.5,
         seed=1024,
         show_type="result only",
         ):
         # Infinite loop until the code executes successfully
 
-        self.cycle=0
-        while self.cycle<1:
+        # self.cycle=0
+        # while self.cycle<1:
 
-            # try:
-                with torch.no_grad():
-                    #1 use llm after rag 4o like
-                    # ragandrecommend = RagAndRecommend(self.weights_path, self.embedding_model_name, self.reranker_model_name, self.top_n, self.csv_data_path, self.vlm_weight_name, self.vlm_awq, self.llm_weight_name, self.llm_awq, self.available_types, self.only_use_vlm, self.openxlab)    
-                    # self.llm_recommended, self.body_shape_descs = ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
-                    
-                    # torch.cuda.synchronize()
-                    # torch.cuda.empty_cache()
+        # try:
+        with torch.no_grad():
+            #1 use llm after rag 4o like
+            # ragandrecommend = RagAndRecommend(self.weights_path, self.embedding_model_name, self.reranker_model_name, self.top_n, self.csv_data_path, self.vlm_weight_name, self.vlm_awq, self.llm_weight_name, self.llm_awq, self.available_types, self.only_use_vlm, self.openxlab)    
+            # self.llm_recommended, self.body_shape_descs = ragandrecommend.infer_llm_raged_recommend_interface(full_body_image_path, season, weather, determine, additional_requirements)
+            
+            # torch.cuda.synchronize()
+            # torch.cuda.empty_cache()
 
-                    #2.Virtual Try-on according the suggestions
-                    try_on_class = TryOnInterface(self.weights_path, self.code_root_path)
-                    try_on_result = try_on_class.try_on_func_form_match_result(match_result, full_body_image_path, body_shape_descs, num_inference_steps, guidance_scale, seed, show_type)
-                    # torch.cuda.synchronize()
-                    # torch.cuda.empty_cache()
-                    # match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
-                    # print(match_result)
-                    #3.Visualize the results of the suggestions to the user
-                    # show_func(match_result, self.save_path).
+            #2.Virtual Try-on according the suggestions
+            try_on_class = TryOnInterface(self.weights_path, self.code_root_path)
+            try_on_result = try_on_class.try_on_func_form_match_result(match_result, full_body_image_path, body_shape_descs, num_inference_steps, guidance_scale, seed, show_type)
+            # torch.cuda.synchronize()
+            # torch.cuda.empty_cache()
+            # match_result = self.ragandrecommend.match_only_result_func(llm_recommended)
+            # print(match_result)
+            #3.Visualize the results of the suggestions to the user
+            # show_func(match_result, self.save_path).
 
-                    return try_on_result
+            return try_on_result
             # except Exception as e:
             #     self.cycle+=1
             #     print(f"Cycles: {self.cycle}/{self.total}, error: {e}, try again...")
