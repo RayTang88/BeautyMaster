@@ -11,7 +11,7 @@ class VLM():
     
     def __init__(self, weights_path, weight_name, awq, openxlab=False):
     
-        backend_config = TurbomindEngineConfig(session_len=3200 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
+        backend_config = TurbomindEngineConfig(session_len=2800 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.05, 
                                         tp=1,
                                         # quant_policy=0,
@@ -23,14 +23,14 @@ class VLM():
                               max_new_tokens=512)
         
         if awq:
-            backend_config = TurbomindEngineConfig(session_len=3200 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
+            backend_config = TurbomindEngineConfig(session_len=2800 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.05, 
                                         tp=1,
                                         model_format='awq',
                                         # quant_policy=0,
                                         )  # 两个显卡
         elif openxlab:
-            backend_config = PytorchEngineConfig(session_len=3200 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
+            backend_config = PytorchEngineConfig(session_len=2800 if not os.getenv("VLM_SESSION_LEN") else os.getenv("VLM_SESSION_LEN"),  # 图片分辨率较高时请调高session_len
                                         cache_max_entry_count=0.05, 
                                         tp=1,
                                         # quant_policy=0,
