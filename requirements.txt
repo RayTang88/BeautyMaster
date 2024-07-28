@@ -191,4 +191,4 @@ scikit-image
 elasticsearch
 rank_bm25
 diffusers==0.28.2
-# autoawq
+autoawq==0.2.5
