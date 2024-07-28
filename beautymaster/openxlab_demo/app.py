@@ -19,28 +19,30 @@ if os.environ.get('openxlab'):
 
     base_path = os.environ.get('CODE_ROOT')+"BeautyMaster/"
     os.system(f'git clone --recursive -b openxlab-demo https://github.com/RayTang88/BeautyMaster.git {base_path}')
-              
-    base_path = os.environ.get('MODEL_ROOT')+"lmdeploy_0-4-2_cpm_v2-5/"
-    os.system(f'git clone https://code.openxlab.org.cn/raytang88/lmdeploy_0-4-2_cpm_v2-5.git {base_path}')
-    os.system(f'cd {base_path} && git lfs pull')
-    package_path = base_path + "lmdeploy-0.4.2-cp310-cp310-manylinux2014_x86_64.whl"
-    os.system(f"pip install {package_path} -i https://pypi.tuna.tsinghua.edu.cn/simple")
-    os.system(f"cd {os.environ.get('CODE_ROOT')}")
+
+    # densepose
+    os.system(f'pip install git+https://github.com/facebookresearch/detectron2@main#subdirectory=projects/DensePose')          
+    # base_path = os.environ.get('MODEL_ROOT')+"lmdeploy_0-4-2_cpm_v2-5/"
+    # os.system(f'git clone https://code.openxlab.org.cn/raytang88/lmdeploy_0-4-2_cpm_v2-5.git {base_path}')
+    # os.system(f'cd {base_path} && git lfs pull')
+    # package_path = base_path + "lmdeploy-0.4.2-cp310-cp310-manylinux2014_x86_64.whl"
+    # os.system(f"pip install {package_path} -i https://pypi.tuna.tsinghua.edu.cn/simple")
+    # os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
     base_path = os.environ.get('MODEL_ROOT')+"Qwen2-7B-Instruct-AWQ/"
     os.system(f'git clone https://code.openxlab.org.cn/raytang88/Qwen2-7B-Instruct-AWQ.git {base_path}')
     os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
-    base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
-    os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
-    os.system(f'cd {base_path} && git lfs pull')
-    os.system(f"cd {os.environ.get('CODE_ROOT')}")
+    # base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
+    # os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
+    # os.system(f'cd {base_path} && git lfs pull')
+    # os.system(f"cd {os.environ.get('CODE_ROOT')}")
     
-    base_path = os.environ.get('MODEL_ROOT')+"Mini-InternVL-Chat-2B-V1-5-AWQ/"
-    os.system(f'git clone https://code.openxlab.org.cn/raytang88/Mini-InternVL-Chat-2B-V1-5-AWQ.git {base_path}')
-    os.system(f'cd {base_path} && git lfs pull')
-    os.system(f"cd {os.environ.get('CODE_ROOT')}")
+    # base_path = os.environ.get('MODEL_ROOT')+"Mini-InternVL-Chat-2B-V1-5-AWQ/"
+    # os.system(f'git clone https://code.openxlab.org.cn/raytang88/Mini-InternVL-Chat-2B-V1-5-AWQ.git {base_path}')
+    # os.system(f'cd {base_path} && git lfs pull')
+    # os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
     base_path = os.environ.get('MODEL_ROOT')+"bce-embedding-base_v1/"
     os.system(f'git clone https://code.openxlab.org.cn/raytang88/bce-embedding-base_v1.git {base_path}')
@@ -51,12 +53,16 @@ if os.environ.get('openxlab'):
     os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
     
-    # densepose
-    os.system(f'pip install git+https://github.com/facebookresearch/detectron2@main#subdirectory=projects/DensePose')
+    base_path = os.environ.get('MODEL_ROOT')+"InternVL2-2B/"
+    os.system(f'git clone -b master https://code.openxlab.org.cn/raytang88/InternVL2-2B.git {base_path}')
+    os.system(f'cd {base_path} && git lfs pull')
+    os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
     # vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
-    vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
+    # vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
+    vlm_weight_name = 'InternVL2-2B/'
     llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
+
 
 
 sys.path.append(os.environ.get('CODE_ROOT')+'BeautyMaster/')
