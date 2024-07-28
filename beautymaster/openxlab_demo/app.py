@@ -58,6 +58,11 @@ if os.environ.get('openxlab'):
     os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
+    base_path = os.environ.get('MODEL_ROOT')+"CatVTON/"
+    os.system(f'git clone https://code.openxlab.org.cn/raytang88/CatVTON.git {base_path}')
+    os.system(f'cd {base_path} && git lfs pull')
+    os.system(f"cd {os.environ.get('CODE_ROOT')}")
+
     # vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
     # vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
     vlm_weight_name = 'InternVL2-2B/'
