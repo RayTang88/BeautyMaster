@@ -5,8 +5,7 @@ import asyncio
 from PIL import Image
 import gradio as gr
 
-sys.path.append(os.environ.get('CODE_ROOT')+'BeautyMaster/')
-from beautymaster.demo.infer import Interface, parse_opt
+
 
 
 vlm_weight_name = '/InternVL-Chat-V1-5-AWQ/'
@@ -71,9 +70,7 @@ if os.environ.get('openxlab'):
     # vlm_weight_name = 'InternVL2-2B-AWQ/'
     # llm_weight_name = 'internlm2_5-7b-chat-4bit'
 
-    
-    # opt = parse_opt(vlm_weight_name, llm_weight_name)
-    # interface = Interface(**vars(opt))
+
 
 def set_image(match_reslult, idx):
     clothes_img_A = Image.new("RGB", (500, 300), 'white')
@@ -230,10 +227,9 @@ def run_local_tryon(weather, season, determine, additional_requirements, full_bo
         print(f"error: {e}, try again...")
        
     
-
 def run_local_tryon_only(full_body_image, match_result, body_shape_descs):
-    # opt = parse_opt(vlm_weight_name, llm_weight_name)
-    # interface = Interface(**vars(opt))
+    opt = parse_opt(vlm_weight_name, llm_weight_name)
+    interface = Interface(**vars(opt))
     # func="match"
     # clothes_path = "/group_share/data_org/test_data/dresses/images/024193_1.jpg"
     # planA_clothes_img_A = Image.new("RGB", (500, 300), 'white')
@@ -309,6 +305,12 @@ def is_upload():
     return interactive_
 
 if __name__ == '__main__':
+
+    sys.path.append(os.environ.get('CODE_ROOT')+'BeautyMaster/')
+    from beautymaster.demo.infer import Interface, parse_opt  
+    # save memory commit
+    # opt = parse_opt(vlm_weight_name, llm_weight_name)
+    # interface = Interface(**vars(opt))
 
     example_path = os.environ.get('DATA_ROOT')
     upper_body = os.listdir(os.path.join(example_path,"upper_body/images/"))[:7]
