@@ -92,6 +92,15 @@
   - [ ] [MOSS](https://github.com/3DHumanRehab/MOSS)
 
 
+- [ ] Need attention
+  - [ ] [ReLoo](https://github.com/eth-ait/ReLoo)
+  - [ ] [BooW-VTON](https://github.com/little-misfit/BooW-VTON)**重建遮蔽的细节**
+  - [ ] [GaussianHaircut](https://eth-ait.github.io/GaussianHaircut)
+  - [ ] [fabric-diffusion](https://humansensinglab.github.io/fabric-diffusion/)
+  - [ ] [gpt4v-fashion-aesthetic-evaluation](https://github.com/st-tech/gpt4v-fashion-aesthetic-evaluation)
+  - [ ] [GarVerseLOD](https://github.com/zhongjinluo/GarVerseLOD)**3D衣服重建**
+
+
 ## 📂 代码仓库结构 (WIP)
 
 ```Bash
