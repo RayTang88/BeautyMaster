@@ -309,32 +309,31 @@ body_out_format = """{"items": ["金色", "长发", "大波浪", "黄色皮肤",
 ##6.3 this template is for vlm describe the body shape 
 vlm_prompt_body_template = """你是一位时尚搭配大师，你需要为我搭配服装，但是做这个之前你需要仔细观察并描述我的体型特征，请从{shape}这几个维度分析,分析{feature}并生成包含以下字段的 JSON 输出："items"和"gender"。
                     items 字段应该是图片中的我的体型特征，与shape中字段一一对应。注意：禁止出现图片中包含物品的描述, 图片只能用来分析我的体型特征。不要在输出中包含 ```json ``` 标签。
-                    gender 字段必须根据图片内容判别图中人物的性别，在此列表中的性别之间进行选择：[男性、女性、男孩、女孩、无性别]。
+                    gender 字段必须根据图片内容判别图中人物的性别，在[男性、女性、男孩、女孩]，这几个性别之中进行选择。
                     示例输入：代表皮肤白皙的女生的图像。
-                    示例输出: {body_out_format}。"""
+                    示例输出: {body_out_format}，请严格遵循此格式输出。"""
                     
 #7.This template is based on body shape characteristics, using LLM to make preliminary recommendations                   
 llm_prompt_template_4o = """您是一位时尚搭配大师，当前处在{season}， 气温{weather}， 我是{gender}，要去{determine}，我的体型特征如下:{shape}，仔细分析并生成包含以下字段的 JSON， 输出："items"、"feature"、"reason"、"category"和"gender"。
                     items 字段应该是与shape中描述的我的体型特征相搭配的衣物列表。每件物品都应代表一件衣服的标题，其中包含物品的款式、颜色和适合的性别，注意：利用您对时尚趋势、风格和性别偏好的理解，根据shape字段中描述的我的体型特征，重点结合当前的季节，气温，和我的出行目的，冬季还需要考虑御寒，夏季需要清凉，{additional_requirements}，为我搭配服装提供准确且相关的建议并写入item字段。
                     category需要在{available_types}，这几个服装类型之间进行选择，且和items字段中搭配的服装类型一一对应。
-                    gender您必须在[男性、女性、男孩、女孩、无性别]，这几个性别之间进行选择，可以从{gender}中直接获取。
+                    gender您必须在[男性、女性、男孩、女孩]，这几个性别之中进行选择，可以从{gender}中直接获取。
                     feature 字段是分析的我的体型特征,可以从{shape}中直接获取。
                     reason 字段是选择item字段中搭配的简明理由概述。
                     不要在输出中包含 ```json ``` 的文字。
                  
-                    以下是示例输出: {recommend_format}，请严格遵循此格式输出。
-                    """                    
+                    以下是示例输出: {recommend_format}，请严格遵循此格式输出。"""                    
 #8.This template is the original template for using LLM for recommendation
 match_prompt_template = "你是一位时尚搭配大师，当前处在{}， 气温{}， 我要去{}，我体型的基本情况描述如下{}，请从以下（ABC）大类中选出三套最合适的搭配：A：上衣：1.{}、2.{}、3.{}、4.{}、5.{};B：裤子：1.{}、2.{}、3.{}、4.{}、5.{};C：裙子：1.{}、2.{}、3.{}、4.{}、5.{};请结合当前的天气，和气温，重点考虑我的目的，根据我的体型，在候选的上衣、候选裤子、候选裙子中为我设计三套最合适的穿搭方案，方案内容可以包括一件衣服和一条裤子或者单选一条裙子，并对每个方案打分，分值在0~100之间。最后输出三个搭配。"
 
 
 #9.This template is used after the rag module is completed, and the results of rag are input into llm for refined recommendation
 ##9.1 this is recommend format
-upper_lower_format="""{"match_content":[{"id": "1", "category": ["上衣","裤子"], "match_id": ["idx", "idx"], "match_caption":["这件上衣则亮色或印花款式，增加整体的活力感", "这条裤子简洁大方，穿搭效果好"], "score": 95.5, "reason": "" },
+upper_lower_format_3="""{"match_content":[{"id": "1", "category": ["上衣","裤子"], "match_id": ["idx", "idx"], "match_caption":["这件上衣则亮色或印花款式，增加整体的活力感", "这条裤子简洁大方，穿搭效果好"], "score": 95.5, "reason": "" },
                        {"id": "2", "category": ["上衣","半身裙"], "match_id": ["idx", "idx"], "match_caption":["这件上衣轻薄透气的，可以保持凉爽舒适", "这条A字型半身裙，既能够凸显您的腰部线条，又能够适应空调房内的温度"], "score": 85.5, "reason": ""},
                        {"id": "3", "category": ["连衣裙"], "match_id": ["idx"], "match_caption":["这条连衣裙可以展现你的沙漏型身材，突出腰部和腿部的优势"], "score": 75.5, "reason": ""}]}"""   
 ##9.2 this is template
-match_prompt_template_raged = """你是一位时尚搭配大师，当前处在{season}， 气温{weather}， 我的性别是{gender}, 要去{determine}，我体型的基本情况描述如下:{shape}。
+match_prompt_template_raged_3 = """你是一位时尚搭配大师，当前处在{season}， 气温{weather}， 我的性别是{gender}, 要去{determine}，我体型的基本情况描述如下:{shape}。
                                 候选的上衣：[{upper}] 
                                 候选裤子：[{lower}]
                                 候选半身裙: [{skirt}]
@@ -342,6 +341,20 @@ match_prompt_template_raged = """你是一位时尚搭配大师，当前处在{s
                                 请结合当前的天气，和气温，重点考虑我的目的，根据我的体型，在前面的：候选的上衣、候选裤子、候选半身裙、候选连衣裙中为我组合出三套合适的穿搭方案，{additional_requirements}，搭配方案可选组合：1.上衣和一条裤子；2.单选一条连衣裙；3.上衣和一条半身裙;4.外套和一条连衣裙。生成包含以下字段的 JSON 输出："id"、"category"、"match_id"、"score"、"reason"
                                 其中id 字段是表示当前的搭配方案是第几个，请在[1, 2, 3]列表中选；match_id 是当前搭配方案中的的服装的idx，需要分别在前面列出的候选的上衣、候选裤子、候选半身裙、候选连衣裙列表中选，并且将选中服装的相应的的idx填进去；category是当前搭配方案的服装类别组成的列表，需要[外套、上衣、裤子、半身裙、连衣裙]之间选择，是match_id字段中选择的服装category字段；match_caption是当前搭配方案中服装的描述，需要分别在前面列出的候选的上衣、候选裤子、候选半身裙、候选连衣裙列表，相应的的content中选；score 字段是对当前搭配方案的一个功能+美学的评分，在0~100中选择；reason 字段是选择当前搭配方案原因的简要概述。
                                 示例输出: {upper_lower_format}。输出要求如下：1.请遵循此格式输出三个方案；2.示例输出只是一个格式的参考，禁止按照示例输出中的内容，原样输出；3.不需要其余多余的的解释性内容，不要在输出中包含 ```json ``` 标签"""
+
+##9.3 this is recommend format give 2
+upper_lower_format="""{"match_content":[{"id": "n", "category": ["上衣","裤子"], "match_id": ["idx", "idx"], "match_caption":["这件上衣则亮色或印花款式，增加整体的活力感", "这条裤子简洁大方，穿搭效果好"], "score": 95.5, "reason": "" },
+                       {"id": "n", "category": ["上衣","半身裙"], "match_id": ["idx", "idx"], "match_caption":["这件上衣轻薄透气的，可以保持凉爽舒适", "这条A字型半身裙，既能够凸显您的腰部线条，又能够适应空调房内的温度"], "score": 85.5, "reason": ""},
+                       {"id": "n", "category": ["连衣裙"], "match_id": ["idx"], "match_caption":["这条连衣裙可以展现你的沙漏型身材，突出腰部和腿部的优势"], "score": 75.5, "reason": ""}]}"""   
+##9.2 this is template give 2
+match_prompt_template_raged = """你是一位时尚搭配大师，当前处在{season}， 气温{weather}， 我的性别是{gender}, 要去{determine}，我体型的基本情况描述如下:{shape}。
+                                候选的上衣：[{upper}] 
+                                候选裤子：[{lower}]
+                                候选半身裙: [{skirt}]
+                                候选连衣裙：[{dresses}]
+                                请结合当前的天气，和气温，重点考虑我的目的，根据我的体型，在前面的：候选的上衣、候选裤子、候选半身裙、候选连衣裙中为我组合出三套合适的穿搭方案，{additional_requirements}，搭配方案可选组合：1.上衣和一条裤子；2.单选一条连衣裙；3.上衣和一条半身裙;4.外套和一条连衣裙。生成包含以下字段的 JSON 输出："id"、"category"、"match_id"、"score"、"reason"
+                                其中id 字段是表示当前的搭配方案是第几个，请在[1, 2, ...]列表中选；match_id 是当前搭配方案中的的服装的idx，需要分别在前面列出的候选的上衣、候选裤子、候选半身裙、候选连衣裙列表中选，并且将选中服装的相应的的idx填进去；category是当前搭配方案的服装类别组成的列表，需要[外套、上衣、裤子、半身裙、连衣裙]之间选择，是match_id字段中选择的服装category字段；match_caption是当前搭配方案中服装的描述，需要分别在前面列出的候选的上衣、候选裤子、候选半身裙、候选连衣裙列表，相应的的content中选；score 字段是对当前搭配方案的一个功能+美学的评分，在0~100中选择；reason 字段是选择当前搭配方案原因的简要概述。
+                                示例输出: {upper_lower_format}。输出要求如下：1.请严格遵循此格式输出{recommend_top_n}个方案, 数量可以小于等于{recommend_top_n}；2.示例输出只是一个格式的参考，禁止按照示例输出中的内容，原样输出；3.不需要其余多余的的解释性内容，不要在输出中包含 ```json ``` 标签"""
 
 #10. This template is used to parse the json generated by vlm                    
 parsing_prompt_template = "将{}中conversations部分的内容整理为一句{}的描述，语句言简意赅， 输出内容只包含这一句描述的内容,不要有其他多余的话。"  

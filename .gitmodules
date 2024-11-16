@@ -1,3 +1,6 @@
 [submodule "beautymaster/third_party/IDM-VTON"]
 	path = beautymaster/third_party/IDM-VTON
 	url = https://github.com/RayTang88/IDM-VTON.git
+[submodule "beautymaster/third_party/CatVTON"]
+	path = beautymaster/third_party/CatVTON
+	url = https://github.com/RayTang88/CatVTON

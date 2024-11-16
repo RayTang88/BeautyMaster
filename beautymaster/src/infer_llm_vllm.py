@@ -4,10 +4,14 @@ from json_repair import repair_json
 from .ready_prompt import ready_prompt_func
 from .prompt import match_prompt_template, match_prompt_template_raged, body_out_format, llm_prompt_template_4o, recommend_format, upper_lower_format
 from beautymaster.utils.parsing_rag import parsing_rag_func
+from vllm import LLM, SamplingParams
+from transformers import AutoTokenizer
 
 class LLM():
     def __init__(self, weights_path, weight_name, awq, openxlab=False):
         # decrease the ratio of the k/v cache occupation to 20%
+        self.weights_path = weights_path
+        self.weight_name = weight_name
 
         backend_config = TurbomindEngineConfig(cache_max_entry_count=0.1,
                                         session_len=2048 if not os.getenv("LLM_SESSION_LEN") else os.getenv("LLM_SESSION_LEN"))
@@ -30,8 +34,16 @@ class LLM():
                                         )  # 两个显卡
 
         
-        self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config, log_level='INFO') 
-        
+        # self.pipe = pipeline(weights_path + weight_name, backend_config=backend_config, log_level='INFO')
+
+        # 2.5
+        self.tokenizer = AutoTokenizer.from_pretrained(weights_path + weight_name, trust_remote_code=True)
+        self.pipe = LLM(
+            model=weights_path + weight_name,
+            trust_remote_code=True, quantization="AWQ"
+        )
+        self.sampling_params = SamplingParams(temperature=0.2, max_tokens=64)
+
 
     def llm_parsing_json(self, model_candidate_clothes_jsons, get_num_list, meaning_list):
     
@@ -74,11 +86,22 @@ class LLM():
         body_shape_descs = '、'.join(item_descs)
         
         data = {"season":season, "weather":weather, "gender": gender, "determine": determine, "shape":body_shape_descs, "available_types": available_types, "additional_requirements":additional_requirements, "recommend_format": recommend_format}
-        match_prompt = llm_prompt_template_4o.format(**data)
+        prompt = llm_prompt_template_4o.format(**data)
+
+        messages = [{
+            'role': 'user',
+            'content': f'{prompt}'
+        }]
+        match_prompt = self.tokenizer.apply_chat_template(messages,
+                                            tokenize=False,
+                                            add_generation_prompt=True) 
         
-        responses = self.pipe([match_prompt])
+  
         
-        return responses[0].text, body_shape_descs, gender
+        responses = self.pipe.generate(match_prompt, sampling_params=self.sampling_params)
+        # responses = self.pipe([match_prompt])
+        
+        return responses[0].outputs[0].text, body_shape_descs, gender
 
     #This function is the main interface for llm to make recommendations, after rag, we have get content from database of used in rag.
     def infer_llm_recommend_raged(self, season, weather, determine, additional_requirements, rag_4o_like_recommended, body_shape_descs, gender, recommend_top_n):
@@ -87,10 +110,22 @@ class LLM():
         
         data = {"season":season, "weather":weather, "gender": gender, "determine": determine, "shape":body_shape_descs,"upper":upper, "lower":lower, "skirt":skirt, "dresses":dresses, "additional_requirements":additional_requirements, "upper_lower_format": upper_lower_format, "recommend_top_n": recommend_top_n}
 
-        match_prompt = match_prompt_template_raged.format(**data)
-        
-        responses = self.pipe([match_prompt])
+        prompt = match_prompt_template_raged.format(**data)
 
-        good_json_obj = repair_json(responses[0].text, return_objects=True)
+        messages = [{
+            'role': 'user',
+            'content': f'{prompt}'
+        }]
+        match_prompt = self.tokenizer.apply_chat_template(messages,
+                                            tokenize=False,
+                                            add_generation_prompt=True) 
+        
+  
+        
+        responses = self.pipe.generate(match_prompt, sampling_params=self.sampling_params)
+        
+        # responses = self.pipe([match_prompt])
+
+        good_json_obj = repair_json(responses[0].responses[0].text, return_objects=True)
         
         return good_json_obj
