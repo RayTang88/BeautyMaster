@@ -17,7 +17,7 @@ llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
 # vlm_weight_name = 'InternVL2-8B-AWQ/'
 # llm_weight_name = 'internlm2_5-7b-chat/'
 # llm_weight_name = 'internlm2_5-7b-chat-4bit'
-llm_weight_name = "Yi-6B-Chat-4bits/"
+# llm_weight_name = "Yi-6B-Chat-4bits/"
 
 if os.environ.get('openxlab'):
 
@@ -39,15 +39,15 @@ if os.environ.get('openxlab'):
     os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
-    # base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
-    # os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
-    # os.system(f'cd {base_path} && git lfs pull')
-    # os.system(f"cd {os.environ.get('CODE_ROOT')}")
-    
-    base_path = os.environ.get('MODEL_ROOT')+"InternVL2-2B-AWQ/"
-    os.system(f'git clone https://code.openxlab.org.cn/raytang88/InternVL2-2B-AWQ.git {base_path}')
+    base_path = os.environ.get('MODEL_ROOT')+"MiniCPM-Llama3-V-2_5-AWQ/"
+    os.system(f'git clone https://code.openxlab.org.cn/raytang88/MiniCPM-Llama3-V-2_5-AWQ.git {base_path}')
     os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
+    
+    # base_path = os.environ.get('MODEL_ROOT')+"InternVL2-2B-AWQ/"
+    # os.system(f'git clone https://code.openxlab.org.cn/raytang88/InternVL2-2B-AWQ.git {base_path}')
+    # os.system(f'cd {base_path} && git lfs pull')
+    # os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
     base_path = os.environ.get('MODEL_ROOT')+"bce-embedding-base_v1/"
     os.system(f'git clone https://code.openxlab.org.cn/raytang88/bce-embedding-base_v1.git {base_path}')
@@ -63,17 +63,17 @@ if os.environ.get('openxlab'):
     os.system(f'cd {base_path} && git lfs pull')
     os.system(f"cd {os.environ.get('CODE_ROOT')}")
 
-    base_path = os.environ.get('MODEL_ROOT')+"CatVTON/"
-    os.system(f'git clone https://code.openxlab.org.cn/raytang88/CatVTON.git {base_path}')
-    os.system(f'cd {base_path} && git lfs pull')
-    os.system(f"cd {os.environ.get('CODE_ROOT')}")
+    # base_path = os.environ.get('MODEL_ROOT')+"CatVTON/"
+    # os.system(f'git clone https://code.openxlab.org.cn/raytang88/CatVTON.git {base_path}')
+    # os.system(f'cd {base_path} && git lfs pull')
+    # os.system(f"cd {os.environ.get('CODE_ROOT')}")
     
     
     # vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
-    # vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
+    vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
     llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
     
-    vlm_weight_name = 'InternVL2-2B-AWQ/'
+    # vlm_weight_name = 'InternVL2-2B-AWQ/'
     # llm_weight_name = 'internlm2_5-7b-chat-4bit'
 
 
