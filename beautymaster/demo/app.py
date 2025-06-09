@@ -12,10 +12,11 @@ vlm_weight_name = '/InternVL-Chat-V1-5-AWQ/'
 llm_weight_name = '/internlm2-chat-20b-4bits/'
 vlm_weight_name = '/Mini-InternVL-Chat-2B-V1-5-AWQ/'
 vlm_weight_name = '/MiniCPM-Llama3-V-2_5-AWQ/'
-llm_weight_name = '/Qwen2-7B-Instruct-AWQ/'
+llm_weight_name = '/Qwen2.5-7B-Instruct-AWQ/'
 
-# vlm_weight_name = 'InternVL2-8B-AWQ/'
-# llm_weight_name = 'internlm2_5-7b-chat/'
+vlm_weight_name = 'InternVL2-8B-AWQ/'
+# vlm_weight_name = "Janus-Pro-7B"
+llm_weight_name = 'internlm3-8b-instruct-awq/'
 # llm_weight_name = 'internlm2_5-7b-chat-4bit'
 # llm_weight_name = "Yi-6B-Chat-4bits/"
 
@@ -180,8 +181,8 @@ def run_local_match(weather, season, determine, additional_requirements, full_bo
 def run_local_tryon(weather, season, determine, additional_requirements, full_body_image):
    
     try:
-        opt = parse_opt(vlm_weight_name, llm_weight_name)
-        interface = Interface(**vars(opt))
+        # opt = parse_opt(vlm_weight_name, llm_weight_name)
+        # interface = Interface(**vars(opt))
         # opt = parse_opt(vlm_weight_name, llm_weight_name)
         # interface = Interface(**vars(opt))
         # func="match"
@@ -305,6 +306,30 @@ def run_local_wardrobe(clothes_path, category_input):
     return category, caption_string
 
 
+def run_tec_support(items, err_code):
+    need_content_dict = {"错误码":"错误描述", "授权编号":"授权项"}  
+    result_dicts = interface.rag_tec_supoort(items, err_code, need_content_dict)
+    
+    result = ""
+    for result_dict in result_dicts["match_content"]:
+        match_id = result_dict["match_id"] 
+        if type(result_dict["match_id"]) == list:
+            match_id = result_dict["match_id"][0]
+            
+        match_caption = result_dict["match_caption"]  
+        if type(result_dict["match_caption"]) == list:
+            match_caption = result_dict["match_caption"][0] 
+            
+        id = result_dict["id"] 
+        if type(result_dict["id"]) == list:
+            id = result_dict["id"][0]    
+     
+               
+        result += ("%s.%s:%s, %s:%s;\n"% (id, items, match_id, need_content_dict[items], match_caption))
+
+    return result    
+
+
 def is_upload():
     global interactive_
     interactive_ = True
@@ -315,86 +340,37 @@ if __name__ == '__main__':
     sys.path.append(os.environ.get('CODE_ROOT')+'BeautyMaster/')
     from beautymaster.demo.infer import Interface, parse_opt  
     # save memory commit
-    # opt = parse_opt(vlm_weight_name, llm_weight_name)
-    # interface = Interface(**vars(opt))
-
-    example_path = os.environ.get('DATA_ROOT')
-    upper_body = os.listdir(os.path.join(example_path,"upper_body/images/"))[:7]
-    upper_body_path = [os.path.join(example_path,"upper_body/images/",human) for human in upper_body]
-    human_list = os.listdir(os.path.join(example_path,"fullbody/images/"))
-    human_list_path = [os.path.join(example_path,"fullbody/images/",human) for human in human_list]
-    # match_reslult = []
-        
+    opt = parse_opt(vlm_weight_name, llm_weight_name)
+    interface = Interface(**vars(opt))   
     image_blocks = gr.Blocks().queue()
     
     with image_blocks as Match:
         state_session_id = gr.State(0)
 
-        gr.Markdown("## 🌟👗💄 美妆达人 - 美丽您的每一天 💄👗🌟")
+        gr.Markdown("## 🌟 牛逼技术支持 🌟")
         gr.Markdown("因为算力的问题，目前上传一个简化版本。如果您想体验完整的功能，请移步Github并持续关注我们的后续工作。Github：[source codes](https://github.com/RayTang88/BeautyMaster), 欢迎star🌟")
-        gr.Markdown("使用方法：在美妆搭配页面按示例上传一张全身照，点击Match按钮，模型会给出穿搭建议并为您试穿展示。目前我们内置了精简的服饰数据库供基础效果展示。如使用过程中出现错误提示，请重复前面的步骤，感谢您的使用！")
+        gr.Markdown("如使用过程中出现错误提示，请重复Match，感谢您的使用！")
         
         with gr.Row():
             with gr.Column():
-                fullbody_img = gr.ImageEditor(sources='upload', type="pil", label='Human. Mask with pen or use auto-masking', interactive=True)
-                with gr.Row():
-                    with gr.Row():
-                        is_checked = gr.Checkbox(label="Yes", info="Use auto-generated mask (Takes 5 seconds)",value=True)
-                    with gr.Row():
-                        is_checked_crop = gr.Checkbox(label="Yes", info="Use auto-crop & resizing",value=False)
+                # with gr.Row():
+                #     with gr.Row():
+                #         is_checked = gr.Checkbox(label="Yes", info="Use auto-generated mask (Takes 5 seconds)",value=True)
+                #     with gr.Row():
+                #         is_checked_crop = gr.Checkbox(label="Yes", info="Use auto-crop & resizing",value=False)
                 # fullbody_img = gr.Image(label="fullbody", sources='upload', type="pil")
                 with gr.Row():
                     with gr.Row():
-                        season = gr.Dropdown(choices=["春季","夏季","秋季","冬季"], label="季节", value="夏季")
+                        items = gr.Dropdown(choices=["错误码","授权编号"], label="技术支持类型", value="错误码")
                     with gr.Row():
-                        weather = gr.Dropdown(choices=["零下10摄氏度左右","0摄氏度左右","10摄氏度左右","20摄氏度左右","30摄氏度左右", "40摄氏度左右"], label="温度", value="40摄氏度左右")
-                    with gr.Row():
-                        determine = gr.Dropdown(choices=["约会","逛街","晚宴","工作"], label="目的", value="逛街")
-                    with gr.Row():
-                        additional_requirements = gr.Dropdown(choices=["复古怀旧","时尚前卫","活力运动","优雅知性"], label="您的个性搭配需求", value="时尚前卫")    
-                # additional_requirements = gr.Textbox(placeholder="描述您对搭配的特殊需求 ex) 简洁大方，美丽动人", show_label=True, label="您的个性搭配需求", elem_id="prompt")
-
-                example = gr.Examples(
-                    inputs=fullbody_img,
-                    examples_per_page=10,
-                    examples=human_list_path
-                )
+                        # additional_requirements = gr.Dropdown(choices=["复古怀旧","时尚前卫","活力运动","优雅知性"], label="您的个性搭配需求", value="时尚前卫")    
+                        err_code = gr.Textbox(placeholder="描述您将输入的信息) -61", show_label=True, label="您想知道的内容", elem_id="prompt")
 
             with gr.Column():
                 with gr.Row():
-                    with gr.Column(elem_id="prompt-container"):
-                        gr.Markdown("推荐方案 1")
-                    planA_clothes_img_A = gr.Image(label="Garment", sources='upload', type="pil", height=300)
-                    planA_clothes_img_B = gr.Image(label="Garment", sources='upload', type="pil", height=300)
-                    with gr.Row(elem_id="prompt-container"):
-                        with gr.Row():
-                            planA_match_reason = gr.Textbox(placeholder="", label="推荐理由", show_label=True, elem_id="planA_match_reason")
-                with gr.Row():
-                    with gr.Column(elem_id="prompt-container"):
-                        gr.Markdown("推荐方案 2")
-                    planB_clothes_img_A = gr.Image(label="Garment", sources='upload', type="pil", height=300)
-                    planB_clothes_img_B = gr.Image(label="Garment", sources='upload', type="pil", height=300)
-                    with gr.Row(elem_id="prompt-container"):
-                        with gr.Row():
-                            planB_match_reason = gr.Textbox(placeholder="", label="推荐理由", show_label=True, elem_id="planB_match_reason")
-                # with gr.Row():
-                #     with gr.Column(elem_id="prompt-container"):
-                #         gr.Markdown("推荐方案 3")
-                #     planC_clothes_img_A = gr.Image(label="Garment", sources='upload', type="pil", height=300)
-                #     planC_clothes_img_B = gr.Image(label="Garment", sources='upload', type="pil", height=300)      
-                #     with gr.Row(elem_id="prompt-container"):
-                #         with gr.Row():
-                #             planC_match_reason = gr.Textbox(placeholder="", label="推荐理由", show_label=True, elem_id="planC_match_reason")
-                            
-            with gr.Column():
-                # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
-                planA = gr.Image(label="试穿展示 1", elem_id="Mach_output_A",show_share_button=False)
-                # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
-                planB = gr.Image(label="试穿展示 2", elem_id="Mach_output_B",show_share_button=False)
-                # image_out = gr.Image(label="Output", elem_id="output-img", height=400)
-                # planC = gr.Image(label="试穿展示 3", elem_id="Mach_output_C",show_share_button=False)
+       
+                    match_caption = gr.Textbox(placeholder="", label="技术支持内容", show_label=True, elem_id="planA_match_reason")
                 
-
         with gr.Row():
             with gr.Row():
 
@@ -411,40 +387,8 @@ if __name__ == '__main__':
         
         # match_button.click(run_local_match, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, match_result, body_shape_descs], api_name='Match')
         # match_button.click(run_local_match, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason], api_name='Match')
-        tryon_button.click(run_local_tryon, inputs=[weather, season, determine, additional_requirements, fullbody_img], outputs=[planA_clothes_img_A, planA_clothes_img_B, planA_match_reason, planB_clothes_img_A, planB_clothes_img_B, planB_match_reason, planA, planB], api_name='TryOn')
+        tryon_button.click(run_tec_support, inputs=[items, err_code], outputs=[match_caption], api_name='TryOn')
         # tryon_button.click(run_local_tryon_only, inputs=[fullbody_img, match_result, body_shape_descs], outputs=[planA, planB], api_name='TryOn')
         
-
-    image_blocks = gr.Blocks().queue()
-    with image_blocks as Wardrobe:
-        gr.Markdown("这里是您的美丽衣橱，您可以将想要搭配的服饰上传到这里。")
-        with gr.Row():
-            with gr.Column():        
-                clothes_img = gr.Image(label="Garment", sources='upload', type="pil")
-                with gr.Row(elem_id="prompt-container"):
-                    with gr.Row():
-                        category_input = gr.Dropdown(choices=["上衣","裤子","半身裙","连衣裙", "其他"], label="类别", value="连衣裙")
-                        prompt = gr.Textbox(placeholder="", label="", show_label=False, elem_id="prompt")
-                        
-                with gr.Row(elem_id="prompt-container"):
-                    with gr.Row():
-                        category = gr.Textbox(placeholder="", label="类别", show_label=True, elem_id="prompt")
-                        caption = gr.Textbox(placeholder="", label="文字说明", show_label=True, elem_id="prompt")
-            
-                example = gr.Examples(
-                    inputs=clothes_img,
-                    examples_per_page=8,
-                    examples=upper_body_path)
-    
-                
-        with gr.Column():
-            wardrobe_button = gr.Button(value="Put it in matching wardrobe(coming soon...)")
-            # with gr.Accordion(label="Advanced Settings", open=False):
-            #     with gr.Row():
-            #         denoise_steps = gr.Number(label="Denoising Steps", minimum=20, maximum=40, value=30, step=1)
-            #         seed = gr.Number(label="Seed", minimum=-1, maximum=2147483647, step=1, value=42)
-
-        # wardrobe_button.click(run_local_wardrobe, inputs=[clothes_img, category_input], outputs=[category, caption], api_name='wardrobe')
-
-    app = gr.TabbedInterface([Match, Wardrobe], ["美妆搭配", "美丽衣橱"])
-    app.launch()
+    app = gr.TabbedInterface([Match], ["牛逼技术支持"])
+    app.launch(server_name='192.168.0.122' ,server_port=7860)

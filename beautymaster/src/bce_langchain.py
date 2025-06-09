@@ -26,14 +26,20 @@ class BceEmbeddingRetriever():
             'device': 'cuda',
             'use_fp16': True
         }
-        reranker = BCERerank(**reranker_args)
+        
+        self.reranker = BCERerank(**reranker_args)
+        
+    def bce_retriever(self, item_dicts):
+        
+        csv_data_path = "/data0/tc_workspace/data/rag/auth.csv" if list(item_dicts.keys())[0] == "授权编号" else "/data0/tc_workspace/data/rag/error.csv"
         
         # init documents
-        documents = CSVLoader(csv_data_path, metadata_columns = ["idx", "category"]).load()
+        documents = CSVLoader(csv_data_path).load()
 
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=640,
                                                     chunk_overlap=0)
         texts = text_splitter.split_documents(documents)
+        print(texts)
 
         # example 1. retrieval with embedding and reranker
         vb_retriever = VectorStore.from_documents(
@@ -48,13 +54,10 @@ class BceEmbeddingRetriever():
         bm25retriever = BM25Retriever.from_documents(documents=texts)
         bm25retriever.k = 10 
         
-        ensemble_retriever = EnsembleRetriever(retrievers=[bm25retriever, vb_retriever], weights=[0.4, 0.6]) 
+        ensemble_retriever = EnsembleRetriever(retrievers=[bm25retriever, vb_retriever], weights=[0.9, 0.1]) 
 
         self.compression_retriever = ContextualCompressionRetriever(
-            base_compressor=reranker, base_retriever=ensemble_retriever)
-
-
-    def bce_retriever(self, item_dicts):
+            base_compressor=self.reranker, base_retriever=ensemble_retriever)
 
         similar_items = {}
         for category, items in item_dicts.items():

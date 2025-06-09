@@ -2,7 +2,6 @@ import os
 import sys
 import numpy as np
 
-import numpy as np
 import torch
 import torchvision.transforms as T
 # from decord import VideoReader, cpu
@@ -15,6 +14,11 @@ from beautymaster.utils.onnx_infer import letterbox, letterbox_keep_new_shape
 from .prompt import vlm_prompt_template_4o_en, vlm_prompt_template_4o, vlm_prompt_template, vlm_prompt_body_template , vlm_prompt_caption_template, upper_shape, upper_choice_list, upper_out_format, lower_shape, lower_choice_list, lower_out_format, dresses_shape, dresses_choice_list, dresses_out_format, skirt_shape, skirt_choice_list, skirt_out_format, body_out_format, body_shape
 
 
+sys.path.insert(0, os.environ.get('CODE_ROOT')+"/BeautyMaster/beautymaster/third_party/Janus")
+from transformers import AutoModelForCausalLM
+from janus.models import MultiModalityCausalLM, VLChatProcessor
+from janus.utils.io import load_pil_images
+
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 
@@ -26,24 +30,36 @@ class VLM():
         # vlm_weight_name="InternVL2-2B/"
         # vlm_awq=False
         # openxlab=True
+        self.weight_name=weight_name
     
-        model_path = weights_path + weight_name
+        model_path = weights_path + weight_name  
         
-        self.model = AutoModel.from_pretrained(
-            model_path,
-            torch_dtype=torch.bfloat16,
-            device_map="auto",
-            low_cpu_mem_usage=True,
-            trust_remote_code=True
-        ).eval().cuda()
+        if weight_name == "Janus-Pro-7B":
+            
+            self.vl_chat_processor: VLChatProcessor = VLChatProcessor.from_pretrained(model_path)
+            self.tokenizer = self.vl_chat_processor.tokenizer
 
-        self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
+            vl_gpt: MultiModalityCausalLM = AutoModelForCausalLM.from_pretrained(
+                model_path, trust_remote_code=True
+            )
+            self.model = vl_gpt.to(torch.bfloat16).cuda().eval()
+            
+        else:
+            self.model = AutoModel.from_pretrained(
+                model_path,
+                torch_dtype=torch.bfloat16,
+                device_map="auto",
+                low_cpu_mem_usage=True,
+                trust_remote_code=True
+            ).eval().cuda()
 
-        self.generation_config = dict(
-        num_beams=1,
-        max_new_tokens=1024,
-        do_sample=False,
-        )    
+            self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
+
+            self.generation_config = dict(
+            num_beams=1,
+            max_new_tokens=1024,
+            do_sample=False,
+            )    
 
 
     def build_transform(self, input_size):
@@ -226,19 +242,52 @@ class VLM():
         return response
     
     def infer_vlm_clothes_caption_func(self, clothes_image_path, available_types):
-            
+        
         data = {"available_types": available_types, "upper_shape": upper_shape, "upper_choice_list":upper_choice_list, "upper_out_format":upper_out_format,
         "lower_shape": lower_shape, "lower_choice_list":lower_choice_list, "lower_out_format":lower_out_format,
         "dresses_shape": dresses_shape, "dresses_choice_list":dresses_choice_list, "dresses_out_format":dresses_out_format,
         "skirt_shape": skirt_shape, "skirt_choice_list":skirt_choice_list, "skirt_out_format":skirt_out_format,
         }
-        
         vlm_prompt = "<image>\n" + vlm_prompt_caption_template.format(**data)
-    
-    
-        image = self.load_image(clothes_image_path).to(torch.bfloat16).cuda()
         
-        response = self.model.chat(self.tokenizer, image, vlm_prompt, self.generation_config)
+        
+        if self.weight_name == "Janus-Pro-7B":
+            conversation = [
+                {
+                    "role": "<|User|>",
+                    "content": f"<image_placeholder>\n{vlm_prompt}",
+                    "images": [clothes_image_path],
+                },
+                {"role": "<|Assistant|>", "content": ""},
+            ]
+            pil_images = load_pil_images(conversation)
+            prepare_inputs = self.vl_chat_processor(
+                conversations=conversation, images=pil_images, force_batchify=True
+            ).to(self.model.device)
+
+            # # run image encoder to get the image embeddings
+            inputs_embeds = self.model.prepare_inputs_embeds(**prepare_inputs)
+
+            # # run the model to get the response
+            outputs = self.model.language_model.generate(
+                inputs_embeds=inputs_embeds,
+                attention_mask=prepare_inputs.attention_mask,
+                pad_token_id=self.tokenizer.eos_token_id,
+                bos_token_id=self.tokenizer.bos_token_id,
+                eos_token_id=self.tokenizer.eos_token_id,
+                max_new_tokens=512,
+                do_sample=False,
+                use_cache=True,
+            )
+
+            response = self.tokenizer.decode(outputs[0].cpu().tolist(), skip_special_tokens=True)
+            
+        else:
+            
+        
+            image = self.load_image(clothes_image_path).to(torch.bfloat16).cuda()
+            
+            response = self.model.chat(self.tokenizer, image, vlm_prompt, self.generation_config)
 
         return response
     

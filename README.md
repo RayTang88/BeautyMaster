@@ -93,12 +93,21 @@
 
 
 - [ ] Need attention
-  - [ ] [ReLoo](https://github.com/eth-ait/ReLoo)
+  - [ ] [ReLoo](https://github.com/eth-ait/ReLoo)**3D重建衣服**
   - [ ] [BooW-VTON](https://github.com/little-misfit/BooW-VTON)**重建遮蔽的细节**
-  - [ ] [GaussianHaircut](https://eth-ait.github.io/GaussianHaircut)
-  - [ ] [fabric-diffusion](https://humansensinglab.github.io/fabric-diffusion/)
+  - [ ] [GaussianHaircut](https://eth-ait.github.io/GaussianHaircut)**发型重建**
+  - [ ] [fabric-diffusion](https://humansensinglab.github.io/fabric-diffusion/)**3D服装重建**
   - [ ] [gpt4v-fashion-aesthetic-evaluation](https://github.com/st-tech/gpt4v-fashion-aesthetic-evaluation)
   - [ ] [GarVerseLOD](https://github.com/zhongjinluo/GarVerseLOD)**3D衣服重建**
+  - [ ] [RAGDiffusion](https://colorful-liyu.github.io/RAGDiffusion-page/)**重建穿在身上的衣服**
+  - [ ] [AnyDressing](https://github.com/Crayon-Shinchan/AnyDressing)**根据提示一次性试穿多件**
+  - [ ] [Dynamic Try-On](https://zhengjun-ai.github.io/dynamic-tryon-page/)**在视频中换装**
+  - [ ] [MakeupTransfer](Beyond Color-Matching for In-the-Wild Makeup Transfer)**妆容迁移**
+  - [ ] [Face-MakeUp](https://github.com/ddw2AIGROUP2CQUPT/Face-MakeUp)**头部装饰**
+  - [ ] [CrossVTON]()**CrossVTON: Mimicking the Logic Reasoning on Cross-category Virtual Try-onguided by Tri-zone Priors**
+  - [ ] [GarmageNet](https://style3d.github.io/garmagenet/)**3D服装重建**
+  - [ ] [MagicTryOn](https://vivocameraresearch.github.io/magictryon/)**视频换装**
+  - [ ] [TEMU-VTOFF](https://github.com/davidelobba/TEMU-VTOFF)**重建穿在身上的衣服**
 
 
 ## 📂 代码仓库结构 (WIP)

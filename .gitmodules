@@ -4,3 +4,9 @@
 [submodule "beautymaster/third_party/CatVTON"]
 	path = beautymaster/third_party/CatVTON
 	url = https://github.com/RayTang88/CatVTON
+[submodule "beautymaster/third_party/Janus"]
+	path = beautymaster/third_party/Janus
+	url = https://github.com/RayTang88/Janus.git
+[submodule "/data0/tc_workspace/internlm/code/project/BeautyMaster/beautymaster/third_party/vllm"]
+	path = /data0/tc_workspace/internlm/code/project/BeautyMaster/beautymaster/third_party/vllm
+	url = https://github.com/OpenBMB/vllm.git

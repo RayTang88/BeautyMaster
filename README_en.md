@@ -88,6 +88,10 @@ The highlights of the project are as follows:
   - [ ] [MOSS](https://github.com/3DHumanRehab/MOSS)
 
 
+- [ ] Need attention
+  - [ ] [ReLoo](https://github.com/eth-ait/ReLoo)
+  - [ ] [BooW-VTON](https://github.com/little-misfit/BooW-VTON)
+  
 ## 📂 Repo structure (WIP)
 
 ```Bash

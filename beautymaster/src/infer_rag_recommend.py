@@ -9,7 +9,7 @@ from PIL import Image
 from .infer_vlm import VLM
 from .infer_llm import LLM
 from .bce_langchain import BceEmbeddingRetriever
-from .prompt import vlm_prompt_body_template, body_shape, body_out_format
+from .prompt import vlm_prompt_body_template, body_shape, body_out_format, tec_support_format
 
 class RagAndRecommend():
     def __init__(self, 
@@ -27,7 +27,7 @@ class RagAndRecommend():
                  openxlab=False):
         
         self.bceEmbeddingRetriever = BceEmbeddingRetriever(weights_path, embedding_model_name, reranker_model_name, bce_top_n, csv_data_path)
-        self.vlm = VLM(weights_path, vlm_weight_name, vlm_awq, openxlab)
+        # self.vlm = VLM(weights_path, vlm_weight_name, vlm_awq, openxlab)
         self.llm = LLM(weights_path, llm_weight_name, llm_awq, openxlab)
 
 
@@ -105,44 +105,44 @@ class RagAndRecommend():
         return model_candidate_clothes_list
 
 
-    def infer_rag_4o_like_func(self, full_body_image_path, season, weather, determine, additional_requirements):
+    # def infer_rag_4o_like_func(self, full_body_image_path, season, weather, determine, additional_requirements):
         
-        #This interface is completely based on 4o. It recommends matching according to the full-body photo. 
-        # The result given by internvl is closely related to the clothes in the provided picture. 
-        # The matching result is not ideal and is not enabled.
-        if self.only_use_vlm:
-            match_text = self.vlm.infer_vlm_4o_like_func(full_body_image_path, season, weather, determine)
-        else: 
-        #This interface 1. first describes the body shape of the full-body photo; 
-        # 2. recommends matching according to the body shape; 
-        # 3. searches for similar matching in the database RAG based on the recommended matching; 
-        # 4. lets the model match three sets of matching in the RAG recommendation, from coarse to fine. 
-        # This interface implements the functions of 1, 2, and 3.
+    #     #This interface is completely based on 4o. It recommends matching according to the full-body photo. 
+    #     # The result given by internvl is closely related to the clothes in the provided picture. 
+    #     # The matching result is not ideal and is not enabled.
+    #     if self.only_use_vlm:
+    #         match_text = self.vlm.infer_vlm_4o_like_func(full_body_image_path, season, weather, determine)
+    #     else: 
+    #     #This interface 1. first describes the body shape of the full-body photo; 
+    #     # 2. recommends matching according to the body shape; 
+    #     # 3. searches for similar matching in the database RAG based on the recommended matching; 
+    #     # 4. lets the model match three sets of matching in the RAG recommendation, from coarse to fine. 
+    #     # This interface implements the functions of 1, 2, and 3.
 
-            body_shape_response = self.vlm.infer_vlm_body_shape_func(full_body_image_path, body_shape, body_out_format)
-            match_text, body_shape_descs, gender = self.llm.infer_llm_single_recommend(season, weather, determine, body_shape_response, additional_requirements, self.available_types)
+    #         body_shape_response = self.vlm.infer_vlm_body_shape_func(full_body_image_path, body_shape, body_out_format)
+    #         match_text, body_shape_descs, gender = self.llm.infer_llm_single_recommend(season, weather, determine, body_shape_response, additional_requirements, self.available_types)
             
-        good_json_obj = repair_json(match_text, return_objects=True)
-        print("good_json_obj rough llm recommend ", good_json_obj)
-        item_descs = good_json_obj["items"]
-        category_descs = good_json_obj["category"]
+    #     good_json_obj = repair_json(match_text, return_objects=True)
+    #     print("good_json_obj rough llm recommend ", good_json_obj)
+    #     item_descs = good_json_obj["items"]
+    #     category_descs = good_json_obj["category"]
         
-        #目前需要搭配的类别
-        assert len(item_descs) == len(category_descs)
+    #     #目前需要搭配的类别
+    #     assert len(item_descs) == len(category_descs)
         
-        # 创建a和b之间的字典映射
-        mapping = dict(zip(category_descs, item_descs))
+    #     # 创建a和b之间的字典映射
+    #     mapping = dict(zip(category_descs, item_descs))
         
-        # 使用字典推导式处理c中的元素，根据映射关系从b中取出对应的元素，并输出为字典
-        items = {item: mapping[item] for item in self.available_types if item in mapping}
+    #     # 使用字典推导式处理c中的元素，根据映射关系从b中取出对应的元素，并输出为字典
+    #     items = {item: mapping[item] for item in self.available_types if item in mapping}
         
-        # print(items)
+    #     # print(items)
         
-        print("--------------------")
-        # 用RAG进行检索和排序
-        similar_items = self.bceEmbeddingRetriever.bce_retriever(items)
+    #     print("--------------------")
+    #     # 用RAG进行检索和排序
+    #     similar_items = self.bceEmbeddingRetriever.bce_retriever(items)
         
-        return similar_items, body_shape_descs, gender
+    #     return similar_items, body_shape_descs, gender
     
     
     #This is a  main interface ,used to match in infer.py
@@ -156,20 +156,20 @@ class RagAndRecommend():
         return recommended, body_shape_descs
     
     #This interface is used to extract the caption of clothes
-    def infer_vlm_caption(self, clothes_image_path):
+    # def infer_vlm_caption(self, clothes_image_path):
         
-        caption_response = self.vlm.infer_vlm_clothes_caption_func(clothes_image_path, self.available_types)
+    #     caption_response = self.vlm.infer_vlm_clothes_caption_func(clothes_image_path, self.available_types)
         
-        # json_string = json.dumps(const_prompt).replace('"', '\\"').replace('{', '\\{').replace('}', '\\}')
-        # json_string = const_prompt.replace('"', '\\"').replace('{', '\\{').replace('}', '\\}').replace('\n', '\\n')
+    #     # json_string = json.dumps(const_prompt).replace('"', '\\"').replace('{', '\\{').replace('}', '\\}')
+    #     # json_string = const_prompt.replace('"', '\\"').replace('{', '\\{').replace('}', '\\}').replace('\n', '\\n')
         
-        good_json_obj = repair_json(caption_response, return_objects=True)
+    #     good_json_obj = repair_json(caption_response, return_objects=True)
         
-        good_json_obj["items"].insert(0, good_json_obj["category"])
-        # item_descs = good_json_obj["items"]
-        clothes_shape_descs = '、'.join(good_json_obj["items"])
+    #     good_json_obj["items"].insert(0, good_json_obj["category"])
+    #     # item_descs = good_json_obj["items"]
+    #     clothes_shape_descs = '、'.join(good_json_obj["items"])
         
-        return good_json_obj, clothes_shape_descs
+    #     return good_json_obj, clothes_shape_descs
     
     # Filter out incompatible combinations
     def filter_output(self, comb):
@@ -283,5 +283,19 @@ class RagAndRecommend():
             match_result.append(match_dict)
 
         return match_result
+    
+
+    def infer_llm_raged_recommend_interface_for_technical_support(self, items, query, need_content_dict):
+        #navie+rag
+        iterms_dict={}
+        iterms_dict[items] = query
+        if query == "":
+            query="-61"
+        similar_items = self.bceEmbeddingRetriever.bce_retriever(iterms_dict)
+        #llm recomend
+        need_content = need_content_dict[items]
+        recommended = self.llm.infer_llm_recommend_raged_technical_support(similar_items, self.recommend_top_n, need_content)
+ 
+        return recommended   
 
    

@@ -451,3 +451,10 @@ vlm_prompt_caption_template = """你是一位时尚搭配大师，你需要为�
                  
 #13 This template is used to generate a caption in json format based on the specified data in the image.
 vlm_caption_prompt_origin = f"按照以下格式创建数据集:\n {clothes_prompt} \n根据提供的图片按json_string的格式生成问题和答案对。答案必须精简，后面有选项的在选项中选即可。答案必须严格来自图像内容，如果根据图像内容无法确定答案，请回答不知道。最后只输出生成好的json_string部分即可。注意gpt字段的value，<answer>部分是hunman字段value部分问题相对应的回答,不要原样输出。"
+
+##9.2 this is template tec support
+
+tec_support_format="""{"match_content":[{"id": "n", "category": ["错误码"], "match_id": ["-60"], "match_caption":["特征数据版本不匹配"]}"""
+tec_support_template_raged = """你是一位经验丰富的IT技术支持，已经知道内容如下：{input}，请生成包含以下字段的 JSON 输出："id"、"category"、"match_id"
+                                其中id 字段是表示当前的方案是第几个，请在[1, 2, ...]列表中选；"category"直接填入{category}的内容，代表本次查询的内容， match_id是{category}对应的编码，请注意match_id是编码不是对应编码的描述！match_caption是{category}对应的{content}
+                                示例输出: {tec_support_format}。输出要求如下：1.请严格遵循此格式输出{recommend_top_n}个方案, 数量可以小于等于{recommend_top_n}；2.示例输出只是一个格式的参考，禁止按照示例输出中的内容，原样输出；3.不需要其余多余的的解释性内容，不要在输出中包含 ```json ``` 标签"""

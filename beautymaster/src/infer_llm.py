@@ -2,8 +2,8 @@ import os
 from lmdeploy import pipeline, TurbomindEngineConfig, GenerationConfig, PytorchEngineConfig
 from json_repair import repair_json
 from .ready_prompt import ready_prompt_func
-from .prompt import match_prompt_template, match_prompt_template_raged, body_out_format, llm_prompt_template_4o, recommend_format, upper_lower_format
-from beautymaster.utils.parsing_rag import parsing_rag_func
+from .prompt import match_prompt_template, match_prompt_template_raged, body_out_format, llm_prompt_template_4o, recommend_format, upper_lower_format, tec_support_format, tec_support_template_raged
+from beautymaster.utils.parsing_rag import parsing_rag_func, parsing_rag_func_technical_support
 
 class LLM():
     def __init__(self, weights_path, weight_name, awq, openxlab=False):
@@ -88,6 +88,22 @@ class LLM():
         data = {"season":season, "weather":weather, "gender": gender, "determine": determine, "shape":body_shape_descs,"upper":upper, "lower":lower, "skirt":skirt, "dresses":dresses, "additional_requirements":additional_requirements, "upper_lower_format": upper_lower_format, "recommend_top_n": recommend_top_n}
 
         match_prompt = match_prompt_template_raged.format(**data)
+        
+        responses = self.pipe([match_prompt])
+
+        good_json_obj = repair_json(responses[0].text, return_objects=True)
+        
+        return good_json_obj
+    
+    #This function is the main interface for llm to make recommendations, after rag, we have get content from database of used in rag.
+    def infer_llm_recommend_raged_technical_support(self, similar_items, recommend_top_n, need_content):
+        
+        contents = parsing_rag_func_technical_support(similar_items)
+        category = list(similar_items.keys())[0]
+        
+        data = {"input":contents, "category":category, "tec_support_format": tec_support_format, "recommend_top_n": recommend_top_n, "content": need_content}
+
+        match_prompt = tec_support_template_raged.format(**data)
         
         responses = self.pipe([match_prompt])
 
